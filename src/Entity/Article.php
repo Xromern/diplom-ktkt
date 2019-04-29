@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use AppTestBundle\Entity\FunctionalTests\Category;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -33,6 +35,12 @@ class Article
     private $description;
 
     /**
+     * @ORM\Column(type="text")
+     *
+     */
+    private $body;
+
+    /**
      * @ORM\Column(type="datetime")
      *
      */
@@ -57,6 +65,26 @@ class Article
      */
     private $updatedAt;
 
+
+    /**
+     * @ORM\ManyToMany(targetEntity="CategoryArticle", inversedBy="articles")
+     * @ORM\JoinTable(name="articles_categories_list")
+     */
+    private $categories;
+
+
+    /**
+     * @return mixed
+     */
+    public function getCategories()
+    {
+        return $this->categories;
+    }
+
+    public function setCategories(Category $categories)
+    {
+         $this->categories[] = $categories;
+    }
 
     public function setImageFile(File $image = null)
     {
@@ -134,6 +162,22 @@ class Article
     /**
      * @return mixed
      */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
+     * @param mixed $body
+     */
+    public function setBody($body): void
+    {
+        $this->body = $body;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getCreatedAt()
     {
         return $this->created_at;
@@ -160,5 +204,12 @@ class Article
     {
 
         $this->created_at = new \DateTime("now");
+        $this->categories = new ArrayCollection();
+
+    }
+
+    public function __toString(){
+        return $this->title;
     }
 }
+

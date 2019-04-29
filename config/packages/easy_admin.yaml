@@ -5,7 +5,7 @@ easy_admin:
           icon: 'newspaper-o'
           children:
             - { entity: 'Article', label: 'Статті' }
-            #- { entity: 'Category', label: 'Категорі' }
+            - { entity: 'CategoryArticle', label: 'Категорі' }
             #- { entity: 'Article', label: 'Статті' }
             #- { entity: 'Article', label: 'Статті' }
 
@@ -16,8 +16,11 @@ easy_admin:
           class: App\Entity\Article
           list:
             fields:
+              - { property: 'title' }
               - { property: 'image', type: 'image', base_path: '%app.path.article_images%' }
-            # ...
+              - { property: 'description' }
+              - { property: 'text' }
+              - { property: 'categories' }
             show:
               fields:
                 - { property: 'image', type: 'image', base_path: '%app.path.article_images%' }
@@ -26,8 +29,10 @@ easy_admin:
               - { property: 'title' }
               - { property: 'description' }
               - { property: 'imageFile', type: 'vich_image' }
-
-
+              - { property: 'body' ,type: 'fos_ckeditor' }
+              - { property: 'categories' }
+        CategoryArticle:
+            class: App\Entity\CategoryArticle
 
       # - App\Entity\Comment
        #- App\Entity\Adverticment
