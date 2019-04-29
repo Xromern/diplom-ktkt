@@ -1,0 +1,34 @@
+easy_admin:
+    design:
+      menu:
+        - label: 'Статті'
+          icon: 'newspaper-o'
+          children:
+            - { entity: 'Article', label: 'Статті' }
+            #- { entity: 'Category', label: 'Категорі' }
+            #- { entity: 'Article', label: 'Статті' }
+            #- { entity: 'Article', label: 'Статті' }
+
+
+
+    entities:
+        Article:
+          class: App\Entity\Article
+          list:
+            fields:
+              - { property: 'image', type: 'image', base_path: '%app.path.article_images%' }
+            # ...
+            show:
+              fields:
+                - { property: 'image', type: 'image', base_path: '%app.path.article_images%' }
+          form:
+            fields:
+              - { property: 'title' }
+              - { property: 'description' }
+              - { property: 'imageFile', type: 'vich_image' }
+
+
+
+      # - App\Entity\Comment
+       #- App\Entity\Adverticment
+       #- App\Entity\CategoryArticle
