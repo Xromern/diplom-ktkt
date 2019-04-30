@@ -1,0 +1,26 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block body %}
+<div class="container-article-sheet">
+    <div class="article-sheet-caption">{{   article.title}}</div>
+    <div class="article-sheet">
+        {{ article.body|raw  }}
+
+    </div>
+
+    <form id="form-add-comment" action="#" method="post">
+
+        <div class="container-comment">
+            <textarea id="editor-comment"></textarea>
+
+            <button class="button comment-send" type="submit">Відправити</button>
+        </div>
+    </form>
+    <div class="container-comments"></div>
+</div>
+
+
+{% endblock %}

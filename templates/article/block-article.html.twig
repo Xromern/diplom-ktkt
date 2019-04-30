@@ -1,0 +1,27 @@
+
+<a class="article-container" href="{{ path('article',{'id':article.id}) }}/">
+
+    <div class="article-container-image">
+        <img class="image-article" src="{{ asset("images/article/") }}{{ article.image }}" alt="image">
+    </div>
+
+    <div class="article-container-text">
+
+        <div class="article-container-text-data">
+
+        </div>
+
+        <div class="article-container-title">
+            {{  article.title}}
+        </div>
+
+        <div class="article-container-excerpt">
+            {{ article.description }}
+        </div>
+
+    </div>
+
+</a>
+
+
+

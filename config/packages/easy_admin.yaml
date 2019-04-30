@@ -6,10 +6,9 @@ easy_admin:
           children:
             - { entity: 'Article', label: 'Статті' }
             - { entity: 'CategoryArticle', label: 'Категорі' }
+            - { entity: 'Advertisement', label: 'Оголошення' }
             #- { entity: 'Article', label: 'Статті' }
             #- { entity: 'Article', label: 'Статті' }
-
-
 
     entities:
         Article:
@@ -33,7 +32,9 @@ easy_admin:
               - { property: 'categories' }
         CategoryArticle:
             class: App\Entity\CategoryArticle
+        Advertisement:
+          class: App\Entity\Advertisement
 
       # - App\Entity\Comment
-       #- App\Entity\Adverticment
+       #- App\Entity\Advertisement
        #- App\Entity\CategoryArticle

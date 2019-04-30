@@ -181,6 +181,7 @@ main{
     font-size: 22px;
     font-weight: bold;
     color: #163C94;
+    padding: 0 0 15px 15px;
 }
 
 .pagination{
@@ -296,12 +297,6 @@ main{
     height: 100px;
     transition-duration: .2s;
 }
-.side-bar-container:hover{
-    transition-duration: .2s;
-
-    margin-left: -10px;
-}
-
 /*end-side-bar*/
 
 /*footer*/
