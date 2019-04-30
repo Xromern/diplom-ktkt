@@ -19,8 +19,26 @@
             <button class="button comment-send" type="submit">Відправити</button>
         </div>
     </form>
-    <div class="container-comments"></div>
+    <div class="container-comments">
+
+            <div class="container-form">
+                {{ form_start(formComment, {  'method': 'POST', 'attr': {'class': 'comment-form'} }) }}
+                <div class="my-custom-class-for-errors">
+                    {{ form_errors(formComment) }}
+                </div>
+                {{ form_widget(formComment)}}
+                {{ form_end(formComment) }}
+
+            </div>
+
+        {% for comment in article.comments %}
+            коментарий {{ comment.text }}<br>
+
+        {% endfor %}
+
+
 </div>
+
 
 
 {% endblock %}

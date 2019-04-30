@@ -72,6 +72,11 @@ class Article
      */
     private $categories;
 
+    /**
+     * One article has many comments. This is the inverse side.
+     * @ORM\OneToMany(targetEntity="Comment", mappedBy="article", cascade={"persist", "remove" })
+     */
+    private $comments;
 
     /**
      * @return mixed
@@ -199,12 +204,29 @@ class Article
         $this->updatedAt = $updatedAt;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @param mixed $comments
+     */
+    public function setComments(Comment $comment): void
+    {
+        $this->comments[] = $comment;
+    }
+
 
     public function __construct()
     {
 
         $this->created_at = new \DateTime("now");
         $this->categories = new ArrayCollection();
+        $this->comments = new ArrayCollection();
 
     }
 
