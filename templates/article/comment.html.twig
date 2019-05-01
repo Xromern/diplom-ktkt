@@ -1,7 +1,7 @@
 
-
+<div id="comments-block">
 {% for comment in comments %}
-<div name='comment' class='block-comment'>
+<div name='comment' class='block-comment' >
     <div class='block-comment-container-head'>
         <div class='block-comment-container-img'></div>
         <div class='article-comment-container-data'>
@@ -9,7 +9,7 @@
             <div class='block-comment-container-date'>05-04-2019</div>
             <div class='block-comment-container-status'>Студент</div>
         </div>
-        <div class='block-comment-container-action' data-id='%s'>
+        <div class='block-comment-container-action' data-id='{{ comment.id }}'>
 
             <div class='block-comment-button-edit' >✎</div>
             <div class='block-comment-button-remove'>✘</div>
@@ -23,37 +23,9 @@
 </div>
 {% endfor %}
 
-{% if comments|length  != 0 %}
-<div class="navigation">
-    {{ knp_pagination_render(comments) }}
+    {% if comments|length  != 0 %}
+        <div class="navigation">
+            {{ knp_pagination_render(comments) }}
+        </div>
+    {% endif %}
 </div>
-{% endif %}
-
-<!-- The Modal -->
-<div id="myModal" class="modal">
-
-    <!-- Modal content -->
-    <div class="modal-content">
-        <span class="modal-close">✘</span>
-        <textarea id="editor-edit-comment"></textarea>
-
-        <button class="button comment-edit" type="submit">Змінити</button>
-    </div>
-
-</div>
-
-
-<script>
-    $(document).ready(function(){
-
-
-    $('html').on('click', '.block-comment-button-remove', function () {
-            if (confirm('Ви дійсно хочете видалити коментар? ')) {
-                $('.preLoader').show();
-                var id_comment = $(this).parent().attr('data-id');
-                //console.log(id_comment);
-               // deleteComment(id_comment);
-            }
-    });
-    });
-</script>

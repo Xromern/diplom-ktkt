@@ -3,14 +3,21 @@
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}{% endblock %}</title>
-        {% block stylesheets %}
+        {% block stylesheets %}\
+            <link href="{{ asset('css/notification.css') }}" rel="stylesheet"/>
             <link href="{{ asset('css/main.css') }}" rel="stylesheet"/>
+
             <link href="{{ asset('css/big-buttons.css') }}" rel="stylesheet"/>
             <link href="{{ asset('css/pagination.css') }}" rel="stylesheet"/>
             <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
         {% endblock %}
         {% block javascripts %}
-                <script type="text/javascript" src="{{ asset('js/jquery-3.4.0.min.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('js/jquery-3.4.0.min.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('editor/tinymce.min.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('js/notification.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('js/useful.js') }}"></script>
+            <script type="text/javascript" src="{{ asset('js/preloader.js') }}"></script>
+
         {% endblock %}
     </head>
     <body>

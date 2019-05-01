@@ -55,10 +55,14 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/article/{id}", name="article", requirements={"id":"\d+"})
+     * @Route("/article/{id}", name="article",methods="GET" ,requirements={"id":"\d+"})
      */
     public function showArticle($id,\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator)
     {
+        $ajax = $request->headers->get('HTTP_X_REQUESTED_WITH');
+        if($ajax == 'xmlhttprequest'){
+            throw new \Exception("This is not an ajax request");
+        }
 
         $doctrine = $this->getDoctrine();
 
@@ -98,7 +102,6 @@ class ArticleController extends AbstractController
         $articlesQuery = $articlesRepo->createQueryBuilder('c')
             ->Where('c.article = :article_id')
             ->setParameter('article_id', $article->getId())
-            ->orderBy('c.id','DESC')
             ->getQuery();
 
         $paginationComment = $paginator->paginate(

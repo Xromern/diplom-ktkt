@@ -54,7 +54,6 @@ class Article
 
     /**
      * @Vich\UploadableField(mapping="article", fileNameProperty="image")
-     * @Assert\NotBlank
      * @var File
      */
     private $imageFile;

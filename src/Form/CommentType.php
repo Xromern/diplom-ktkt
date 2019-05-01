@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Comment;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -15,8 +16,10 @@ class CommentType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('text',TextType::class, array(
-                'label' => 'Коментарий'
+            ->add('text',TextareaType::class, array(
+                'label' => 'Коментарий',
+                'attr' => ['id' => 'editor-comment']
+
             ))
             ->add('save', SubmitType::class, ['label' => 'Отправить'])
             ->getForm();
