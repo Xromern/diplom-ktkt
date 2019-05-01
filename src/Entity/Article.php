@@ -86,7 +86,7 @@ class Article
         return $this->categories;
     }
 
-    public function setCategories(Category $categories)
+    public function setCategories( $categories)
     {
          $this->categories[] = $categories;
     }
@@ -114,6 +114,8 @@ class Article
     public function setImage($image)
     {
         $this->image = $image;
+        $this->updatedAt = new \DateTime("now");
+
     }
 
     /**
@@ -146,6 +148,8 @@ class Article
     public function setTitle($title): void
     {
         $this->title = $title;
+        $this->updatedAt = new \DateTime("now");
+
     }
 
     /**
@@ -161,7 +165,10 @@ class Article
      */
     public function setDescription($description): void
     {
+
         $this->description = $description;
+        $this->updatedAt = new \DateTime("now");
+
     }
 
     /**
@@ -225,6 +232,8 @@ class Article
     {
 
         $this->created_at = new \DateTime("now");
+        $this->updatedAt = new \DateTime("now");
+
         $this->categories = new ArrayCollection();
         $this->comments = new ArrayCollection();
 
