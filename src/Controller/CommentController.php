@@ -47,32 +47,12 @@ class CommentController extends AbstractController
     }
 
     /**
-     * @Route("/article/{article_id}", name="showComments", methods="POST",requirements={"article_id":"\d+"})
+     * @Route("/article/{article_id}", name="showComments", requirements={"article_id":"\d+"})
      */
     public function showComments(Request $request, ObjectManager $manager,PaginatorInterface $paginator)
     {
 
-        $commentsRepo = $manager->getRepository(Comment::class);
 
-        $commentsQuery = $commentsRepo->createQueryBuilder('c')
-            ->Where('c.article = :article_id')
-            ->setParameter('article_id', $request->GET('article_id'))
-            ->getQuery();
-
-        $paginationComment = $paginator->paginate(
-        // Doctrine Query, not results
-            $commentsQuery,
-            // Define the page parameter
-            $request->GET('page', 1),
-            // Items per page
-            3
-        );
-
-        $commentRender = $this->render('article/comment.html.twig', [
-            'comments'=>$paginationComment,
-        ]);
-
-        return ($commentRender);
 
     }
 }

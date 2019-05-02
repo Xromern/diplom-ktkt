@@ -5,6 +5,9 @@
     position: relative;
     top:-90px;
 }
+.big-buttons{
+    font-size: 18px;
+}
 h1 {
     font-size: 2.2em;
 }

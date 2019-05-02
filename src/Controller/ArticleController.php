@@ -9,6 +9,7 @@ use App\Form\CommentType;
 use http\Env\Request;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 
@@ -55,14 +56,10 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/article/{id}", name="article",methods="GET" ,requirements={"id":"\d+"})
+     * @Route("/article/{id}", name="article",requirements={"id":"\d+"})
      */
     public function showArticle($id,\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator)
     {
-        $ajax = $request->headers->get('HTTP_X_REQUESTED_WITH');
-        if($ajax == 'xmlhttprequest'){
-            throw new \Exception("This is not an ajax request");
-        }
 
         $doctrine = $this->getDoctrine();
 
@@ -74,33 +71,11 @@ class ArticleController extends AbstractController
 
         $article= $entityManager->getRepository(Article::class)->find($id);
 
-        if($article ==null){
-            return $this->render('Exception/error404.html.twig', [
-
-                'advertisement'=>$advertisements,
-                'message_error'=>'Сторінка не знайдена'
-            ]);
-        }
-        $comment = new Comment();
-
-        $formComment = $this->createForm(CommentType::class,$comment);
-
-        $formComment->handleRequest($request);
-
-       // dump($comment);
-        if ($formComment->isSubmitted() && $formComment->isValid()) {
-
-            $comment->setArticle($article);
-
-            $entityManager->persist($comment);
-
-            $entityManager->flush();
-
-        }
         $articlesRepo = $entityManager->getRepository(Comment::class);
 
         $articlesQuery = $articlesRepo->createQueryBuilder('c')
             ->Where('c.article = :article_id')
+            ->orderBy('c.id', 'desc')
             ->setParameter('article_id', $article->getId())
             ->getQuery();
 
@@ -108,10 +83,41 @@ class ArticleController extends AbstractController
         // Doctrine Query, not results
             $articlesQuery,
             // Define the page parameter
-            $request->query->getInt('page', 1),
+            $request->get('page', 1),
             // Items per page
             3
         );
+
+        if($request->isXmlHttpRequest()) {
+            $commentRender = $this->render('article/comment.html.twig', [
+                'comments'=>$paginationComment,
+            ]);
+
+            return ($commentRender);
+        }
+
+        if($article ==null){
+            return $this->render('Exception/error404.html.twig', [
+                'advertisement'=>$advertisements,
+                'message_error'=>'Сторінка не знайдена'
+            ]);
+        }
+        $comment = new Comment();
+
+        $formComment = $this->createForm(CommentType::class,$comment, array(
+            'action' => $this->generateUrl('article',['id'=>$id]),
+        ));
+
+        $formComment->handleRequest($request);
+
+        if ($formComment->isSubmitted() && $formComment->isValid()) {
+            $comment->setArticle($article);
+
+            $entityManager->persist($comment);
+
+            $entityManager->flush();
+
+        }
 
         return $this->render('article/show-one-article.html.twig', [
             'article' => $article,
