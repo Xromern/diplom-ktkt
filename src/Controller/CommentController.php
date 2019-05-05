@@ -49,11 +49,16 @@ class CommentController extends AbstractController
     }
 
     /**
+<<<<<<< HEAD
      * @Route("/commentAjaxPaginate", name="showComments", methods={"POST"})
+=======
+     * @Route("/article/{article_id}", name="showComments", requirements={"article_id":"\d+"})
+>>>>>>> 26fa11026878574217ae3c8144756e942f03ca3c
      */
     public function commentAjaxPaginate(Request $request, ObjectManager $manager,PaginatorInterface $paginator)
     {
 
+<<<<<<< HEAD
        $paginationComment =  Service\ArticleManager::getPaginateCommentsForArticle(
            $manager,
            $request->get('id'),
@@ -65,5 +70,9 @@ class CommentController extends AbstractController
         ]);
 
         return ($commentRender);
+=======
+
+
+>>>>>>> 26fa11026878574217ae3c8144756e942f03ca3c
     }
 }

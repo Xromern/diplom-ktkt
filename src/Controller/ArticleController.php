@@ -47,10 +47,15 @@ class ArticleController extends AbstractController
     }
 
     /**
+<<<<<<< HEAD
      * @Route("/articlesAjaxPaginate", name="articlesAjaxPaginate")
+=======
+     * @Route("/article/{id}", name="article",requirements={"id":"\d+"})
+>>>>>>> 26fa11026878574217ae3c8144756e942f03ca3c
      */
     public function articlesAjaxPaginate(\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator)
     {
+<<<<<<< HEAD
 
         $em = $this->getDoctrine()->getManager();
 
@@ -64,6 +69,8 @@ class ArticleController extends AbstractController
                 'message_error'=>'Сторінка не знайдена'
             ]);
         }
+=======
+>>>>>>> 26fa11026878574217ae3c8144756e942f03ca3c
 
         return $this->render('article/articles.html.twig', [
             'articles' => $paginationArticle,
@@ -84,14 +91,50 @@ class ArticleController extends AbstractController
 
         $article = $entityManager->getRepository(Article::class)->find($request->get('id'));
 
+<<<<<<< HEAD
         $paginationComment =  Service\ArticleManager::getPaginateCommentsForArticle(
             $entityManager,
             $request->get('id'),
             $request->get('page', 1),$paginator);
 
+=======
+        $articlesRepo = $entityManager->getRepository(Comment::class);
+
+        $articlesQuery = $articlesRepo->createQueryBuilder('c')
+            ->Where('c.article = :article_id')
+            ->orderBy('c.id', 'desc')
+            ->setParameter('article_id', $article->getId())
+            ->getQuery();
+
+        $paginationComment = $paginator->paginate(
+        // Doctrine Query, not results
+            $articlesQuery,
+            // Define the page parameter
+            $request->get('page', 1),
+            // Items per page
+            3
+        );
+
+        if($request->isXmlHttpRequest()) {
+            $commentRender = $this->render('article/comment.html.twig', [
+                'comments'=>$paginationComment,
+            ]);
+
+            return ($commentRender);
+        }
+
+        if($article ==null){
+            return $this->render('Exception/error404.html.twig', [
+                'advertisement'=>$advertisements,
+                'message_error'=>'Сторінка не знайдена'
+            ]);
+        }
+>>>>>>> 26fa11026878574217ae3c8144756e942f03ca3c
         $comment = new Comment();
 
-        $formComment = $this->createForm(CommentType::class,$comment);
+        $formComment = $this->createForm(CommentType::class,$comment, array(
+            'action' => $this->generateUrl('article',['id'=>$id]),
+        ));
 
         $formComment->handleRequest($request);
 
