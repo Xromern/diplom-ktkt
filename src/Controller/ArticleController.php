@@ -26,7 +26,8 @@ class ArticleController extends AbstractController
 
         $paginationArticle = Service\ArticleManager::getPaginateArticles(
             $em,
-            $request->get('page', 1),$paginator);
+            $request->get('page', 1),
+            $paginator);
 
         $advertisements = $em
             ->getRepository(Advertisement::class)
@@ -36,32 +37,36 @@ class ArticleController extends AbstractController
             return $this->render('Exception/error404.html.twig', [
 
                 'advertisement'=>$advertisements,
-                'message_error'=>'Сторінка не знайдена'
+                'message_error'=>'Сторінка не знайдена',
+                'condition'=>false
             ]);
         }
-
-        return $this->render('article/index.html.twig', [
-            'articles' => $paginationArticle,
-            'advertisement'=>$advertisements
-        ]);
+        if($request->isXmlHttpRequest()) {
+            return $this->render('article/articles-paginate.html.twig', [
+                'articles' => $paginationArticle,
+                'ajax' => true,
+            ]);
+        }else {
+            return $this->render('article/articles-paginate.html.twig', [
+                'articles' => $paginationArticle,
+                'advertisement' => $advertisements,
+                'ajax' => false,
+            ]);
+        }
     }
 
     /**
-<<<<<<< HEAD
      * @Route("/articlesAjaxPaginate", name="articlesAjaxPaginate")
-=======
-     * @Route("/article/{id}", name="article",requirements={"id":"\d+"})
->>>>>>> 26fa11026878574217ae3c8144756e942f03ca3c
      */
     public function articlesAjaxPaginate(\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator)
     {
-<<<<<<< HEAD
 
         $em = $this->getDoctrine()->getManager();
 
         $paginationArticle = Service\ArticleManager::getPaginateArticles(
             $em,
-            $request->get('page', 1),$paginator);
+            $request->get('page', 1),
+            $paginator);
 
         if(count($paginationArticle) == 0){
             return $this->render('Exception/error404.html.twig', [
@@ -69,16 +74,16 @@ class ArticleController extends AbstractController
                 'message_error'=>'Сторінка не знайдена'
             ]);
         }
-=======
->>>>>>> 26fa11026878574217ae3c8144756e942f03ca3c
 
-        return $this->render('article/articles.html.twig', [
-            'articles' => $paginationArticle,
-        ]);
+            return $this->render('article/articles.html.twig', [
+                'articles' => $paginationArticle,
+                'ajax' => true
+            ]);
+
     }
 
     /**
-     * @Route("/article/{id}", name="article",requirements={"id":"\d+"})
+     * @Route("/article/{id}", name="article", methods={"GET","HEAD","POST"}, requirements={"id":"\d+"})
      */
     public function showArticle(\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator)
     {
@@ -91,50 +96,21 @@ class ArticleController extends AbstractController
 
         $article = $entityManager->getRepository(Article::class)->find($request->get('id'));
 
-<<<<<<< HEAD
         $paginationComment =  Service\ArticleManager::getPaginateCommentsForArticle(
             $entityManager,
             $request->get('id'),
             $request->get('page', 1),$paginator);
 
-=======
-        $articlesRepo = $entityManager->getRepository(Comment::class);
-
-        $articlesQuery = $articlesRepo->createQueryBuilder('c')
-            ->Where('c.article = :article_id')
-            ->orderBy('c.id', 'desc')
-            ->setParameter('article_id', $article->getId())
-            ->getQuery();
-
-        $paginationComment = $paginator->paginate(
-        // Doctrine Query, not results
-            $articlesQuery,
-            // Define the page parameter
-            $request->get('page', 1),
-            // Items per page
-            3
-        );
-
-        if($request->isXmlHttpRequest()) {
-            $commentRender = $this->render('article/comment.html.twig', [
-                'comments'=>$paginationComment,
-            ]);
-
-            return ($commentRender);
-        }
-
-        if($article ==null){
+        if($article == null){
             return $this->render('Exception/error404.html.twig', [
                 'advertisement'=>$advertisements,
+                'condition'=>false,
                 'message_error'=>'Сторінка не знайдена'
             ]);
         }
->>>>>>> 26fa11026878574217ae3c8144756e942f03ca3c
         $comment = new Comment();
 
-        $formComment = $this->createForm(CommentType::class,$comment, array(
-            'action' => $this->generateUrl('article',['id'=>$id]),
-        ));
+        $formComment = $this->createForm(CommentType::class,$comment);
 
         $formComment->handleRequest($request);
 
@@ -151,8 +127,10 @@ class ArticleController extends AbstractController
             'article' => $article,
             'comments'=>$paginationComment,
             'advertisement'=>$advertisements,
-            'routeName'=>'showComments',
+            'ajax'=>false,
             'formComment'=>$formComment->createView(),
         ]);
+
+
     }
 }

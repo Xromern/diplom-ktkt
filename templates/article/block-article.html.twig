@@ -1,5 +1,5 @@
 
-<a class="article-container" href="{{ path('article',{'id':article.id}) }}/">
+<a class="article-container" data-id-article="{{ article.id }}" href="{{ path('article',{'id':article.id}) }}/">
 
     <div class="article-container-image">
         <img class="image-article" src="{{ asset("images/article/") }}{{ article.image }}" alt="image">

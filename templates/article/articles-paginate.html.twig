@@ -1,0 +1,76 @@
+{% extends  ajax ? 'ajax.html.twig' : 'base.html.twig' %}
+
+{% block title %}Hello ArticleController!{% endblock %}
+
+{% block body %}
+    <div class="preLoader" id="preloader-article-paginate"></div>
+<div class="articles" id="ajax-articles-canvas">
+
+    {{ include('article/articles.html.twig')}}
+</div>
+<script>
+    $( document ).ready(function() {
+
+        history.replaceState(//занести в историю номер страницы с коментариеями
+
+            {'type': 'paginate_article', 'article_page_comment': {{ articles.currentPageNumber}} },
+            '',
+            $(this).attr('href'));
+
+        let preloaderArticlePaginate = new Preloader(
+
+            $('#preloader-article-paginate'),
+
+            '{{ asset("images/preloader/preloader.gif") }}'
+        );
+
+        function showAjaxArticles(page){
+
+            $.ajax({
+                type: "POST",
+                url: '/articlesAjaxPaginate',
+                data: ({
+                    "page": page,
+                }),
+                beforeSend: function() {
+                    $('#ajax-articles-canvas').html('');
+                    preloaderArticlePaginate.showPeloader();
+                },
+                success: function (html) {
+
+                    preloaderArticlePaginate.hidePrloaer();
+                    $('#ajax-articles-canvas').html(html);
+
+                }
+            });
+
+        }
+
+        $('#ajax-articles-canvas').on('click', ".pagination a", function (e) {
+
+            let page = $(this).attr('data-article-page');
+
+            var state = {'type': 'paginate_article', 'article_page_comment':  page === null || page === undefined ? 1 : page};
+
+            history.pushState(//занести в историю номер страницы с коментариеями
+
+                state,
+                '',
+                $(this).attr('href'));
+
+            showAjaxArticles(page);
+
+            e.preventDefault();
+        });
+
+        onpopstate = function (event) {
+
+            let state = JSON.parse(JSON.stringify(event.state));
+            if(state['type'] !== null)
+            showAjaxArticles(state['article_page_comment']);
+
+        }
+
+    });
+</script>
+{% endblock %}

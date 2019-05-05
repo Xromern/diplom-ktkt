@@ -41,6 +41,8 @@ class ArticleManager
 
         $paginationComment->setParam('id', $article_id);
 
+
+
         return $paginationComment;
 
     }
@@ -66,8 +68,10 @@ class ArticleManager
             $page,
             9
         );
-
+        $paginationArticle->setTemplate('pagination/paginate.html.twig');
         $paginationArticle->setUsedRoute('articles');
+        $paginationArticle->setParam('page', $page);
+
 
         return $paginationArticle;
 
