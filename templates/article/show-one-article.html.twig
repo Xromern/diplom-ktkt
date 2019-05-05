@@ -38,10 +38,10 @@
 
 </div>
 <script>
-    var editor_comment = 'comment_text';
-    var editor_edit_comment = 'editor-edit-comment';
+    let editor_comment = 'comment_text';
+    let editor_edit_comment = 'editor-edit-comment';
 
-    var preloaderComment = new Preloader(
+    let preloaderComment = new Preloader(
         $('#preloader-comment'),
         '{{ asset("images/preloader/preloader.gif")  }}'
     );
@@ -155,8 +155,6 @@
 
             modal.style.display = "none";
 
-          //  setTimeout(ShowComments, 200);
-
         })
 
         span.onclick = function () {
@@ -179,32 +177,46 @@
             }
         }
 
-        $('#dish-select-component-canvas').on('click', ".pagination a" , function(e){
-           window.history.replaceState("object or string", "Title", $(this).attr('href'));
-
-            var page = getUrlVars()['page'];
-
+        function showAjaxComment(){
             $.ajax({
-            type: "POST",
-            url: '{{ path('showComments',{ 'article_id':article.id }) }}',
-            data: ({
-                    'article_id': {{ article.id }},
-                    "page": page,
-            }),
-            beforeSend: function() {
-                $('#comments-block').html('');
-                preloaderComment.showPeloader();
+                type: "POST",
+                url: '{{ path('showComments') }}',
+                data: ({
+                    'id': {{ article.id }},
+                    "page": getUrlVars()['page'],
+                }),
+                beforeSend: function() {
+                    $('#comments-block').html('');
+                    preloaderComment.showPeloader();
 
-            },
-            success: function (msg) {
-                setTimeout(function () {
-                    preloaderComment.hidePrloaer();
-                    $('#comments-block').html(msg);
-                },500)
-
-
-            }
+                },
+                success: function (msg) {
+                    setTimeout(function () {
+                        preloaderComment.hidePrloaer();
+                        $('#comments-block').html(msg);
+                    },300)
+                }
             });
+
+
+        }
+
+        onpopstate = function(event) {
+           //let article_page_comment = JSON.parse(JSON.stringify(event.state));
+            showAjaxComment();
+        }
+
+        $('#dish-select-component-canvas').on('click', ".pagination a" , function(e){
+
+            let page = getUrlVars()['page'];//получить параметр get из url
+
+            history.pushState(//занести в историю номер страницы с коментариеями
+
+                {article_page_comment: page === undefined ? 1 :page },
+                '',
+                $(this).attr('href'));
+
+            showAjaxComment();
 
             e.preventDefault();
         });

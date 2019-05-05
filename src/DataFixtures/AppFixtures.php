@@ -2,11 +2,13 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Advertisement;
 use App\Entity\Article;
 use App\Entity\CategoryArticle;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use phpDocumentor\Reflection\Types\Integer;
+//php bin/console doctrine:fixtures:load
 
 class AppFixtures extends Fixture
 {
@@ -19,7 +21,12 @@ class AppFixtures extends Fixture
             $manager->persist($category[$i]);
 
         }*/
-
+        for($i = 0;$i<8;$i++ ) {
+            $advertisement= new Advertisement();
+            $advertisement->setTitle('title test '.$i);
+            $advertisement->setDescription('description test '.$i);
+            $manager->persist($advertisement);
+        }
         for($i = 0;$i<67;$i++ ) {
             $article = new Article();
             $article->setBody('body test: '.$i);

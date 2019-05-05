@@ -1,0 +1,8 @@
+<div class="articles-content">
+    {% for article in articles %}
+        {{ include('article/block-article.html.twig', { 'article': article }) }}
+    {% endfor %}
+</div>
+<div class="navigation">
+    {{ knp_pagination_render(articles) }}
+</div>

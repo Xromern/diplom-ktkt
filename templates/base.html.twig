@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
-    <head>
+
         <meta charset="UTF-8">
         <title>{% block title %}{% endblock %}</title>
-        {% block stylesheets %}\
+        {% block stylesheets %}
             <link href="{{ asset('css/notification.css') }}" rel="stylesheet"/>
             <link href="{{ asset('css/main.css') }}" rel="stylesheet"/>
 
@@ -17,10 +17,12 @@
             <script type="text/javascript" src="{{ asset('js/notification.js') }}"></script>
             <script type="text/javascript" src="{{ asset('js/useful.js') }}"></script>
             <script type="text/javascript" src="{{ asset('js/preloader.js') }}"></script>
+            <script type="text/javascript" src="https://cdn.rawgit.com/nnattawat/flip/master/dist/jquery.flip.min.js"></script>
 
         {% endblock %}
     </head>
     <body>
+    <div id="content-inner">
     <section class="slider"></section>
     {{ include('article/big-buttons.html.twig') }}
     <main>
@@ -30,6 +32,6 @@
     {{ include('article/footer.html.twig') }}
 
 
-
+</div>
     </body>
 </html>

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Advertisement;
 use App\Entity\Article;
 use App\Entity\Comment;
@@ -9,8 +10,9 @@ use App\Form\CommentType;
 use http\Env\Request;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
-
+use App\Service;
 
 class ArticleController extends AbstractController
 {
@@ -22,25 +24,15 @@ class ArticleController extends AbstractController
 
         $em = $this->getDoctrine()->getManager();
 
-        $articlesRepo = $em->getRepository(Article::class);
+        $paginationArticle = Service\ArticleManager::getPaginateArticles(
+            $em,
+            $request->get('page', 1),$paginator);
 
-        $advertisements = $this->getDoctrine()
-                ->getRepository(Advertisement::class)
+        $advertisements = $em
+            ->getRepository(Advertisement::class)
             ->findAll();
 
-        $articlesQuery = $articlesRepo->createQueryBuilder('a')
-            ->orderBy('a.id','DESC')
-            ->getQuery();
-
-        $paginationArticle = $paginator->paginate(
-        // Doctrine Query, not results
-            $articlesQuery,
-            // Define the page parameter
-            $request->query->getInt('page', 1),
-            // Items per page
-            9
-        );
-        if(count($paginationArticle) == 0){
+        if($paginationArticle == null){
             return $this->render('Exception/error404.html.twig', [
 
                 'advertisement'=>$advertisements,
@@ -55,41 +47,55 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/article/{id}", name="article",methods="GET" ,requirements={"id":"\d+"})
+     * @Route("/articlesAjaxPaginate", name="articlesAjaxPaginate")
      */
-    public function showArticle($id,\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator)
+    public function articlesAjaxPaginate(\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator)
     {
-        $ajax = $request->headers->get('HTTP_X_REQUESTED_WITH');
-        if($ajax == 'xmlhttprequest'){
-            throw new \Exception("This is not an ajax request");
-        }
 
-        $doctrine = $this->getDoctrine();
+        $em = $this->getDoctrine()->getManager();
 
-        $entityManager = $doctrine->getManager();
+        $paginationArticle = Service\ArticleManager::getPaginateArticles(
+            $em,
+            $request->get('page', 1),$paginator);
 
-        $advertisements = $doctrine
-            ->getRepository(Advertisement::class)
-            ->findAll();
-
-        $article= $entityManager->getRepository(Article::class)->find($id);
-
-        if($article ==null){
+        if(count($paginationArticle) == 0){
             return $this->render('Exception/error404.html.twig', [
 
-                'advertisement'=>$advertisements,
                 'message_error'=>'Сторінка не знайдена'
             ]);
         }
+
+        return $this->render('article/articles.html.twig', [
+            'articles' => $paginationArticle,
+        ]);
+    }
+
+    /**
+     * @Route("/article/{id}", name="article",requirements={"id":"\d+"})
+     */
+    public function showArticle(\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator)
+    {
+
+        $entityManager =  $this->getDoctrine()->getManager();
+
+        $advertisements = $entityManager
+            ->getRepository(Advertisement::class)
+            ->findAll();
+
+        $article = $entityManager->getRepository(Article::class)->find($request->get('id'));
+
+        $paginationComment =  Service\ArticleManager::getPaginateCommentsForArticle(
+            $entityManager,
+            $request->get('id'),
+            $request->get('page', 1),$paginator);
+
         $comment = new Comment();
 
         $formComment = $this->createForm(CommentType::class,$comment);
 
         $formComment->handleRequest($request);
 
-       // dump($comment);
         if ($formComment->isSubmitted() && $formComment->isValid()) {
-
             $comment->setArticle($article);
 
             $entityManager->persist($comment);
@@ -97,26 +103,12 @@ class ArticleController extends AbstractController
             $entityManager->flush();
 
         }
-        $articlesRepo = $entityManager->getRepository(Comment::class);
-
-        $articlesQuery = $articlesRepo->createQueryBuilder('c')
-            ->Where('c.article = :article_id')
-            ->setParameter('article_id', $article->getId())
-            ->getQuery();
-
-        $paginationComment = $paginator->paginate(
-        // Doctrine Query, not results
-            $articlesQuery,
-            // Define the page parameter
-            $request->query->getInt('page', 1),
-            // Items per page
-            3
-        );
 
         return $this->render('article/show-one-article.html.twig', [
             'article' => $article,
             'comments'=>$paginationComment,
             'advertisement'=>$advertisements,
+            'routeName'=>'showComments',
             'formComment'=>$formComment->createView(),
         ]);
     }

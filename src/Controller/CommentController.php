@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 
+use App\Entity\Advertisement;
 use App\Entity\Article;
 use App\Entity\Comment;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service;
 
 class CommentController extends AbstractController
 {
@@ -47,32 +49,21 @@ class CommentController extends AbstractController
     }
 
     /**
-     * @Route("/article/{article_id}", name="showComments", methods="POST",requirements={"article_id":"\d+"})
+     * @Route("/commentAjaxPaginate", name="showComments", methods={"POST"})
      */
-    public function showComments(Request $request, ObjectManager $manager,PaginatorInterface $paginator)
+    public function commentAjaxPaginate(Request $request, ObjectManager $manager,PaginatorInterface $paginator)
     {
 
-        $commentsRepo = $manager->getRepository(Comment::class);
-
-        $commentsQuery = $commentsRepo->createQueryBuilder('c')
-            ->Where('c.article = :article_id')
-            ->setParameter('article_id', $request->GET('article_id'))
-            ->getQuery();
-
-        $paginationComment = $paginator->paginate(
-        // Doctrine Query, not results
-            $commentsQuery,
-            // Define the page parameter
-            $request->GET('page', 1),
-            // Items per page
-            3
-        );
+       $paginationComment =  Service\ArticleManager::getPaginateCommentsForArticle(
+           $manager,
+           $request->get('id'),
+           $request->get('page', 1),
+           $paginator);
 
         $commentRender = $this->render('article/comment.html.twig', [
-            'comments'=>$paginationComment,
+            'comments'=>$paginationComment
         ]);
 
         return ($commentRender);
-
     }
 }

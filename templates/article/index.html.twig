@@ -3,16 +3,59 @@
 {% block title %}Hello ArticleController!{% endblock %}
 
 {% block body %}
-<div class="articles">
-    <div class="articles-content">
-    {% for article in articles %}
-    {{ include('article/block-article.html.twig', { 'article': article }) }}
-    {% endfor %}
-    </div>
-    <div class="navigation">
-        {{ knp_pagination_render(articles) }}
-    </div>
+    <div class="preLoader" id="preloader-comment"></div>
+<div class="articles" id="ajax-articles-canvas">
 
+    {{ include('article/articles.html.twig')}}
 </div>
+<script>
 
+
+    let preloaderComment = new Preloader(
+        $('#preloader-comment'),
+        '{{ asset("images/preloader/preloader.gif")  }}'
+    );
+
+    function showAjaxArticles(){
+        $.ajax({
+            type: "POST",
+            url: '{{ path('articlesAjaxPaginate') }}',
+            data: ({
+                "page": getUrlVars()['page'],
+            }),
+            beforeSend: function() {
+                $('#ajax-articles-canvas').html('');
+                preloaderComment.showPeloader();
+            },
+            success: function (msg) {
+                setTimeout(function () {
+                    preloaderComment.hidePrloaer();
+                    $('#ajax-articles-canvas').html(msg);
+                },300)
+            }
+        });
+
+
+    }
+
+    onpopstate = function(event) {
+        //let article_page_comment = JSON.parse(JSON.stringify(event.state));
+        showAjaxArticles();
+    }
+
+    $('#ajax-articles-canvas').on('click', ".pagination a" , function(e){
+
+        let page = getUrlVars()['page'];//получить параметр get из url
+
+        history.pushState(//занести в историю номер страницы с коментариеями
+
+            {article_page_comment: page === undefined ? 1 :page },
+            '',
+            $(this).attr('href'));
+
+       showAjaxArticles();
+
+        e.preventDefault();
+    });
+</script>
 {% endblock %}
