@@ -8,17 +8,26 @@
     <div class="article-container-text">
 
         <div class="article-container-text-data">
-
+            <div class="article-container-date"> {{ article.updatedAt|date('Y-m-d h:i') }}</div>
+            <div class="article-container-author">admin</div>
         </div>
 
         <div class="article-container-title">
             {{  article.title}}
         </div>
 
-        <div class="article-container-excerpt">
-            {{ article.description }}
+        <div class="article-container-description">
+            {{ article.description|raw }}
         </div>
 
+
+
+    </div>
+    <div class="article-container-tag">
+
+        {% for category in article.categories %}
+          #{{ category }}
+        {% endfor %}
     </div>
 
 </a>

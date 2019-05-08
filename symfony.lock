@@ -142,6 +142,9 @@
             "config/packages/fos_ckeditor.yaml"
         ]
     },
+    "friendsofsymfony/user-bundle": {
+        "version": "2.2.x-dev"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },

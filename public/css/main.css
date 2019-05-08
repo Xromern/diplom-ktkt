@@ -137,6 +137,16 @@ main{
     font-size: 12px;
 }
 
+.article-container-date{
+    display: inline-block;
+    float: left;
+}
+
+.article-container-author{
+    display: inline-block;
+
+}
+
 .article-container .article-container-title{
     color:#163C94;
     font-weight:700;
@@ -145,9 +155,21 @@ main{
     padding: 0px 5px;
 }
 
-.article-container .article-container-excerpt{
-    color:#444;
+.article-container .article-container-description{
+    color:#000;
     font-size:12px;padding: 2px 5px;
+    font-weight: 400;
+}
+.article-container-text{
+    height: 150px !important;
+}
+.article-container-tag{
+    color: #666;
+    font-size: 12px !important;
+    margin-bottom: auto;
+}
+.article-container-tag a{
+    display: inline-block;
 }
 .container-article-sheet{
 

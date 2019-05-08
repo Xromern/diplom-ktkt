@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "9b5e797c212b9f7a44c7e26c71cbdb13",
@@ -1241,16 +1241,16 @@
         },
         {
             "name": "easycorp/easyadmin-bundle",
-            "version": "v2.1.1",
+            "version": "v2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EasyCorp/EasyAdminBundle.git",
-                "reference": "bc27c0727b1416c740117abee8002988056f3cbc"
+                "reference": "06d38c1ca93892e5015c92631436556826c85d6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/bc27c0727b1416c740117abee8002988056f3cbc",
-                "reference": "bc27c0727b1416c740117abee8002988056f3cbc",
+                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/06d38c1ca93892e5015c92631436556826c85d6e",
+                "reference": "06d38c1ca93892e5015c92631436556826c85d6e",
                 "shasum": ""
             },
             "require": {
@@ -1322,7 +1322,7 @@
                 "backend",
                 "generator"
             ],
-            "time": "2019-02-19T19:40:50+00:00"
+            "time": "2019-05-06T18:37:49+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -3390,16 +3390,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v1.2.3",
+            "version": "v1.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "d65041a4c9b1dbcd606f8be3a5bae2bee4534f6a"
+                "reference": "27909122a3da4676c3dc5dc34c8f82323c610d69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/d65041a4c9b1dbcd606f8be3a5bae2bee4534f6a",
-                "reference": "d65041a4c9b1dbcd606f8be3a5bae2bee4534f6a",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/27909122a3da4676c3dc5dc34c8f82323c610d69",
+                "reference": "27909122a3da4676c3dc5dc34c8f82323c610d69",
                 "shasum": ""
             },
             "require": {
@@ -3435,7 +3435,7 @@
                 }
             ],
             "description": "Composer plugin for Symfony",
-            "time": "2019-04-16T10:04:15+00:00"
+            "time": "2019-05-07T08:10:46+00:00"
         },
         {
             "name": "symfony/form",

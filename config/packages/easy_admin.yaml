@@ -8,8 +8,14 @@ easy_admin:
             - { entity: 'CategoryArticle', label: 'Категорі' }
             - { entity: 'Advertisement', label: 'Оголошення' }
             - { entity: 'Comment', label: 'Коментарі' }
-            #- { entity: 'Article', label: 'Статті' }
-            #- { entity: 'Article', label: 'Статті' }
+            - { entity: 'user', label: 'Пользователи' }
+        - label: 'Журнал'
+          children:
+            - { entity: 'JournalGroup', label: 'JournalGroup' }
+            - { entity: 'JournalTeacher', label: 'JournalTeacher' }
+            - { entity: 'JournalSpecialty', label: 'JournalSpecialty' }
+            - { entity: 'JournalStudent', label: 'JournalStudent' }
+            - { entity: 'JournalSubject', label: 'JournalSubject' }
 
     entities:
         Article:
@@ -37,6 +43,30 @@ easy_admin:
           class: App\Entity\Advertisement
         Comment:
           class: App\Entity\Comment
+        user:
+          class: App\Entity\User
+          form:
+            fields:
+              - username
+              - email
+              - enabled
+              - lastLogin
+              # if administrators are allowed to edit users' passwords and roles, add this:
+              - { property: 'plainPassword', type: 'text', type_options: { required: false } }
+              - { property: 'roles', type: 'choice', type_options: { multiple: true, choices: { 'ROLE_USER': 'ROLE_USER', 'ROLE_ADMIN': 'ROLE_ADMIN' } } }
+        JournalGroup:
+          class: App\Entity\JournalGroup
+        JournalTeacher:
+          class: App\Entity\JournalTeacher
+        JournalSpecialty:
+          class: App\Entity\JournalSpecialty
+        JournalStudent:
+          class: App\Entity\JournalStudent
+        JournalSubject:
+          class: App\Entity\JournalSubject
+
+
+
 
       # - App\Entity\Comment
        #- App\Entity\Advertisement

@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\Advertisement;
 use App\Entity\Article;
 use App\Entity\Comment;
+use App\Entity\User;
 use App\Form\CommentType;
 use http\Env\Request;
 use Knp\Component\Pager\PaginatorInterface;
@@ -21,7 +22,6 @@ class ArticleController extends AbstractController
      */
     public function showArticles(\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator)
     {
-
         $em = $this->getDoctrine()->getManager();
 
         $paginationArticle = Service\ArticleManager::getPaginateArticles(
@@ -41,6 +41,7 @@ class ArticleController extends AbstractController
                 'condition'=>false
             ]);
         }
+        dump($paginationArticle);
         if($request->isXmlHttpRequest()) {
             return $this->render('article/articles-paginate.html.twig', [
                 'articles' => $paginationArticle,
