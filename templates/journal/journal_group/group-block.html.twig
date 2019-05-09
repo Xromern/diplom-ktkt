@@ -1,0 +1,14 @@
+{% for sp in specialty %}
+    {% if sp.groups|length != 0 %}
+        <div class='block-specialty'>
+            <div class='line-specialty'>{{ sp.name }}</div>
+            {% for group in sp.groups %}
+                <a href='/journal/groups/" . $group->group_name . "'class='block-group'>
+                    <div class='block-group-name'>{{ group.name }}</div>
+                    <div class='block-group-curator'><div>Куратор:</div> {{ group.curator.name }}</div>
+                    <div class='block-group-count-student'><div>Кількість студентів:</div>  {{ group.students|length }}</div>
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endfor %}

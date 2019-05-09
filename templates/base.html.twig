@@ -21,15 +21,17 @@
 
     {% endblock %}
 </head>
-<section class="slider"></section>
-{{ include('article/big-buttons.html.twig') }}
-<main>
+<div class="wrapper">
+    <section class="slider"></section>
 
-      {% block body %}{% endblock %}
+    {{ include('article/big-buttons.html.twig') }}
+    <main>
 
-    {{ include('article/side-bar.html.twig', { 'advertisement': advertisement }) }}
-</main>
-{{ include('article/footer.html.twig') }}
+          {% block body %}{% endblock %}
 
+        {{ include('article/side-bar.html.twig', { 'advertisement': advertisement }) }}
+    </main>
+    {{ include('article/footer.html.twig') }}
+</div>
 </body>
 </html>

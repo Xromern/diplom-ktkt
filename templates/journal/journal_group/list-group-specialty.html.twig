@@ -1,0 +1,327 @@
+
+{% extends 'base-journal.html.twig' %}
+
+{% block title %}Групи{% endblock %}
+
+{% block body %}
+    <div class="container-journal-list container-journal-center">
+        <div class="container-show-journal-list">
+            <div class="container-journal-block">
+                <div class="add-group-level-1">
+                    <input type="text" class="edit-add-group-name" placeholder="ПП-0000" required="required"/>
+
+                    <select class="select-curator">
+
+                    </select><a href='/journal/teachers' class="button">Вчителя</a>
+                    <select class="select-specialty">
+
+                    </select><div class="button button-add-specialty-show">Спеціальність</div>
+                </div>
+                <div class="add-group-level-2"><div class="button button-add-group">Додати групу</div></div>
+            </div>
+            <div class="preLoader" id="preloader-group"></div>
+
+            <div class="list-group">
+              {{ include('journal/journal_group/group-block.html.twig',{'specialty':specialty})}}
+            </div>
+
+        </div>
+    </div>
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="modal-close">✘</span>
+            <div class="container-add-specialty">
+                <input type="text" class="input-add-specialty" placeholder="ПП-0000" required="required"/>
+                <div class="button button-add-specialty">Додати</div>
+            </div>
+            <div class="container-table-speciality">
+                <div class="preLoader" id="preloader-specialty"></div>
+                <table class="table-show-speciality">
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+<script>
+    let preloaderSpecialty = new Preloader(
+
+        $('#preloader-specialty'),
+
+        '{{ asset("images/preloader/preloader.gif") }}'
+    );
+
+    let preloaderGroup = new Preloader(
+
+        $('#preloader-group'),
+
+        '{{ asset("images/preloader/preloader.gif") }}'
+    );
+
+
+    $('.button-add-specialty').on('click', function(){
+
+        addSpecialty();
+    });
+
+    specialtySelect();
+    function specialtySelect() {
+        $('.select-specialty').html(" ");
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('journal_specialty_select') }}',
+            error:function(){
+                note({
+                    content: "Сталась помилка.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function(result){
+                $('.select-specialty').html(result);
+
+
+            }
+        });
+    }
+    teacherSelect();
+    function teacherSelect() {
+      $('.select-curator').html(' ');
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('journal_curator_select') }}',
+            error:function(){
+                note({
+                    content: "Сталась помилка, перезавантажте сторінку.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function(result){
+                $('.select-curator').html(result);
+            }
+        });
+    }
+
+    function addSpecialty() {
+        $('.table-show-speciality').html(" ");
+
+        var name = $('.input-add-specialty').val();
+
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('journal_specialty_add') }}',
+            dataType: "json",
+            data: ({
+                'name':name
+            }),
+            error:function(){
+                note({
+                    content: "Сталась помилка, перезавантажте сторінку.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function(result){
+                console.log(result['type'])
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 5
+                    });
+
+                showSpecialty()
+                specialtySelect();
+            }
+        });
+    }
+
+    function showSpecialty() {
+
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('journal_specialty_show') }}',
+            beforeSend: function() {
+                preloaderSpecialty.showPeloader();
+            },
+            complete: function() {
+                preloaderSpecialty.hidePrloaer();
+            },
+            error:function(){
+                note({
+                    content: "Сталась помилка, перезавантажте сторінку.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function(result){
+                $('.table-show-speciality').html(result);
+
+            }
+        });
+    }
+
+    $('html').on('click','.button-update-specialty', function(){
+        let obj = $(this).parent();
+        let name = obj.parent().find('.input-name-specialty').val();
+        let id = obj.attr('data-id-specialty');
+
+        updateSpecialty(id,name);
+    });
+
+    function updateSpecialty(id,name) {
+        $('.table-show-speciality').html(" ");
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('journal_specialty_update') }}',
+            dataType: "json",
+            data: ({
+                'id':id,
+                'name':name
+            }),
+            error:function(){
+                note({
+                    content: "Сталась помилка.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function(result){
+                  note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 3
+                    });
+                  setTimeout(function () {
+                      specialtySelect();
+                      showSpecialty();
+                      showGroupList();
+                  },200)
+
+            }
+        });
+    }
+
+    $('html').on('click','.button-delete-specialty', function(){
+        var id = $(this).parent().attr('data-id-specialty');
+        deleteSpecialty(id);
+    });
+
+    function deleteSpecialty(id) {
+        $('.table-show-speciality').html(" ");
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('journal_specialty_delete') }}',
+            dataType: "json",
+            data: ({
+                'id':id
+            }),
+            error:function(){
+                note({
+                    content: "Сталась помилка, перезавантажте сторінку.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function(result){
+
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 5
+                    });
+
+                showSpecialty();
+                specialtySelect();
+                showGroupList();
+            }
+        });
+    }
+
+    $('html').on('click','.button-add-group', function(){
+
+        var name = $('.edit-add-group-name').val();
+        var teacher_id = $('.select-curator').val();
+        var specialty_id = $('.select-specialty').val();
+        console.log(teacher_id)
+        addGroup(teacher_id,specialty_id,name);
+    });
+
+
+    function addGroup(teacher_id,specialty_id,name) {
+
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('groupAdd') }}',
+            data: ({
+                "teacher_id":teacher_id,
+                "specialty_id":specialty_id,
+                "name":name
+            }),
+            error:function(){
+                note({
+                    content: "Сталась помилка, перезавантажте сторінку.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function(result){
+                note({
+                    content: result['message'],
+                    type: result['type'],
+                    time: 3
+                });
+                showGroupList();
+                teacherSelect();
+            }
+        });
+    }
+
+    function showGroupList() {
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('journal_group') }}',
+            beforeSend: function() {
+                preloaderGroup.showPeloader();
+            },
+            complete: function() {
+                preloaderGroup.hidePrloaer();
+            },
+            error:function(){
+                note({
+                    content: "Сталась помилка.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function(result){
+                $('.list-group').html(result);
+            }
+        });
+    }
+
+    var modal = document.getElementById('myModal');
+
+    var span = document.getElementsByClassName("modal-close")[0];
+
+    $('html').on('click','.button-add-specialty-show', function(){
+
+        modal.style.display = "block";
+        showSpecialty();
+    });
+
+    span.onclick = function() {
+        $('.table-show-speciality').html(" ");
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            $('.table-show-speciality').html(" ");
+            modal.style.display = "none";
+        }
+    }
+
+</script>
+{% endblock %}

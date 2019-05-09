@@ -5,7 +5,10 @@
     box-sizing: border-box;
 
 }
-
+html,
+body {
+    height: 100%;
+}
 body{
     background-color: #F2F2F2;
     font-family: 'Roboto', sans-serif;
@@ -19,7 +22,6 @@ body{
 
 a:hover{
     text-decoration: none;
-    color: #1b4b72;
 }
 
 .header-top{
@@ -76,9 +78,15 @@ main{
     flex-direction: row;
     width: 100%;
     padding:0 20px;
+    min-height:100%;
 
 }
+.wrapper{
+    position: relative;
+    min-height: 100%;
+    padding-bottom: 180px;
 
+}
 .articles-content{
     display: flex;
     flex-wrap: wrap;
@@ -315,6 +323,10 @@ main{
 .footer{
     height: 180px;
     background-color: #163C94;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
 }
 
 /*end-footer*/
@@ -330,19 +342,22 @@ main{
     font-weight: 300;
     font-size: 0.9em;
     border-radius: 3px;
-    border: 1px solid #585858;
     text-align: center;
     transition: .1s all;
     cursor: pointer;
     color: #fff;
     background-color: #163C94;
+    transition-duration: .2s;
+    border: 1px solid #163c94;
 
 }
 
 .button:hover {
-    box-shadow: 0 1px 1px rgba(0,0,0,0.05);
-    transform: scale(1.02); transition: .1s all;
-    background-color: #F2F2F2;   color: #000000;
+    background-color: #fff;
+    border: 1px solid #163c94;
+    transition-duration: .2s;
+    color: #163C94;
+
 }
 
 /*end-button*/
@@ -382,6 +397,7 @@ main{
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+
 }
 
 /* Modal Content */

@@ -75,22 +75,6 @@ class JournalSpecialty
     /**
      * @return mixed
      */
-    public function getGroup()
-    {
-        return $this->group;
-    }
-
-    /**
-     * @param mixed $group
-     */
-    public function setGroup($group): void
-    {
-        $this->group = $group;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getGroups()
     {
         return $this->groups;

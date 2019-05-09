@@ -46,7 +46,7 @@ class JournalGroup
 
     /**
      * One group has many students. This is the inverse side.
-     * @ORM\OneToMany(targetEntity="JournalGroup", mappedBy="group")
+     * @ORM\OneToMany(targetEntity="JournalStudent", mappedBy="group")
      */
     private $students;
 
@@ -157,7 +157,6 @@ class JournalGroup
     {
         $this->marks = $marks;
     }
-
 
     public function __construct()
     {

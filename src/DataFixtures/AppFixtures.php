@@ -5,6 +5,9 @@ namespace App\DataFixtures;
 use App\Entity\Advertisement;
 use App\Entity\Article;
 use App\Entity\CategoryArticle;
+use App\Entity\JournalGroup;
+use App\Entity\JournalSpecialty;
+use App\Entity\JournalTeacher;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use phpDocumentor\Reflection\Types\Integer;
@@ -12,7 +15,7 @@ use phpDocumentor\Reflection\Types\Integer;
 
 class AppFixtures extends Fixture
 {
-    public function load(ObjectManager $manager)
+    public function loadk(ObjectManager $manager)
     {
         /*$category = [];
         for($i=0;$i<5;$i++){
@@ -44,6 +47,88 @@ class AppFixtures extends Fixture
             $manager->persist($article);
         }
         //
+
+        $manager->flush();
+    }
+
+    public function load(ObjectManager $manager)
+    {
+
+        $specialty1 = new JournalSpecialty();
+        $specialty1->setDescription('Это ПС');
+        $specialty1->setName('ПС');
+        $manager->persist($specialty1);
+
+        $specialty2 = new JournalSpecialty();
+        $specialty2->setDescription('Это КС');
+        $specialty2->setName('КС');
+        $manager->persist($specialty2);
+
+        $specialty3 = new JournalSpecialty();
+        $specialty3->setDescription('Это АД');
+        $specialty3->setName('АД');
+        $manager->persist($specialty3);
+
+        $specialty4 = new JournalSpecialty();
+        $specialty4->setDescription('Это ЕП');
+        $specialty4->setName('ЕП');
+        $manager->persist($specialty4);
+
+        $teacher1 = new JournalTeacher();
+        $teacher1->setName('Ємець Петро Андрійович');
+        $manager->persist($teacher1);
+
+        $teacher2 = new JournalTeacher();
+        $teacher2->setName('Данилова Віталіна Анатоліївна');
+        $manager->persist($teacher2);
+
+        $teacher3= new JournalTeacher();
+        $teacher3->setName('Зуйкова Олена Вікторівна');
+        $manager->persist($teacher3);
+
+        $teacher4 = new JournalTeacher();
+        $teacher4->setName('Мудрицький Артур Вікотрович');
+        $manager->persist($teacher4);
+
+        $teacher5 = new JournalTeacher();
+        $teacher5->setName('Нехай Валентин Валентинович');
+        $manager->persist($teacher5);
+
+        $teacher6 = new JournalTeacher();
+        $teacher6->setName('Крисько Тетяна Олександрівна');
+        $manager->persist($teacher6);
+
+        $teacher7 = new JournalTeacher();
+        $teacher7->setName('Любенко Андрій Андрійович');
+        $manager->persist($teacher7);
+
+        $group1 = new JournalGroup();
+        $group1->setName('ПС-1501');
+        $group1->setDescription('Это група пс');
+        $group1->setCurator($teacher2);
+        $group1->setSpecialty($specialty1);
+        $manager->persist($group1);
+
+        $group2 = new JournalGroup();
+        $group2->setName('КС-1502');
+        $group2->setDescription('Это група КС');
+        $group2->setCurator($teacher1);
+        $group2->setSpecialty($specialty2);
+        $manager->persist($group2);
+
+        $group3 = new JournalGroup();
+        $group3->setName('АД-1502');
+        $group3->setDescription('Это група АД');
+        $group3->setCurator($teacher3);
+        $group3->setSpecialty($specialty3);
+        $manager->persist($group3);
+
+        $group4 = new JournalGroup();
+        $group4->setName('ПС-1401');
+        $group4->setDescription('Это група пс');
+        $group4->setCurator($teacher4);
+        $group4->setSpecialty($specialty1);
+        $manager->persist($group4);
 
         $manager->flush();
     }
