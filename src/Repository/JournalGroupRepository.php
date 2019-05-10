@@ -19,6 +19,21 @@ class JournalGroupRepository extends ServiceEntityRepository
         parent::__construct($registry, JournalGroup::class);
     }
 
+    /**
+     * @param mixed $alis
+     * @return JournalGroup
+     */
+    public function getCuratorByAlis($alis){
+
+        return $this->createQueryBuilder('g')
+            ->where("g.id = :group_alis or g.alis_en = :group_alis")
+            ->setParameter('group_alis',$alis)
+            ->getQuery()
+            ->execute()[0];
+
+    }
+
+
     // /**
     //  * @return JournalGroup[] Returns an array of JournalGroup objects
     //  */

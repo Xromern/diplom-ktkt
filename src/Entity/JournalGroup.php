@@ -5,10 +5,13 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Service;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\JournalGroupRepository")
+ * @UniqueEntity("name")
  */
 class JournalGroup
 {
@@ -57,6 +60,11 @@ class JournalGroup
     private $marks;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $alis_en;
+
+    /**
      * @return mixed
      */
     public function getName()
@@ -70,6 +78,7 @@ class JournalGroup
     public function setName($name): void
     {
         $this->name = $name;
+        $this->alis_en = Service\Helper::createAlias($name);
     }
 
     /**
@@ -156,6 +165,22 @@ class JournalGroup
     public function setMarks($marks): void
     {
         $this->marks = $marks;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAlisEn()
+    {
+        return $this->alis_en;
+    }
+
+    /**
+     * @param mixed $alis_en
+     */
+    private function setAlisEn($alis_en): void
+    {
+        $this->alis_en = $alis_en;
     }
 
     public function __construct()

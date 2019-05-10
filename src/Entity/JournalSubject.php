@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use App\Service;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\JournalSubjectRepository")
@@ -42,6 +42,11 @@ class JournalSubject
      */
     private $students;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $alis_en;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +66,7 @@ class JournalSubject
     public function setName($name): void
     {
         $this->name = $name;
+        $this->alis_en = Service\Helper::createAlias($name);
     }
 
     /**
@@ -111,5 +117,20 @@ class JournalSubject
         $this->students = $students;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getAlisEn()
+    {
+        return $this->alis_en;
+    }
+
+    /**
+     * @param mixed $alis_en
+     */
+    private function setAlisEn($alis_en): void
+    {
+        $this->alis_en = $alis_en;
+    }
 
 }

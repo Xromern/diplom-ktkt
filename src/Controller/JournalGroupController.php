@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\JournalGroup;
 use App\Entity\JournalSpecialty;
 use App\Entity\JournalTeacher;
+use App\Service;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request as Request;
@@ -17,11 +18,11 @@ class JournalGroupController extends AbstractController
     /**
      * @Route("/journal", name="journal_group")
      */
-    public function listGroup(Request $request)
+    public function listGroup(Request $request, ObjectManager $manager)
     {
-        $em =  $this->getDoctrine();
 
-        $specialty = $em->getRepository(JournalSpecialty::class)->findAll();
+
+        $specialty = $manager->getRepository(JournalSpecialty::class)->findAll();
 
         if ($request->isXmlHttpRequest())
         {
@@ -35,6 +36,26 @@ class JournalGroupController extends AbstractController
                 'specialty'=>$specialty
             ]);
         }
+    }
+
+    /**
+     * @Route("/journal/{group_alis}", name="journal_show_one_group")
+     */
+    public function showGroup(Request $request,ObjectManager $manager)
+    {
+        //$journalGroup = $manager->getRepository(JournalGroup::class)->find($request->get('group_alis'));
+        $journalGroup =  $manager->getRepository(JournalGroup::class)->createQueryBuilder('g')
+        ->where("g.id = :group_alis or g.alis_en = :group_alis")
+        ->setParameter('group_alis',$request->get('group_alis'))
+        ->getQuery()
+        ->execute()[0];
+
+        if(!$journalGroup){
+            return $this->render('journal/Exception/error404.html.twig',['message_error'=>'Така група не інуснує.']);
+        }
+
+        return $this->render('journal/journal_group/one-group.html.twig',['group'=>$journalGroup]);
+
     }
 
     /**
@@ -70,10 +91,7 @@ class JournalGroupController extends AbstractController
         $manager->persist($group);
         $manager->flush();
 
-
         return new JsonResponse(array('type' => 'info','message'=>'Група додана додана.'));
-
-
     }
 
 

@@ -12,6 +12,7 @@ class AdvertisementController extends AbstractController
      */
     public function index()
     {
+
        /* return $this->render('advertisement/index.html.twig', [
             'controller_name' => 'AdvertisementController',
         ]);*/

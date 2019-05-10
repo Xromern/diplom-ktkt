@@ -1,0 +1,92 @@
+
+{% extends 'base-journal.html.twig' %}
+
+{% block title %}{{ group.name }}{% endblock %}
+
+{% block body %}
+<div class="change-group container-journal-center">
+    <div class="container-journal-block">
+        <div class="add-group-level-1">
+            <input type="text" value="{{group.name}}" class="edit-add-group-name" placeholder="ПП-0000" required="required"/>
+
+            <select class="select-teacher-curator">
+            </select><a href='/journal/teachers' class="button">Вчителя</a>
+            <select class="select-specialty">
+            </select><a href="/journal/groups" class="button button-add-specialty-show">Спеціальність</a>
+        </div>
+        <div class="add-group-level-2">
+            <div class="button button-update-group">Зберегти</div>
+            <div class="button button-delete-group">Видалити</div>
+        </div>
+
+
+    </div>
+    <a href='/journal/groups/{{group.alisen}}/students' class='block-group'>
+        <div class="block-group-caption">Студенти</div>
+
+    </a>
+    <a href='/journal/groups/{{group.alisen}}/form6' class='block-group'>
+        <div class="block-group-caption">Форма 6</div>
+
+    </a>
+
+    <div class="container-journal-block">
+        <div class="button button-show-subject-add">Створит новий журнал</div>
+    </div>
+    @include('MainSite.preloader')
+    <div class="container-subjects">
+
+
+    </div>
+
+</div>
+
+<div id="myModal" class="modal modal-add-subject">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="modal-close">✘</span>
+        <div class="modal-container-journal-add-subject">
+            <input type="text" class="input-add-subject" placeholder="Предмет" required="required"/>
+            <select class="select-teacher">
+            </select>
+            <div class="button button-add-subject">Додати</div>
+        </div>
+        <div class="container-table-students-subject">
+            @include('MainSite.preloader')
+            <div class="field_block_2 student_select">
+                <ul class="student_ student_yes">
+                </ul>
+                <ul class="student_ student_no">
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+
+    showTeacherList();
+
+    function showTeacherList() {
+
+    $.ajax({
+        type: 'POST',
+        url: '{{ path('curatorSelectEditGroup') }}',
+        data: ({
+            "group_alis" :'{{group.id}}'
+        }),
+        error:function(){
+            note({
+                content: "Сталась помилка, перезавантажте сторінку.",
+                type: "error",
+                time: 15
+            });
+        },
+        success: function(result){
+            $('.select-teacher-curator').html(result);
+        }
+    });
+    }
+</script>
+{% endblock %}
