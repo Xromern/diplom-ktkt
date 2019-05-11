@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Service;
@@ -37,8 +39,8 @@ class JournalSubject
     private $teacher;
 
     /**
-     * One subject has many students. This is the inverse side.
-     * @ORM\OneToMany(targetEntity="JournalSubject", mappedBy="group")
+     * Many Groups have Many Users.
+     * @ORM\ManyToMany(targetEntity="JournalStudent", mappedBy="subjects")
      */
     private $students;
 
@@ -114,7 +116,7 @@ class JournalSubject
      */
     public function setStudents($students): void
     {
-        $this->students = $students;
+        $this->students[] = $students;
     }
 
     /**
@@ -133,4 +135,8 @@ class JournalSubject
         $this->alis_en = $alis_en;
     }
 
+    public function __construct()
+    {
+        $this->students = new ArrayCollection();
+    }
 }

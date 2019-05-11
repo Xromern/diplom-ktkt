@@ -1,0 +1,90 @@
+
+{% extends 'base-journal.html.twig' %}
+
+{% block title %}Студенти групи {{ group.name }}{% endblock %}
+
+{% block body %}
+    <div class="container-journal-center">
+        <div class="container-journal-block">
+            <input type="text" class="edit-add-student" placeholder="П.І.Б" required="required"/>
+
+            <div class="button journal-button-student-add">Додати</div>
+        </div>
+        <div class="container-journal-show-students">
+            <div class="preLoader" id="preloader-students"></div>
+            <table class="table-show-students"></table>
+        </div>
+    </div>
+
+    <script>
+        let preloaderStudents = new Preloader(
+
+            $('#preloader-students'),
+
+            '{{ asset("images/preloader/preloader.gif") }}'
+        );
+
+        $('.journal-button-student-add').on('click', function (e) {
+
+                addStudent($('.edit-add-student').val());
+        });
+
+        function addStudent(student_name) {
+            $('.table-show-students').html(" ");
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('addStudent') }}',
+                data: ({
+                    'student_name': student_name,
+                    'group_id': '{{ group.id }}',
+                }),
+                error: function () {
+                    note({
+                        content: "Сталась помилка.",
+                        type: "error",
+                        time: 3
+                    });
+               //     showStudents();
+                },
+                success: function (result) {
+                        note({
+                            content: result['message'],
+                            type: result['type'],
+                            time: 3
+                        });
+                    showStudents();
+                    $('.edit-add-student').val("");
+                }
+            });
+        }
+        showStudents();
+
+        function showStudents() {
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('showStudent') }}',
+                data: ({
+                    'group_id': '{{ group.id}}'
+                }),
+                beforeSend: function () {
+                    preloaderStudents.showPeloader();
+                },
+                complete: function () {
+                    preloaderStudents.hidePrloaer();
+                },
+                error: function () {
+                    note({
+                        content: "Сталася помилка",
+                        type: "error",
+                        time: 1
+                    });
+                },
+                success: function (result) {
+                    console.log(result);
+                    $('.table-show-students').html(result);
+                }
+            });
+        }
+
+    </script>
+{% endblock %}

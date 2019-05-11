@@ -12,7 +12,7 @@
             <select class="select-teacher-curator">
             </select><a href='/journal/teachers' class="button">Вчителя</a>
             <select class="select-specialty">
-            </select><a href="/journal/groups" class="button button-add-specialty-show">Спеціальність</a>
+            </select><a href="{{ path('journal_group') }}" class="button button-add-specialty-show">Спеціальність</a>
         </div>
         <div class="add-group-level-2">
             <div class="button button-update-group">Зберегти</div>
@@ -21,7 +21,7 @@
 
 
     </div>
-    <a href='/journal/groups/{{group.alisen}}/students' class='block-group'>
+    <a href='{{ path('journal_student_list',{'group_alis':group.alisen}) }}' class='block-group'>
         <div class="block-group-caption">Студенти</div>
 
     </a>
@@ -66,13 +66,12 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
 
-    showTeacherList();
-
-    function showTeacherList() {
-
+    curatorSelect();
+    function curatorSelect() {
+    $('.select-teacher-curator').html('');
     $.ajax({
         type: 'POST',
-        url: '{{ path('curatorSelectEditGroup') }}',
+        url: '{{ path('journal_curator_select') }}',
         data: ({
             "group_alis" :'{{group.id}}'
         }),
@@ -88,5 +87,99 @@
         }
     });
     }
+
+    specialtySelect();
+    function specialtySelect() {
+        $('.select-specialty').html('');
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('journal_specialty_select') }}',
+            data: ({
+                "group_alis" :'{{group.id}}'
+            }),
+            error:function(){
+                note({
+                    content: "Сталась помилка, перезавантажте сторінку.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function(result){
+                $('.select-specialty').html(result);
+            }
+        });
+    }
+
+    $('html').on('click','.button-update-group', function(){
+        updateGroup();
+    });
+
+    function updateGroup() {
+
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('groupUpdate') }}',
+            data: ({
+                "curator_id" : $('.select-teacher-curator').val(),
+                "specialty_id": $('.select-specialty').val(),
+                "group_id": '{{ group.id }}',
+                "group_name":$('.edit-add-group-name').val()
+            }),
+            error:function(){
+                note({
+                    content: "Сталася помилка.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function(result){
+                note({
+                    content: result['message'],
+                    type: result['type'],
+                    time: 5
+                });
+                if(result['type'] === 'info'){
+                    history.replaceState("Group_name","Group_name",result['new_alis']);
+                    curatorSelect();
+                    specialtySelect();
+                }
+            }
+
+        });
+    }
+
+    $('html').on('click','.button-delete-group', function(){
+        if(confirm("Всі журнали, студенти цієї групи будуть видалені. Продовжии?"))
+            deleteGroup()
+    });
+
+    function deleteGroup(){
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('groupDelete') }}',
+            data: ({
+                "group_id" :'{{ group.id }}'
+            }),
+            error:function(){
+                note({
+                    content: "Сталася помилка.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function(result){
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 15
+                    });
+                    setTimeout(function () {
+                        location.href="/journal";
+                    },2000)
+                }
+        })
+    }
+
+
 </script>
 {% endblock %}

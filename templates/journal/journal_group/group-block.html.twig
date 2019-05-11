@@ -3,7 +3,7 @@
         <div class='block-specialty'>
             <div class='line-specialty'>{{ sp.name }}</div>
             {% for group in sp.groups %}
-                <a href='/journal/groups/" . $group->group_name . "'class='block-group'>
+                <a href='{{ path('journal_show_one_group',{'group_alis':group.alisen}) }}' class='block-group'>
                     <div class='block-group-name'>{{ group.name }}</div>
                     <div class='block-group-curator'><div>Куратор:</div> {{ group.curator.name }}</div>
                     <div class='block-group-count-student'><div>Кількість студентів:</div>  {{ group.students|length }}</div>

@@ -23,16 +23,44 @@ class JournalGroupRepository extends ServiceEntityRepository
      * @param mixed $alis
      * @return JournalGroup
      */
-    public function getCuratorByAlis($alis){
-
+    public function getGroupByAlis($alis){
         return $this->createQueryBuilder('g')
             ->where("g.id = :group_alis or g.alis_en = :group_alis")
             ->setParameter('group_alis',$alis)
             ->getQuery()
             ->execute()[0];
-
     }
 
+    /**
+     * @param mixed $group_name
+     * @param mixed $group_id
+     * @return JournalGroup
+     */
+    public function checkGroupName($group_name, $group_id){
+        return $this->createQueryBuilder('g')
+            ->where('g.name = :group_name')
+            ->andWhere('g.id != :group_id')
+            ->setParameter('group_name',$group_name)
+            ->setParameter('group_id',$group_id)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param mixed $curator_id
+     * @param mixed $group_id
+     * @return JournalGroup
+     */
+    public function checkGroupCurator($curator_id, $group_id){
+        return $this->createQueryBuilder('g')
+            ->leftJoin('g.curator', 'gt')
+            ->andWhere('gt.id = :curator_id')
+            ->andWhere('g.id != :group_id')
+            ->setParameter('curator_id',$curator_id)
+            ->setParameter('group_id',$group_id)
+            ->getQuery()
+            ->execute();
+    }
 
     // /**
     //  * @return JournalGroup[] Returns an array of JournalGroup objects

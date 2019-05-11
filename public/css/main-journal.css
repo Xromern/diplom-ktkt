@@ -148,6 +148,9 @@ select {
     padding-left: 5px;
 
 }
+.edit-add-student{
+width: 70%;
+}
 
 .container-table-speciality .button {
     display: inline-block;

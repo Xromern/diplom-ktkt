@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\JournalGroup;
 use App\Entity\JournalSpecialty;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -96,19 +97,33 @@ class JournalSpecialtyController extends AbstractController
     }
 
     /**
-     * @Route("/journal/specialtySelect", name="journal_specialty_select")
+     * @Route("/journal/ajax/specialtySelect", name="journal_specialty_select")
      */
-    public function specialtySelect(ObjectManager $manager)
+    public function specialtySelect(Request $request, ObjectManager $manager)
     {
+        $specialty_id = null;
+        if(($request->get('group_alis'))){
+            $group = $manager->getRepository(JournalGroup::class)
+                ->getGroupByAlis($request->get('group_alis'));
+            $specialty_id = $group->getSpecialty()->getId();
+        }
 
         $specialty = $manager->getRepository(JournalSpecialty::class)
             ->findAll();
 
         $string = "";
         foreach ($specialty as $item){
-            $string.="<option value='".$item->getId()."'>".$item->getName()."</option>";
+            if($item->getId() == $specialty_id){
+                $selected = "selected";
+            }else{
+                $selected = "";
+            }
+
+            $string.="<option $selected value='".$item->getId()."'>".$item->getName()."</option>";
         }
+       // dd(3);
 
         return new Response($string);
     }
+
 }

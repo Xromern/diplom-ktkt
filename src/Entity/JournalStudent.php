@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -31,11 +32,11 @@ class JournalStudent
     private $group;
 
     /**
-     * Many subject have one teacher. This is the owning side.
-     * @ORM\ManyToOne(targetEntity="JournalSubject", inversedBy="students")
-     * @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
+     * Many Users have Many Groups.
+     * @ORM\ManyToMany(targetEntity="JournalSubject", inversedBy="students")
+     * @ORM\JoinTable(name="subject_students")
      */
-    private $subject;
+    private $subjects;
 
     /**
      * One student has many marks. This is the inverse side.
@@ -48,6 +49,11 @@ class JournalStudent
      * @ORM\OneToMany(targetEntity="JournalFormControlMark", mappedBy="student")
      */
     private $formControlMarks;
+
+    /**
+     * @ORM\OneToOne(targetEntity="JournalCode", mappedBy="student")
+     */
+    private $code;
 
     //private $user;
 
@@ -91,17 +97,17 @@ class JournalStudent
     /**
      * @return mixed
      */
-    public function getSubject()
+    public function getSubjects()
     {
-        return $this->subject;
+        return $this->subjects;
     }
 
     /**
-     * @param mixed $subject
+     * @param mixed $subjects
      */
-    public function setSubject($subject): void
+    public function setSubjects($subjects): void
     {
-        $this->subject = $subject;
+        $this->subjects[] = $subjects;
     }
 
     /**
@@ -136,5 +142,25 @@ class JournalStudent
         $this->formControlMarks = $formControlMarks;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param mixed $code
+     */
+    public function setCode($code): void
+    {
+        $this->code = $code;
+    }
+
+    public function __construct()
+    {
+        $this->subjects = new ArrayCollection();
+    }
 
 }
