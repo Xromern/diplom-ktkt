@@ -37,9 +37,16 @@ class JournalStudentController extends AbstractController
      */
     public function listStudentTable(Request $request, ObjectManager $manager)
     {
-        $group = $manager->getRepository(JournalGroup::class)->find($request->get('group_id'));
+        $students = $manager->getRepository(JournalStudent::class)->createQueryBuilder('s')
+            ->Join('s.group','sg')
+            ->where('sg.id = :group_id')
+            ->setParameter('group_id',$request->get('group_id'))
+            ->orderBy('s.name','asc')
+            ->getQuery()
+            ->execute();
+
         $string = '';
-        foreach ($group->getStudents() as $student){
+        foreach ($students as $student){
             $string.= $this->render('journal/show-humans.html.twig', [
                 'human'=>$student,
                 'controller_name' => 'listStudentTable',
@@ -53,26 +60,21 @@ class JournalStudentController extends AbstractController
      */
     public function addStudent(Request $request, ObjectManager $manager)
     {
-        $group = $manager->getRepository(JournalGroup::class)->find(29);
+        $group = $manager->getRepository(JournalGroup::class)->find($request->get('group_id'));
         if(!$group){
             return new JsonResponse(array('type' => 'error','message'=>'Така група не інуснує.'));
         }
 
-
-
         $code = new JournalCode();
-        $code->setKey(Helper::createAlias($request->get('student_name').'_'.random_bytes(22)));
-     //   $code->setStudent($student);
+        $code->setKeyP(Helper::createAlias($request->get('student_name')).'_'.Helper::generatePassword(30));
         $manager->persist($code);
 
         $student = new JournalStudent();
-        $student->setName('43');
+        $student->setName($request->get('student_name'));
+        $student->setGroup($group);
         $student->setCode($code);
+
         $manager->persist($student);
-
-
-       // $group->setStudents($student);
-      //  $manager->persist($group);
 
         $manager->flush();
 
@@ -80,4 +82,55 @@ class JournalStudentController extends AbstractController
 
     }
 
+    /**
+     * @Route("/journal/ajax/updateStudent", name="updateStudent")
+     */
+    public function updateStudent(Request $request, ObjectManager $manager)
+    {
+
+
+        $student = $manager->getRepository(JournalStudent::class)->find($request->get('student_id'));
+        if(!$student){
+            return new JsonResponse(array('type' => 'error','message'=>'Судента не знайдено.'));
+        }
+        $student->setName($request->get('student_name'));
+        $manager->persist($student);
+
+        if(!$student->getCode()){
+            $code = new JournalCode();
+            $code->setKeyP($request->get('key'));
+            $manager->persist($code);
+            $student->setCode($code);
+        }else{
+            $code = $manager->getRepository(JournalCode::class)->find($student->getCode()->getId());
+            $code->setKeyP($request->get('key'));
+            $manager->persist($code);
+        }
+
+        $manager->flush();
+
+        return new JsonResponse(array('type' => 'info','message'=>'Судента змінено.'));
+    }
+
+    /**
+     * @Route("/journal/ajax/deleteStudent", name="deleteStudent")
+     */
+    public function deleteStudent(Request $request, ObjectManager $manager)
+    {
+
+        $student = $manager->getRepository(JournalStudent::class)->find($request->get('student_id'));
+        if(!$student){
+            return new JsonResponse(array('type' => 'error','message'=>'Судента не знайдено.'));
+        }
+        if($student->getCode()){
+            $code = $manager->getRepository(JournalCode::class)->find($student->getCode()->getId());
+            $manager->remove($code);
+        }
+
+        $manager->remove($student);
+        $manager->flush();
+
+        return new JsonResponse(array('type' => 'info','message'=>'Судента видалено.'));
+
+    }
 }

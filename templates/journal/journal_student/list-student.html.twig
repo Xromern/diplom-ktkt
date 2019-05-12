@@ -80,8 +80,86 @@
                     });
                 },
                 success: function (result) {
-                    console.log(result);
+                 //   console.log(result);
                     $('.table-show-students').html(result);
+                }
+            });
+        }
+
+        $('html').on('click', '.button-journal-delete', function (e) {
+            let student_name = $(this).parent().parent().parent().find('.show-student-name input').val();
+            if(confirm('Ви дійсно хочете видалити студента "'+student_name+'"?'))
+            deleteStudent($(this));
+        });
+
+        function deleteStudent(e) {
+            let student_id = e.attr('data-human-id');
+
+            $('.table-show-students').html(" ");
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('deleteStudent') }}',
+                data: ({
+                    'student_id': student_id,
+                }),
+                beforeSend: function () {
+                    preloaderStudents.showPeloader();
+                },
+                complete: function () {
+                    preloaderStudents.hidePrloaer();
+                },
+                error: function () {
+                    note({
+                        content: "Сталась помилка при видаленні Студента",
+                        type: "error",
+                        time: 3
+                    });
+                },
+                success: function (result) {
+                        note({
+                            content: result['message'],
+                            type: result['type'],
+                            time: 5
+                        });
+                    showStudents();
+
+                }
+            });
+        }
+        $('html').on('click', '.button-journal-update', function () {
+            updateStudent($(this));
+        });
+
+        function updateStudent(e) {
+            let student_id = e.attr('data-human-id');
+            let student_name = e.parent().parent().parent().find('.show-student-name input').val();
+            let key = e.parent().parent().parent().find('.show-student-key input').val();
+
+            $('.table-show-students').html(" ");
+            $('.preLoader').show();
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('updateStudent') }}',
+                data: ({
+                    'student_id': student_id,
+                    'student_name': student_name,
+                    'key': key
+                }),
+                error: function () {
+                    note({
+                        content: "Сталася помилка при зміненні студента",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                        note({
+                            content: result['message'],
+                            type: result['type'],
+                            time: 15
+                        });
+                    showStudents();
+
                 }
             });
         }

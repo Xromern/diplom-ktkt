@@ -51,7 +51,9 @@ class JournalStudent
     private $formControlMarks;
 
     /**
-     * @ORM\OneToOne(targetEntity="JournalCode", mappedBy="student")
+     * One group has One curator.
+     * @ORM\OneToOne(targetEntity="JournalCode", inversedBy="student")
+     * @ORM\JoinColumn(name="code_id", referencedColumnName="id")
      */
     private $code;
 

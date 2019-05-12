@@ -82,7 +82,9 @@ select{
 .table-show-teachers, .table-show-students {
     width: 820px;
 }
-
+.table-show-students input {
+    width: 350px;
+}
 .add-group-level-1 {
     width: 100%;
 }

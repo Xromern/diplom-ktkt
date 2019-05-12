@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\JournalCodeRepository")
  */
@@ -18,21 +19,18 @@ class JournalCode
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
      */
-    private $key;
-
-//    /**
-//     * @ORM\Column(type="datetime")
-//     */
-//    private $date_use;
+    private $keyP;
 
     /**
-     * One student has One code.
-     * @ORM\OneToOne(targetEntity="JournalStudent", inversedBy="code")
-     * @ORM\JoinColumn(name="student_id", referencedColumnName="id")
+     * @ORM\OneToOne(targetEntity="JournalStudent", mappedBy="code")
      */
     private $student;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $date_use;
 
     public function getId(): ?int
     {
@@ -44,15 +42,15 @@ class JournalCode
      */
     public function getKey()
     {
-        return $this->key;
+        return $this->keyP;
     }
 
     /**
-     * @param mixed $key
+     * @param mixed $keyP
      */
-    public function setKey($key): void
+    public function setKeyP($keyP): void
     {
-        $this->key = $key;
+        $this->keyP= $keyP;
     }
 
     /**
@@ -68,29 +66,24 @@ class JournalCode
      */
     public function setStudent($student): void
     {
-      //  $this->date_use = \DateTime::createFromFormat('Y-m-d H:i:s', strtotime('now'));
         $this->student = $student;
     }
 
-//    /**
-//     * @return mixed
-//     */
-//    public function getDateUse()
-//    {
-//        return $this->date_use;
-//    }
-//
-//    /**
-//     * @param mixed $date_use
-//     */
-//    public function setDateUse($date_use): void
-//    {
-//        $this->date_use = $date_use;
-//    }
-
-    public function __construct()
+    /**
+     * @return mixed
+     */
+    public function getDateUse()
     {
-        $this->date_use = new \DateTime('0000-00-00');
+        return $this->date_use;
     }
+
+    /**
+     * @param mixed $date_use
+     */
+    public function setDateUse($date_use): void
+    {
+        $this->date_use = $date_use;
+    }
+
 
 }

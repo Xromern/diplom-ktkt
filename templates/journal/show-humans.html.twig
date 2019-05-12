@@ -1,9 +1,14 @@
 <tr class='tr-student-leavel-one'>
     <td class='show-student-name'><input value='{{ human.name }}'></td>';
-    <th style='text-align:right;'>Код: </th><td class='show-student-key'><input value='{{ human.code.key }}'></td>';
+    <th style='text-align:right;'>Код: </th><td class='show-student-key'>
+        <input value='{% if human.code !=null %}{{ human.code.KEY}}{% endif %}'></td>';
 </tr>
-<tr class='tr-student-leavel-two' data-id-key='{{ human.code.id }}' data-id='{{ human.id }}'>';
-    <td><br><div class='button button-journal-update' >Змінити</div><div class='button button-journal-delete' style='margin-left:10px;'>Видалити</div></td>';
+<tr class='tr-student-leavel-two' data-id-key='{% if human.code !=null %} {{ human.code.id}} {% endif %}' >';
+    <td><br>
+        <div class='button button-journal-update' data-human-id='{{ human.id }}' >Змінити</div>
+        <div class='button button-journal-delete' data-human-id='{{ human.id }}' style='margin-left:10px;'>Видалити</div><br><br>
+        <div class='button' >Форма 6</div>
+        <div class='button'style='margin-left:10px;'>Журнал</div></td>';
     <td class='show-student-use' colspan='2'>Дата реєестрації:</td>
 </tr>
 <tr><td colspan='3'><br><hr style='border:1px solid #999'><br></td></tr>

@@ -30,6 +30,7 @@ class JournalGroupController extends AbstractController
                 'specialty'=>$specialty
             ]);
         }else{
+           // dd($specialty[0]->getGroups()[0]->getStudents()[0]);
             return $this->render('journal/journal_group/list-group-specialty.html.twig', [
                 'controller_name' => 'JournalGroupController',
                 'specialty'=>$specialty
