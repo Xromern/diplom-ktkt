@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\JournalGroup;
 use App\Entity\JournalSpecialty;
 use App\Entity\JournalTeacher;
+use App\Entity\JournalTypeFormControl;
 use App\Repository\TeacherRepository;
 use App\Service;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -43,16 +44,19 @@ class JournalGroupController extends AbstractController
      */
     public function showGroup(Request $request,ObjectManager $manager)
     {
-        //$journalGroup = $manager->getRepository(JournalGroup::class)->find($request->get('group_alis'));
-
         $journalGroup =  $manager->getRepository(JournalGroup::class)
             ->getGroupByAlis($request->get('group_alis'));
+
+        $formControl = $manager->getRepository(JournalTypeFormControl::class)->findAll();
 
         if(!$journalGroup){
             return $this->render('journal/Exception/error404.html.twig',['message_error'=>'Така група не інуснує.']);
         }
 
-        return $this->render('journal/journal_group/one-group.html.twig',['group'=>$journalGroup]);
+        return $this->render('journal/journal_group/one-group.html.twig',[
+            'group'=>$journalGroup,
+            'formControl'=>$formControl
+        ]);
 
     }
 

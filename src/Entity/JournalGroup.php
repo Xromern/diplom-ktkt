@@ -36,14 +36,14 @@ class JournalGroup
     /**
      * One group has One curator.
      * @ORM\OneToOne(targetEntity="JournalTeacher", inversedBy="group")
-     * @ORM\JoinColumn(name="curator_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="curator_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     private $curator;
 
     /**
      * Many group have one specialty. This is the owning side.
      * @ORM\ManyToOne(targetEntity="JournalSpecialty", inversedBy="groups")
-     * @ORM\JoinColumn(name="specialty_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="specialty_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     private $specialty;
 

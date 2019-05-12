@@ -46,25 +46,39 @@
     <div class="modal-content">
         <span class="modal-close">✘</span>
         <div class="modal-container-journal-add-subject">
-            <input type="text" class="input-add-subject" placeholder="Предмет" required="required"/>
-            <select class="select-teacher">
+
+            <select class="select-form-control">
+                {% for item in formControl %}
+                <option data-id="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
             </select>
+
+            <select class="select-teacher">
+            </select><br>
+            <input type="text" class="input-add-subject" placeholder="Предмет" required="required"/>
+
             <div class="button button-add-subject">Додати</div>
         </div>
         <div class="container-table-students-subject">
-            @include('MainSite.preloader')
-            <div class="field_block_2 student_select">
-                <ul class="student_ student_yes">
-                </ul>
-                <ul class="student_ student_no">
-                </ul>
-            </div>
+            <div class="preLoader" id="preloader-subject">  </div>
+                <table class="student_ student_yes">
+                    {{ include('journal/journal_student/student-for-subject.html.twig',{'students':group.students}) }}
+                </table>
+                <table class="student_ student_no">
+                </table>
+
         </div>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
+    let preloaderAddSubject = new Preloader(
+
+        $('#preloader-subject'),
+
+        '{{ asset("images/preloader/preloader.gif") }}'
+    );
 
     curatorSelect();
     function curatorSelect() {
@@ -180,6 +194,126 @@
         })
     }
 
+    $('html').on('click', '.student_yes tr', function (e) {
+        var student_id = $(this).attr('data-id-student');
+     //   deleteStudentFromSubject(student_id);
 
+        $(this).prependTo($('.student_no'));
+        calculation_height();
+       // showSubjectJournal()
+    });
+
+
+    $('html').on('click', '.student_no tr', function (e) {
+        var student_id = $(this).attr('data-id-student');
+       // addStudentToSubject(student_id);
+
+        $(this).prependTo($('.student_yes'));
+        calculation_height();
+      //  showSubjectJournal()
+    });
+
+
+
+    function create_list_student(){
+        var length =  $('.student_yes tr').length;
+        var array = [];
+        for(var i = 1;i<=length;i++){
+            array.push($('.student_yes tr:nth-child('+[i]+')').attr('data-id-student'));
+        }
+        return JSON.stringify(array);
+    }
+
+
+    function calculation_height(){
+        var length = $('.student_no tr').length;
+        var min_height = length*35.3;
+        $('.student_select').css('min-height',min_height+'px');
+    }
+
+    $('html').on('click','.button-add-subject', function(){
+        addSubject()
+    });
+
+    function addSubject(){
+        $.ajax({
+            url:'{{ path('subjectAdd') }}',
+            type:"POST",
+            data:({
+                'name_subject':$('.input-add-subject').val(),
+                'list_student':create_list_student(),
+                'group_id':'{{ group.id }}',
+                'teacher_id':$('.select-teacher').val(),
+                'form_control_id':$('.select-form-control').val()
+            }),
+            beforeSend: function() {
+                preloaderAddSubject.showPeloader();
+            },
+            complete: function() {
+                preloaderAddSubject.hidePrloaer();
+            },
+            error: function() {
+                note({
+                    content: "Сталася помилка.",
+                    type: "error",
+                    time: 15
+                });
+            },success:function(data){
+                $('html').html(data);
+                note({
+                    content: data['message'],
+                    type: data['type'],
+                    time: 5
+                });
+                $('.input-add-subject').val("");
+                show_student();
+                show_subjects();
+            }
+        });
+    }
+
+
+    teacherSelect();
+    function teacherSelect() {
+        $('.select-curator').html(' ');
+        $.ajax({
+            type: 'POST',
+            url: '{{ path('journal_curator_select') }}',
+            error:function(){
+                note({
+                    content: "Сталась помилка, перезавантажте сторінку.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function(result){
+                $('.select-teacher').html(result);
+            }
+        });
+    }
+
+    var modal = document.getElementById('myModal');
+
+    var span = document.getElementsByClassName("modal-close")[0];
+
+    //если кликаю на крестик, добавлюя id коммента в модальное окно для редактирование комменатрия
+    //
+    $('html').on('click','.button-show-subject-add', function(){
+
+        teacherSelect();
+        modal.style.display = "block";
+    });
+
+    span.onclick = function() {
+
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+
+            modal.style.display = "none";
+        }
+    }
 </script>
 {% endblock %}

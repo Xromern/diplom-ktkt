@@ -32,9 +32,16 @@ class JournalTeacher
 
     /**
      * One teacher has many subject. This is the inverse side.
-     * @ORM\OneToMany(targetEntity="JournalSubject", mappedBy="teacher")
+     * @ORM\OneToMany(targetEntity="JournalSubject", mappedBy="teacher" )
      */
     private $subjects;
+
+    /**
+     * One group has One curator.
+     * @ORM\OneToOne(targetEntity="JournalCode", inversedBy="teacher")
+     * @ORM\JoinColumn(name="code_id", referencedColumnName="id")
+     */
+    private $code;
 
    //private $user;
 
@@ -94,6 +101,22 @@ class JournalTeacher
     public function __construct()
     {
         $this->subjects = new ArrayCollection();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * @param mixed $code
+     */
+    public function setCode($code): void
+    {
+        $this->code = $code;
     }
 
     public function __toString()

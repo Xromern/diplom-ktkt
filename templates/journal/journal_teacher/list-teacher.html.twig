@@ -1,0 +1,163 @@
+
+{% extends 'base-journal.html.twig' %}
+
+{% block title %}Вчителя{% endblock %}
+
+{% block body %}
+    <div class="container-journal-center">
+        <div class="container-journal-block">
+            <input type="text" class="edit-add-teacher" placeholder="П.І.Б" required="required"/>
+
+            <div class="button journal-button-teacher-add">Додати</div>
+        </div>
+        <div class="container-journal-show-teachers">
+            <div class="preLoader" id="preloader-teachers"></div>
+            <table class="table-show-teachers"></table>
+        </div>
+    </div>
+
+    <script>
+        let preloaderTeachers = new Preloader(
+
+            $('#preloader-teachers'),
+
+            '{{ asset("images/preloader/preloader.gif") }}'
+        );
+
+        $('.journal-button-teacher-add').on('click', function (e) {
+
+            addTeacher($('.edit-add-teacher').val());
+        });
+
+        function addTeacher(teacher_name) {
+            $('.table-show-teachers').html(" ");
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('addTeacher') }}',
+                data: ({
+                    'teacher_name': teacher_name,
+                }),
+                error: function () {
+                    note({
+                        content: "Сталась помилка.",
+                        type: "error",
+                        time: 3
+                    });
+
+                },
+                success: function (result) {
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 3
+                    });
+                    showTeachers();
+                    $('.edit-add-teacher').val("");
+                }
+            });
+        }
+        showTeachers();
+
+        function showTeachers() {
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('showTeacher') }}',
+                beforeSend: function () {
+                    preloaderTeachers.showPeloader();
+                },
+                complete: function () {
+                    preloaderTeachers.hidePrloaer();
+                },
+                error: function () {
+                    note({
+                        content: "Сталася помилка",
+                        type: "error",
+                        time: 1
+                    });
+                },
+                success: function (result) {
+                    $('.table-show-teachers').html(result);
+                }
+            });
+        }
+
+        $('html').on('click', '.button-journal-delete', function (e) {
+            let teacher_name = $(this).parent().parent().parent().find('.show-human-name input').val();
+            if(confirm('Ви дійсно хочете видалити вчителя "'+teacher_name+'"?'))
+                deleteTeacher($(this));
+        });
+
+        function deleteTeacher(e) {
+            let teacher_id = e.attr('data-human-id');
+            console.log(teacher_id);
+            $('.table-show-teachers').html(" ");
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('deleteTeacher') }}',
+                data: ({
+                    'teacher_id': teacher_id,
+                }),
+                beforeSend: function () {
+                    preloaderTeachers.showPeloader();
+                },
+                complete: function () {
+                    preloaderTeachers.hidePrloaer();
+                },
+                error: function () {
+                    note({
+                        content: "Сталась помилка при видаленні вчителя",
+                        type: "error",
+                        time: 3
+                    });
+                },
+                success: function (result) {
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 5
+                    });
+                    showTeachers();
+
+                }
+            });
+        }
+        $('html').on('click', '.button-journal-update', function () {
+            updateTeacher($(this));
+        });
+
+        function updateTeacher(e) {
+            let teacher_id = e.attr('data-human-id');
+            let teacher_name = $('[data-human-name-id='+teacher_id+']').val();
+            let key = $('[data-id-key="'+teacher_id+'"]').val();
+         console.log(teacher_name);
+            $('.table-show-teachers').html(" ");
+            $('.preLoader').show();
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('updateTeacher') }}',
+                data: ({
+                    'teacher_id': teacher_id,
+                    'teacher_name': teacher_name,
+                    'key': key
+                }),
+                error: function () {
+                    note({
+                        content: "Сталася помилка при зміненні вчителя",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 15
+                    });
+                    showTeachers();
+
+                }
+            });
+        }
+
+    </script>
+{% endblock %}

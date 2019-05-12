@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request as Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class JournalSubjectController extends AbstractController
@@ -15,5 +17,13 @@ class JournalSubjectController extends AbstractController
         return $this->render('journal_subject/index.html.twig', [
             'controller_name' => 'JournalSubjectController',
         ]);
+    }
+
+    /**
+     * @Route("/journal/ajax/subjectAdd", name="subjectAdd")
+     */
+    public function addSubject(Request $request, ObjectManager $manager)
+    {
+       dd(json_decode($request->get('list_student')));
     }
 }

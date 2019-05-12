@@ -34,7 +34,7 @@ class JournalSubject
     /**
      * Many subject have one teacher. This is the owning side.
      * @ORM\ManyToOne(targetEntity="JournalTeacher", inversedBy="subjects")
-     * @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="teacher_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     private $teacher;
 

@@ -57,14 +57,14 @@
                 }
             });
         }
-        showStudents();
 
+        showStudents();
         function showStudents() {
             $.ajax({
                 type: 'POST',
                 url: '{{ path('showStudent') }}',
                 data: ({
-                    'group_id': '{{ group.id}}'
+                    'group_id': '{{ group.id }}'
                 }),
                 beforeSend: function () {
                     preloaderStudents.showPeloader();
@@ -76,7 +76,7 @@
                     note({
                         content: "Сталася помилка",
                         type: "error",
-                        time: 1
+                        time: 3
                     });
                 },
                 success: function (result) {
@@ -87,7 +87,7 @@
         }
 
         $('html').on('click', '.button-journal-delete', function (e) {
-            let student_name = $(this).parent().parent().parent().find('.show-student-name input').val();
+            let student_name = $(this).parent().parent().parent().find('.show-human-name input').val();
             if(confirm('Ви дійсно хочете видалити студента "'+student_name+'"?'))
             deleteStudent($(this));
         });
@@ -132,8 +132,8 @@
 
         function updateStudent(e) {
             let student_id = e.attr('data-human-id');
-            let student_name = e.parent().parent().parent().find('.show-student-name input').val();
-            let key = e.parent().parent().parent().find('.show-student-key input').val();
+            let student_name = $('[data-human-name-id='+student_id+']').val();
+            let key = $('[data-id-key="'+student_id+'"]').val();
 
             $('.table-show-students').html(" ");
             $('.preLoader').show();

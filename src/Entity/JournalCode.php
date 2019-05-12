@@ -4,9 +4,10 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\JournalCodeRepository")
+ * @UniqueEntity("$keyP")
  */
 class JournalCode
 {
@@ -26,6 +27,11 @@ class JournalCode
      * @ORM\OneToOne(targetEntity="JournalStudent", mappedBy="code")
      */
     private $student;
+
+    /**
+     * @ORM\OneToOne(targetEntity="JournalTeacher", mappedBy="code")
+     */
+    private $teacher;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -67,6 +73,22 @@ class JournalCode
     public function setStudent($student): void
     {
         $this->student = $student;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTeacher()
+    {
+        return $this->teacher;
+    }
+
+    /**
+     * @param mixed $teacher
+     */
+    public function setTeacher($teacher): void
+    {
+        $this->teacher = $teacher;
     }
 
     /**

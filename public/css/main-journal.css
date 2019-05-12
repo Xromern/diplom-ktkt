@@ -82,8 +82,11 @@ select{
 .table-show-teachers, .table-show-students {
     width: 820px;
 }
-.table-show-students input {
+.table-show-students input,.table-show-teachers input {
     width: 350px;
+}
+.edit-add-teacher{
+    width: 70%;
 }
 .add-group-level-1 {
     width: 100%;
@@ -256,19 +259,21 @@ input{
 }
 
 .container-table-students-subject .student_ {
-    width: 370px;
+    width: 50%;
     display: inline-block;
     min-height: 300px;
 }
 
-.container-table-students-subject .student_ td:nth-child(2) {
-    width: 350px;
+.container-table-students-subject tr {
+    margin-top: 10px;
 }
 
-.container-table-students-subject .student_ td:nth-child(1) {
-    width: 20px;
+.container-table-students-subject .sd-student-name {
+    width: 320px !important;
 }
-
+.container-table-students-subject .student_ .rewmove-student {
+    width: 10%;
+}
 .container-table-students-subject .student_select {
     padding: 0;
 }
@@ -313,7 +318,10 @@ input{
 }
 
 .input-add-subject, .input-update-subject {
-    width: 300px !important;
+    width: 270px !important;
+    padding:5px;
+    font-size: 16px;
+    height: 40px;
 }
 
 .block-subject-name {
@@ -439,8 +447,18 @@ table {
 }
 .subject-modal-block-attestation input{
     width: auto;
-
 }
+
+.modal-container-journal-add-subject select{
+    margin: 0;
+    width: 48%;
+}
+
+.modal-container-journal-add-subject input{
+    margin-top: 10px;
+    width: 80%!important;
+}
+
 .modal-date-subject input[type="date"]{
 height: auto;
     width: auto;

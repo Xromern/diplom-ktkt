@@ -52,6 +52,7 @@ class JournalStudentController extends AbstractController
                 'controller_name' => 'listStudentTable',
             ]);
         }
+
         return new Response($string);
     }
 
@@ -70,7 +71,7 @@ class JournalStudentController extends AbstractController
         $manager->persist($code);
 
         $student = new JournalStudent();
-        $student->setName($request->get('student_name'));
+        $student->setName(trim($request->get('student_name')));
         $student->setGroup($group);
         $student->setCode($code);
 
@@ -93,17 +94,17 @@ class JournalStudentController extends AbstractController
         if(!$student){
             return new JsonResponse(array('type' => 'error','message'=>'Судента не знайдено.'));
         }
-        $student->setName($request->get('student_name'));
+        $student->setName(trim($request->get('student_name')));
         $manager->persist($student);
 
         if(!$student->getCode()){
             $code = new JournalCode();
-            $code->setKeyP($request->get('key'));
+            $code->setKeyP(trim($request->get('key')));
             $manager->persist($code);
             $student->setCode($code);
         }else{
             $code = $manager->getRepository(JournalCode::class)->find($student->getCode()->getId());
-            $code->setKeyP($request->get('key'));
+            $code->setKeyP(trim($request->get('key')));
             $manager->persist($code);
         }
 

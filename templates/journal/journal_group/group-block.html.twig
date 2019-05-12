@@ -5,7 +5,13 @@
             {% for group in sp.groups %}
                 <a href='{{ path('journal_show_one_group',{'group_alis':group.alisen}) }}' class='block-group'>
                     <div class='block-group-name'>{{ group.name }}</div>
-                    <div class='block-group-curator'><div>Куратор:</div> {{ group.curator.name }}</div>
+                    <div class='block-group-curator'><div>Куратор:</div>
+                        {% if group.curator != null %}
+                        {{ group.curator.name }}
+                        {% else %}
+                            Без куратора
+                        {% endif %}
+                    </div>
                     <div class='block-group-count-student'><div>Кількість студентів:</div>  {{ group.students|length }}</div>
                 </a>
             {% endfor %}
