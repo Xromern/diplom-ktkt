@@ -31,10 +31,17 @@ class JournalTeacher
     private $group;
 
     /**
-     * One teacher has many subject. This is the inverse side.
-     * @ORM\OneToMany(targetEntity="JournalSubject", mappedBy="teacher" )
+     * Many Users have Many Groups.
+     * @ORM\ManyToMany(targetEntity="JournalSubject", inversedBy="secondaryTeachers")
+     * @ORM\JoinTable(name="subject_secondary_teachers")
      */
     private $subjects;
+
+    /**
+     * One date has many marks. This is the inverse side.
+     * @ORM\OneToMany(targetEntity="JournalSubject", mappedBy="mainTeacher")
+     */
+    private $mainSubjects;
 
     /**
      * One group has One curator.
@@ -98,11 +105,6 @@ class JournalTeacher
         $this->subjects[] = $subjects;
     }
 
-    public function __construct()
-    {
-        $this->subjects = new ArrayCollection();
-    }
-
     /**
      * @return mixed
      */
@@ -117,6 +119,28 @@ class JournalTeacher
     public function setCode($code): void
     {
         $this->code = $code;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMainSubjects()
+    {
+        return $this->mainSubjects;
+    }
+
+    /**
+     * @param mixed $mainSubjects
+     */
+    public function setMainSubjects($mainSubjects): void
+    {
+        $this->mainSubjects[] = $mainSubjects;
+    }
+
+    public function __construct()
+    {
+        $this->subjects = new ArrayCollection();
+        $this->mainSubjects = new ArrayCollection();
     }
 
     public function __toString()

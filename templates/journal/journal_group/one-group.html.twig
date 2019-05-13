@@ -33,8 +33,9 @@
     <div class="container-journal-block">
         <div class="button button-show-subject-add">Створит новий журнал</div>
     </div>
-    @include('MainSite.preloader')
+    <div class="preLoader" id="preloader-list-subject">  </div>
     <div class="container-subjects">
+        {{ include('journal/journal_subject/subject-block.html.twig',{'subjectList':group.subjects}) }}
 
 
     </div>
@@ -76,6 +77,13 @@
     let preloaderAddSubject = new Preloader(
 
         $('#preloader-subject'),
+
+        '{{ asset("images/preloader/preloader.gif") }}'
+    );
+
+    let preloaderListSubject = new Preloader(
+
+        $('#preloader-list-subject'),
 
         '{{ asset("images/preloader/preloader.gif") }}'
     );
@@ -259,15 +267,12 @@
                     time: 15
                 });
             },success:function(data){
-                $('html').html(data);
                 note({
                     content: data['message'],
                     type: data['type'],
                     time: 5
                 });
                 $('.input-add-subject').val("");
-                show_student();
-                show_subjects();
             }
         });
     }

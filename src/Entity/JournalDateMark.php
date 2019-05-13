@@ -17,12 +17,12 @@ class JournalDateMark
     private $id;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $date;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $description;
 
@@ -31,6 +31,13 @@ class JournalDateMark
      * @ORM\OneToMany(targetEntity="JournalMark", mappedBy="date")
      */
     private $marks;
+
+    /**
+     * Many mark have one group. This is the owning side.
+     * @ORM\ManyToOne(targetEntity="JournalSubject", inversedBy="dateMarks")
+     * @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
+     */
+    private $subject;
 
     /**
      * Many date have one typeMark. This is the owning side.
@@ -98,6 +105,22 @@ class JournalDateMark
     public function getTypeMark()
     {
         return $this->typeMark;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSubject()
+    {
+        return $this->subject;
+    }
+
+    /**
+     * @param mixed $subject
+     */
+    public function setSubject($subject): void
+    {
+        $this->subject = $subject;
     }
 
     /**

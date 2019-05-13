@@ -1,0 +1,19 @@
+{% for itemFormControl in formControl %}
+    {% if itemFormControl.subjects|length != 0 %}
+    <div class='block-specialty'>
+        <div class='line-specialty'>{{ itemFormControl.name }}</div>
+        {% for subject in itemFormControl.subjects %}
+            <a href='/journal/groups/$group_name/subject-$subject->subject_id/'class='block-group'>
+                <div class='block-subject-name'>{{ subject.name }}</div>
+                <div class='block-group-curator'><div>Викладач:</div>
+                    {% if subject.mainTeacher !=null %}
+                    {{ subject.mainTeacher.name }}
+                    {% else %}
+                        Без викладача
+                    {% endif %}
+                </div>
+                <div class='block-group-count-student'><div>Система оцiнювання:</div> 5 бальна</div>
+            </a>
+            {% endfor %}
+        {% endif %}
+{% endfor %}

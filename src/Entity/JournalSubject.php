@@ -27,22 +27,43 @@ class JournalSubject
     private $name;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $description;
 
     /**
-     * Many subject have one teacher. This is the owning side.
-     * @ORM\ManyToOne(targetEntity="JournalTeacher", inversedBy="subjects")
-     * @ORM\JoinColumn(name="teacher_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ORM\ManyToMany(targetEntity="JournalTeacher", mappedBy="subjects")
      */
-    private $teacher;
+    private $secondaryTeachers;
 
     /**
-     * Many Groups have Many Users.
+     * @ORM\ManyToOne(targetEntity="JournalTeacher", inversedBy="subjects")
+     * @ORM\JoinColumn(name="main_teacher_id", referencedColumnName="id")
+     */
+    private $mainTeacher;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="JournalGroup", inversedBy="subjects")
+     * @ORM\JoinColumn(name="group_id", referencedColumnName="id")
+     */
+    private $group;
+
+    /**
      * @ORM\ManyToMany(targetEntity="JournalStudent", mappedBy="subjects")
      */
     private $students;
+
+    /**
+     * One date has many marks. This is the inverse side.
+     * @ORM\OneToMany(targetEntity="JournalDateMark", mappedBy="subject")
+     */
+    private $dateMarks;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="JournalTypeFormControl", inversedBy="subjects")
+     * @ORM\JoinColumn(name="type_form_control_id", referencedColumnName="id")
+     */
+    private $typeFormControl;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -90,17 +111,33 @@ class JournalSubject
     /**
      * @return mixed
      */
-    public function getTeacher()
+    public function getSecondaryTeachers()
     {
-        return $this->teacher;
+        return $this->secondaryTeachers;
     }
 
     /**
-     * @param mixed $teacher
+     * @param mixed $secondaryTeachers
      */
-    public function setTeacher($teacher): void
+    public function setSecondaryTeachers($secondaryTeachers): void
     {
-        $this->teacher = $teacher;
+        $this->secondaryTeachers[] = $secondaryTeachers;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMainTeacher()
+    {
+        return $this->mainTeacher;
+    }
+
+    /**
+     * @param mixed $mainTeacher
+     */
+    public function setMainTeacher($mainTeacher): void
+    {
+        $this->mainTeacher = $mainTeacher;
     }
 
     /**
@@ -135,8 +172,59 @@ class JournalSubject
         $this->alis_en = $alis_en;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    /**
+     * @param mixed $group
+     */
+    public function setGroup($group): void
+    {
+        $this->group = $group;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDateMarks()
+    {
+        return $this->dateMarks;
+    }
+
+    /**
+     * @param mixed $dateMarks
+     */
+    public function setDateMarks($dateMarks): void
+    {
+        foreach ($dateMarks as $item)
+        $this->dateMarks[] = $item;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTypeFormControl()
+    {
+        return $this->typeFormControl;
+    }
+
+    /**
+     * @param mixed $typeFormControl
+     */
+    public function setTypeFormControl($typeFormControl): void
+    {
+        $this->typeFormControl = $typeFormControl;
+    }
+
     public function __construct()
     {
+        $this->dateMarks= new ArrayCollection();
         $this->students = new ArrayCollection();
+        $this->secondaryTeachers = new ArrayCollection();
     }
 }

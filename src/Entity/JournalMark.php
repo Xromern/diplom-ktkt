@@ -17,7 +17,7 @@ class JournalMark
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=2)
+     * @ORM\Column(type="string", length=2, nullable=true)
      */
     private $mark;
 
@@ -29,16 +29,9 @@ class JournalMark
     private $student;
 
     /**
-     * Many mark have one group. This is the owning side.
-     * @ORM\ManyToOne(targetEntity="JournalGroup", inversedBy="marks")
-     * @ORM\JoinColumn(name="group_id", referencedColumnName="id")
-     */
-    private $group;
-
-    /**
      * Many mark have one date. This is the owning side.
      * @ORM\ManyToOne(targetEntity="JournalDateMark", inversedBy="marks")
-     * @ORM\JoinColumn(name="teacher_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="date_id", referencedColumnName="id")
      */
     private $dateMark;
 
@@ -77,22 +70,6 @@ class JournalMark
     public function setStudent($student): void
     {
         $this->student = $student;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getGroup()
-    {
-        return $this->group;
-    }
-
-    /**
-     * @param mixed $group
-     */
-    public function setGroup($group): void
-    {
-        $this->group = $group;
     }
 
     /**

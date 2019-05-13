@@ -54,6 +54,12 @@ class JournalGroup
     private $students;
 
     /**
+     * One group has many students. This is the inverse side.
+     * @ORM\OneToMany(targetEntity="JournalSubject", mappedBy="group")
+     */
+    private $subjects;
+
+    /**
      * One group has many marks. This is the inverse side.
      * @ORM\OneToMany(targetEntity="JournalMark", mappedBy="group")
      */
@@ -183,8 +189,25 @@ class JournalGroup
         $this->alis_en = $alis_en;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getSubjects()
+    {
+        return $this->subjects;
+    }
+
+    /**
+     * @param mixed $subjects
+     */
+    public function setSubjects($subjects): void
+    {
+        $this->subjects[] = $subjects;
+    }
+
     public function __construct()
     {
+        $this->subjects = new ArrayCollection();
         $this->students = new ArrayCollection();
     }
 }

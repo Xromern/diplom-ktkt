@@ -21,6 +21,12 @@ class JournalTypeFormControl
      */
     private $name;
 
+    /**
+     * One date has many marks. This is the inverse side.
+     * @ORM\OneToMany(targetEntity="JournalSubject", mappedBy="typeFormControl")
+     */
+    private $subjects;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -40,6 +46,22 @@ class JournalTypeFormControl
     public function setName($name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSubjects()
+    {
+        return $this->subjects;
+    }
+
+    /**
+     * @param mixed $subjects
+     */
+    public function setSubjects($subjects): void
+    {
+        $this->subjects = $subjects;
     }
 
 

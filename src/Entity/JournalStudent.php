@@ -45,12 +45,6 @@ class JournalStudent
     private $marks;
 
     /**
-     * One student has many marks. This is the inverse side.
-     * @ORM\OneToMany(targetEntity="JournalFormControlMark", mappedBy="student")
-     */
-    private $formControlMarks;
-
-    /**
      * One group has One curator.
      * @ORM\OneToOne(targetEntity="JournalCode", inversedBy="student")
      * @ORM\JoinColumn(name="code_id", referencedColumnName="id")
@@ -126,22 +120,6 @@ class JournalStudent
     public function setMarks($marks): void
     {
         $this->marks = $marks;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFormControlMarks()
-    {
-        return $this->formControlMarks;
-    }
-
-    /**
-     * @param mixed $formControlMarks
-     */
-    public function setFormControlMarks($formControlMarks): void
-    {
-        $this->formControlMarks = $formControlMarks;
     }
 
     /**
