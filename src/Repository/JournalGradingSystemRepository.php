@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\JournalTested;
+use App\Entity\JournalGradingSystem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * @method JournalTested|null find($id, $lockMode = null, $lockVersion = null)
- * @method JournalTested|null findOneBy(array $criteria, array $orderBy = null)
- * @method JournalTested[]    findAll()
- * @method JournalTested[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method JournalGradingSystem|null find($id, $lockMode = null, $lockVersion = null)
+ * @method JournalGradingSystem|null findOneBy(array $criteria, array $orderBy = null)
+ * @method JournalGradingSystem[]    findAll()
+ * @method JournalGradingSystem[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class JournalTestedRepository extends ServiceEntityRepository
+class JournalGradingSystemRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, JournalTested::class);
+        parent::__construct($registry, JournalGradingSystem::class);
     }
 
     // /**
-    //  * @return JournalTested[] Returns an array of JournalTested objects
+    //  * @return JournalGradingSystem[] Returns an array of JournalGradingSystem objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class JournalTestedRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?JournalTested
+    public function findOneBySomeField($value): ?JournalGradingSystem
     {
         return $this->createQueryBuilder('j')
             ->andWhere('j.exampleField = :val')

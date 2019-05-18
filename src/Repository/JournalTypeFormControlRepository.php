@@ -19,6 +19,23 @@ class JournalTypeFormControlRepository extends ServiceEntityRepository
         parent::__construct($registry, JournalTypeFormControl::class);
     }
 
+    /**
+     * Получить список предметов по id групи
+     * @param mixed $group_id
+     * @return JournalTypeFormControl
+     */
+    public function getSubjectsOnGroup($group_id){
+        return $this->createQueryBuilder('tfc')
+            ->leftJoin('tfc.subjects','s')
+            ->leftJoin('s.group','g')
+            ->where('g.id = s.group')
+            ->andWhere('g.id = :group_id')
+            ->setParameter('group_id',$group_id)
+            ->getQuery()
+            ->setMaxResults(1)
+            ->execute();
+    }
+
     // /**
     //  * @return JournalTypeFormControl[] Returns an array of JournalTypeFormControl objects
     //  */

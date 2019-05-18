@@ -66,6 +66,12 @@ class JournalSubject
     private $typeFormControl;
 
     /**
+     * @ORM\ManyToOne(targetEntity="JournalGradingSystem", inversedBy="subjects")
+     * @ORM\JoinColumn(name="grading_system_id", referencedColumnName="id")
+     */
+    private $gradingSystem;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $alis_en;
@@ -220,6 +226,23 @@ class JournalSubject
     {
         $this->typeFormControl = $typeFormControl;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getGradingSystem()
+    {
+        return $this->gradingSystem;
+    }
+
+    /**
+     * @param mixed $gradingSystem
+     */
+    public function setGradingSystem($gradingSystem): void
+    {
+        $this->gradingSystem = $gradingSystem;
+    }
+
 
     public function __construct()
     {

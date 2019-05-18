@@ -35,7 +35,7 @@
     </div>
     <div class="preLoader" id="preloader-list-subject">  </div>
     <div class="container-subjects">
-        {{ include('journal/journal_subject/subject-block.html.twig',{'subjectList':group.subjects}) }}
+        {{ include('journal/journal_subject/subject-block.html.twig',{'subjectList':subjects}) }}
 
 
     </div>
@@ -50,12 +50,18 @@
 
             <select class="select-form-control">
                 {% for item in formControl %}
-                <option data-id="{{ item.id }}">{{ item.name }}</option>
+                <option value="{{ item.id }}" data-id="{{ item.id }}">{{ item.name }}</option>
                 {% endfor %}
             </select>
 
             <select class="select-teacher">
-            </select><br>
+            </select>
+            <select class="select-grading-system">
+                {% for item in gradingSystem %}
+                    <option value="{{ item.id }}">{{ item.system }}</option>
+                {% endfor %}
+            </select>
+            <br>
             <input type="text" class="input-add-subject" placeholder="Предмет" required="required"/>
 
             <div class="button button-add-subject">Додати</div>
@@ -142,10 +148,11 @@
             type: 'POST',
             url: '{{ path('groupUpdate') }}',
             data: ({
+                "grading_system_id" : $('.select-grading-system').val(),
                 "curator_id" : $('.select-teacher-curator').val(),
-                "specialty_id": $('.select-specialty').val(),
+                "specialty_id" : $('.select-specialty').val(),
                 "group_id": '{{ group.id }}',
-                "group_name":$('.edit-add-group-name').val()
+                "group_name" :$('.edit-add-group-name').val()
             }),
             error:function(){
                 note({
@@ -244,10 +251,12 @@
     });
 
     function addSubject(){
+
         $.ajax({
             url:'{{ path('subjectAdd') }}',
             type:"POST",
             data:({
+                "grading_system_id" : $('.select-grading-system').val(),
                 'name_subject':$('.input-add-subject').val(),
                 'list_student':create_list_student(),
                 'group_id':'{{ group.id }}',

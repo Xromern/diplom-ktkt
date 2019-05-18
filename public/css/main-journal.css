@@ -451,7 +451,11 @@ table {
 
 .modal-container-journal-add-subject select{
     margin: 0;
-    width: 48%;
+    width: 44%;
+}
+
+.select-grading-system{
+    width: 40px !important;
 }
 
 .modal-container-journal-add-subject input{

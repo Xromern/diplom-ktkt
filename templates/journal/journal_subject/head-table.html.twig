@@ -1,0 +1,12 @@
+<thead>
+<tr>
+    <th rowspan="2">id</th>
+    <th class="name-student" rowspan="2">Прізвище та ініціали</th>
+    <th colspan="35">Місяць, число</th><th rowspan=2 width="20px;">с/б</th></tr>
+</tr>
+
+{% for item in dates %}
+<th class="journal-table-date column' . $i . ' column" data-date="' . $row['date'] . '" title="' . $row['date'] . '&#013' . $row['description'] . '" ' . 'data-date-description="' . $row['description'] . '" data-date-id=' . $row['id'] . ' data-date-id-journal="' . $row['journal_id'] . '"'
+. 'data-date-number = ' . $i . '>' . $this->convert_date($row['date']) . '&#160</th>';
+{% endfor %}
+</thead>

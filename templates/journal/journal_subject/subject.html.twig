@@ -1,0 +1,88 @@
+
+{% extends 'base-journal.html.twig' %}
+
+{% block title %}Групи{% endblock %}
+
+{% block body %}
+
+
+    <div class="container-table-subject-journal">
+        <table class="table-subject-journal table ver">
+
+        </table>
+    </div>
+
+    <div class="container-journal-center">
+        <div class="container-journal-block">
+            <div class="button button-show-modal-update-subject"> Редагувати предмет.</div>
+            <div class="button button-delete-subject"> Видалити предмет.</div>
+
+        </div>
+    </div>
+
+    <div id="myModal" class="modal modal-update-subject">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="modal-close">✘</span>
+            <div class="modal-container-journal-update-subject">
+                <input type="text" class="input-update-subject" placeholder="Предмет" required="required"/>
+                <select class="select-teacher">
+                </select>
+                <div class="button button-update-subject">Зберегти</div>
+            </div>
+            <div class="container-table-students-subject">
+                @include('MainSite.preloader')
+                <div class="field_block_2 student_select">
+                    <table class="student_ student_yes">
+                    </table>
+                    <table class="student_ student_no">
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="modal-date" class="modal modal-date-subject">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="modal-close">✘</span>
+
+            <div class="modal-container-date-subject">
+                <input type="date" class="date-subject-modal" >
+                <div class="subject-modal-block-attestation">
+                    Атестація  <input type="checkbox" class="checkbox-subject-modal" ></div>
+                <textarea class="textarea-subject-modal"></textarea>
+
+                <div class="button button-update-subject-date">Зберегти</div>
+            </div>
+
+        </div>
+
+    </div>
+    <script>
+        showSubjectJournal()
+
+        function showSubjectJournal() {
+            $.ajax({
+                type: 'post',
+                url: "{{ path('showTableSubject') }}",
+                data: ({
+
+                    "subject_id": '{{ subject.getId }}'
+                }),
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    $('.table-subject-journal').html(result)
+                }
+            });
+        }
+
+    </script>
+{% endblock %}

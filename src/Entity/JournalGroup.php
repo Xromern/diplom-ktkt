@@ -65,6 +65,8 @@ class JournalGroup
      */
     private $marks;
 
+
+
     /**
      * @ORM\Column(type="string", length=255)
      */

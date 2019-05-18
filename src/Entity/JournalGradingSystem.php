@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\JournalTypeFormControlRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\JournalGradingSystemRepository")
  */
-class JournalTypeFormControl
+class JournalGradingSystem
 {
     /**
      * @ORM\Id()
@@ -18,13 +17,13 @@ class JournalTypeFormControl
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="integer")
      */
-    private $name;
+    private $system;
 
     /**
-     * One date has many marks. This is the inverse side.
-     * @ORM\OneToMany(targetEntity="JournalSubject", mappedBy="typeFormControl")
+     * One group has many students. This is the inverse side.
+     * @ORM\OneToMany(targetEntity="JournalSubject", mappedBy="gradingSystem")
      */
     private $subjects;
 
@@ -36,17 +35,17 @@ class JournalTypeFormControl
     /**
      * @return mixed
      */
-    public function getName()
+    public function getSystem()
     {
-        return $this->name;
+        return $this->system;
     }
 
     /**
-     * @param mixed $name
+     * @param mixed $system
      */
-    public function setName($name): void
+    public function setSystem($system): void
     {
-        $this->name = $name;
+        $this->system = $system;
     }
 
     /**
@@ -65,10 +64,6 @@ class JournalTypeFormControl
         $this->subjects = $subjects;
     }
 
-    public function __construct()
-    {
-        $this->subjects = new ArrayCollection();
-    }
 
 
 }
