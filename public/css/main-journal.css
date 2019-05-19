@@ -16,16 +16,13 @@
     padding: 15px;
     box-shadow: 0 0.5px 0 0 #ffffff inset, 0 1px 2px 0 #B3B3B3;
     border-radius: 2px;
+    margin-top: 20px;
 }
 .container-journal-center{
 
     width: 850px;
 
     margin: 0 auto;
-}
-
-.container-journal-block {
-    margin-top: 20px;
 }
 
 .container-journal input {
@@ -349,7 +346,23 @@ input{
 .journal-table-marks,
 .journal-table-date {
     cursor: pointer;
+    width: 25px;
+
 }
+
+.journal-table-marks{
+    height: 25px !important;
+}
+
+.journal-table-date{
+    height: 50px !important;
+
+}
+
+.subject-counter-students{
+    width: 25px;
+}
+
 .table .journal-table-date:hover {
     background-color: #42b6f4 !important;
     color: #fff;
@@ -362,18 +375,19 @@ table {
     width: 1200px;
     margin: 0 auto;
     border-collapse: collapse;
-    background-color: #fff
+    background-color: #fff;
+    /*filter: blur(4px);*/
 }
 .head-journal th:nth-child(1) {
-    width: 20px;
+    width: 30px;
 }
-.head-journal th:nth-child(2) {
-    width: 350px;
-}
+
 .container-table-subject-journal{
     margin: 60px auto;
 }
-
+.name-student{
+    width:250px;
+}
 .table-subject-tr select,.table-subject-tr{
 
     transition:0s;
@@ -411,11 +425,6 @@ table {
 .container-table-subject-journal option {
     background-color: #F2F2F2;
 }
-.table-subject-marks{
-    width: 27px;
-    height: 27px;
-    padding: 0;
-}
 
 .table-subject-number-student{
     width: 26px;
@@ -425,6 +434,7 @@ table {
 .container-table-subject-journal .table-subject-name{
     width:auto;
     padding: 3px;
+    display: block;
 }
 
 .table-subject-average{
@@ -468,4 +478,20 @@ height: auto;
     width: auto;
     padding: 0;
     line-height: 1em;
+}
+
+.container-subject-block{
+    width: 500px;
+    margin: 0 auto;
+}
+.container-subject-block .button{
+    width: 46%;
+    display: inline-block;
+}
+.test{
+    position: relative;
+    width: 600px;
+    height: 600px;
+    background-color: #1b1e21;
+
 }

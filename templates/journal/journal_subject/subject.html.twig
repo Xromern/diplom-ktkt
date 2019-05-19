@@ -7,17 +7,17 @@
 
 
     <div class="container-table-subject-journal">
-        <table class="table-subject-journal table ver">
+
+        <table class="table-subject-journal table ver" >
+            {{ include('journal/journal_subject/head-table.html.twig',{'subject':subject}) }}
 
         </table>
     </div>
 
-    <div class="container-journal-center">
-        <div class="container-journal-block">
-            <div class="button button-show-modal-update-subject"> Редагувати предмет.</div>
-            <div class="button button-delete-subject"> Видалити предмет.</div>
 
-        </div>
+    <div class="container-subject-block">
+        <div class="button button-show-modal-update-subject"> Редагувати предмет.</div>
+        <div class="button button-delete-subject"> Видалити предмет.</div>
     </div>
 
     <div id="myModal" class="modal modal-update-subject">

@@ -68,6 +68,11 @@ class JournalSpecialtyController extends AbstractController
             return new JsonResponse(array('type' => 'error','message'=>'Спеціальність не інуснує.'));
         }
 
+        if(count($specialty->getGroups()) != 0){
+            return new JsonResponse(array('type' => 'error','message'=>'Групи не можуть існувати без спеціальності.'));
+
+        }
+
         $manager->remove($specialty);
         $manager->flush();
 

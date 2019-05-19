@@ -5,9 +5,15 @@ namespace App\DataFixtures;
 use App\Entity\Advertisement;
 use App\Entity\Article;
 use App\Entity\CategoryArticle;
+use App\Entity\JournalCode;
+use App\Entity\JournalGradingSystem;
 use App\Entity\JournalGroup;
 use App\Entity\JournalSpecialty;
+use App\Entity\JournalStudent;
 use App\Entity\JournalTeacher;
+use App\Entity\JournalTypeFormControl;
+use App\Entity\JournalTypeMark;
+use App\Service\Helper;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use phpDocumentor\Reflection\Types\Integer;
@@ -129,6 +135,131 @@ class AppFixtures extends Fixture
         $group4->setCurator($teacher4);
         $group4->setSpecialty($specialty1);
         $manager->persist($group4);
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Аврамішин Іван Сергійович').'_'.Helper::generatePassword(30));
+        $manager->persist($code);
+
+        $student = new JournalStudent();
+        $student->setName('Аврамішин Іван Сергійович');
+        $student->setGroup($group1);
+        $student->setCode($code);
+        $manager->persist($student);
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Брей Ігор Володимирович').'_'.Helper::generatePassword(30));
+        $manager->persist($code);
+
+        $student = new JournalStudent();
+        $student->setName('Брей Ігор Володимирович');
+        $student->setGroup($group1);
+        $student->setCode($code);
+        $manager->persist($student);
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Бузинов Владислав Михайлович').'_'.Helper::generatePassword(30));
+        $manager->persist($code);
+
+        $student = new JournalStudent();
+        $student->setName('Бузинов Владислав Михайлович');
+        $student->setGroup($group1);
+        $student->setCode($code);
+        $manager->persist($student);
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Дударенко Володимер Володимирович').'_'.Helper::generatePassword(30));
+        $manager->persist($code);
+
+        $student = new JournalStudent();
+        $student->setName('Дударенко Володимер Володимирович');
+        $student->setGroup($group1);
+        $student->setCode($code);
+        $manager->persist($student);
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Завгородня Поліна Сергіївна').'_'.Helper::generatePassword(30));
+        $manager->persist($code);
+
+        $student = new JournalStudent();
+        $student->setName('Завгородня Поліна Сергіївна');
+        $student->setGroup($group1);
+        $student->setCode($code);
+        $manager->persist($student);
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Івасюк Данило Валерійович').'_'.Helper::generatePassword(30));
+        $manager->persist($code);
+
+        $student = new JournalStudent();
+        $student->setName('Івасюк Данило Валерійович');
+        $student->setGroup($group1);
+        $student->setCode($code);
+        $manager->persist($student);
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Криієнко Богдан Олександрович').'_'.Helper::generatePassword(30));
+        $manager->persist($code);
+
+        $student = new JournalStudent();
+        $student->setName('Криієнко Богдан Олександрович');
+        $student->setGroup($group1);
+        $student->setCode($code);
+        $manager->persist($student);
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Матвієнко Валерія Іорівна').'_'.Helper::generatePassword(30));
+        $manager->persist($code);
+
+        $student = new JournalStudent();
+        $student->setName('Матвієнко Валерія Іорівна');
+        $student->setGroup($group1);
+        $student->setCode($code);
+        $manager->persist($student);
+
+        $typeMark1=  new JournalTypeMark();
+        $typeMark1->setName('Оцінка');
+        $manager->persist($typeMark1);
+
+        $typeMark1=  new JournalTypeMark();
+        $typeMark1->setName('Атестація');
+        $manager->persist($typeMark1);
+
+        $typeMark1=  new JournalTypeMark();
+        $typeMark1->setName('Контрольна');
+        $manager->persist($typeMark1);
+
+        $typeMark1=  new JournalTypeMark();
+        $typeMark1->setName('Самостійна');
+        $manager->persist($typeMark1);
+
+        $typeMark1=  new JournalTypeMark();
+        $typeMark1->setName('Лабораторна');
+        $manager->persist($typeMark1);
+
+
+        $typeJournal = new JournalTypeFormControl();
+        $typeJournal->setName('Журнал');
+        $manager->persist($typeJournal);
+
+        $typeJournal = new JournalTypeFormControl();
+        $typeJournal->setName('Диплом');
+        $manager->persist($typeJournal);
+
+        $typeJournal = new JournalTypeFormControl();
+        $typeJournal->setName('Курсова');
+        $manager->persist($typeJournal);
+        $typeJournal = new JournalTypeFormControl();
+
+        $typeJournal->setName('Практика');
+        $manager->persist($typeJournal);
+
+        $system = new JournalGradingSystem();
+        $system->setSystem('5');
+        $manager->persist($system);
+
+        $system = new JournalGradingSystem();
+        $system->setSystem('12');
+        $manager->persist($system);
 
         $manager->flush();
     }

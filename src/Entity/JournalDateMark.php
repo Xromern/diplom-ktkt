@@ -27,6 +27,11 @@ class JournalDateMark
     private $description;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $color;
+
+    /**
      * One date has many marks. This is the inverse side.
      * @ORM\OneToMany(targetEntity="JournalMark", mappedBy="date")
      */
@@ -45,6 +50,8 @@ class JournalDateMark
      * @ORM\JoinColumn(name="type_mark_id", referencedColumnName="id")
      */
     private $typeMark;
+
+
 
     public function getId(): ?int
     {
@@ -74,6 +81,23 @@ class JournalDateMark
     {
         return $this->description;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * @param mixed $color
+     */
+    public function setColor($color): void
+    {
+        $this->color = $color;
+    }
+
 
     /**
      * @param mixed $description

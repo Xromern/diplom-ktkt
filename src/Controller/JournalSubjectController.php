@@ -27,14 +27,20 @@ class JournalSubjectController extends AbstractController
      */
     public function index(Request $request,ObjectManager $manager)
     {
-//        $journalGroup = $manager->getRepository(JournalGroup::class)
-//            ->getGroupByAlis($request->get('group_alis'));
 
+        $subjects = $manager->getRepository(JournalSubject::class)
+            ->find($request->get('subject_alis'));
 
-        $subjects = $manager->getRepository(JournalTypeFormControl::class)
-            ->find(1);
+        $students = $manager->getRepository(JournalStudent::class)->createQueryBuilder('stud')
+        ->leftJoin('stud.marks','m')
+        ->leftJoin('m.dateMark','d')
+        ->leftJoin('d.subject','s')
+        ->where('s.id = :subject_id')
+        ->setParameter('subject_id',$request->get('subject_alis'))
 
-
+            ->getQuery()
+            ->execute();
+dd($students);
         return $this->render('journal/journal_subject/subject.html.twig',[
 
             'subject'=>$subjects,
@@ -103,10 +109,10 @@ class JournalSubjectController extends AbstractController
     public function addSubject(Request $request, ObjectManager $manager)
     {
         $listStudent = json_decode($request->get('list_student'));
-       // dd($request->get('grading_system_id'));
+
         $group = $manager->getRepository(JournalGroup::class)->find($request->get('group_id'));//$request->get('group_id'));
         $teacher = $manager->getRepository(JournalTeacher::class)->find($request->get('teacher_id'));//$request->get('teacher_id'));
-        $typeMark = $manager->getRepository(JournalTypeMark::class)->find(1);
+        $typeMark = $manager->getRepository(JournalTypeMark::class)->findOneBy(array('name'=>'Оцінка'));
         $formControl = $manager->getRepository(JournalTypeFormControl::class)->find($request->get('form_control_id'));
         $grading_system_id = $manager->getRepository(JournalGradingSystem::class)->find($request->get('grading_system_id'));
 
@@ -120,7 +126,7 @@ class JournalSubjectController extends AbstractController
 
         $manager->persist($subject);
 
-        if($listStudent)
+//        if(count($listStudent) != 0)
         Service\Journal::createJournal($typeMark,$subject,$listStudent,$manager);
 
         $manager->flush();

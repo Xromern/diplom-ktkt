@@ -24,6 +24,8 @@ class Journal
 
        foreach ($listStudent as $student_id){
            $student = $manager->getRepository(JournalStudent::class)->find($student_id);
+           $student->setSubjects($subject);
+           $manager->persist($student);
            foreach ($listDate as $date){
                $mark = new JournalMark();
                $mark->setDateMark($date);
@@ -31,6 +33,7 @@ class Journal
                $manager->persist($mark);
            }
        }
+
 
     }
 

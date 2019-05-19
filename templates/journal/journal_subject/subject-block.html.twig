@@ -3,7 +3,7 @@
     <div class='block-specialty'>
         <div class='line-specialty'>{{ itemFormControl.name }}</div>
         {% for subject in itemFormControl.subjects %}
-            <a href='/journal/groups/$group_name/subject-$subject->subject_id/'class='block-group'>
+            <a href='{{ path('journal_show_subject',{'group_alis':group.alisen,'subject_alis':subject.getId}) }}'class='block-group'>
                 <div class='block-subject-name'>{{ subject.name }}</div>
                 <div class='block-group-curator'><div>Викладач:</div>
                     {% if subject.mainTeacher !=null %}

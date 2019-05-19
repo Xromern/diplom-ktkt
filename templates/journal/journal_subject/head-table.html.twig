@@ -1,12 +1,30 @@
+{% set i = 0 %}
 <thead>
 <tr>
-    <th rowspan="2">id</th>
+    <th class="subject-counter-students" rowspan="2">id</th>
     <th class="name-student" rowspan="2">Прізвище та ініціали</th>
     <th colspan="35">Місяць, число</th><th rowspan=2 width="20px;">с/б</th></tr>
 </tr>
-
-{% for item in dates %}
-<th class="journal-table-date column' . $i . ' column" data-date="' . $row['date'] . '" title="' . $row['date'] . '&#013' . $row['description'] . '" ' . 'data-date-description="' . $row['description'] . '" data-date-id=' . $row['id'] . ' data-date-id-journal="' . $row['journal_id'] . '"'
-. 'data-date-number = ' . $i . '>' . $this->convert_date($row['date']) . '&#160</th>';
+<tr>
+{% for item in 0..29   %}
+<th
+    class="journal-table-date" column{{ i }}
+    data-date-id=''
+    data-date-id-subject=''
+    data-date-number = ' {{ i }}'
+>&#160</th>
+    {% set i = i+1  %}
 {% endfor %}
+</tr>
+{% set i = 1  %}
+ {% for student in subject.students  %}
+<tr>
+    <td>{{ i }}</td>
+     <td data-student-id='{{ student.getId }}' class='table-subject-name'>{{ student.getName }}</td>
+    {{ dump(student) }}
+     <td data-column='column$num' class='table-subject-marks column column$num' data-subject-mark-id='$mark->id'>$select</td>
+
+</tr>
+     {% set i = i+1  %}
+ {% endfor %}
 </thead>
