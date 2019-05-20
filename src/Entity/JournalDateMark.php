@@ -51,6 +51,10 @@ class JournalDateMark
      */
     private $typeMark;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $page;
 
 
     public function getId(): ?int
@@ -154,6 +158,23 @@ class JournalDateMark
     {
         $this->typeMark = $typeMark;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPage()
+    {
+        return $this->page;
+    }
+
+    /**
+     * @param mixed $page
+     */
+    public function setPage($page): void
+    {
+        $this->page = $page;
+    }
+
 
 
 }

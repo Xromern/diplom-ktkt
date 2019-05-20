@@ -31,9 +31,16 @@ class JournalMark
     /**
      * Many mark have one date. This is the owning side.
      * @ORM\ManyToOne(targetEntity="JournalDateMark", inversedBy="marks")
-     * @ORM\JoinColumn(name="date_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
      */
     private $dateMark;
+
+    /**
+     * Many mark have one group. This is the owning side.
+     * @ORM\ManyToOne(targetEntity="JournalSubject", inversedBy="marks")
+     * @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
+     */
+    private $subject;
 
     public function getId(): ?int
     {
@@ -78,6 +85,22 @@ class JournalMark
     public function getDateMark()
     {
         return $this->dateMark;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSubject()
+    {
+        return $this->subject;
+    }
+
+    /**
+     * @param mixed $subject
+     */
+    public function setSubject($subject): void
+    {
+        $this->subject = $subject;
     }
 
     /**

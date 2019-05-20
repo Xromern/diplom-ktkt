@@ -60,6 +60,12 @@ class JournalSubject
     private $dateMarks;
 
     /**
+     * One date has many marks. This is the inverse side.
+     * @ORM\OneToMany(targetEntity="JournalMark", mappedBy="subject")
+     */
+    private $marks;
+
+    /**
      * @ORM\ManyToOne(targetEntity="JournalTypeFormControl", inversedBy="subjects")
      * @ORM\JoinColumn(name="type_form_control_id", referencedColumnName="id")
      */
@@ -241,6 +247,22 @@ class JournalSubject
     public function setGradingSystem($gradingSystem): void
     {
         $this->gradingSystem = $gradingSystem;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMarks()
+    {
+        return $this->marks;
+    }
+
+    /**
+     * @param mixed $marks
+     */
+    public function setMarks($marks): void
+    {
+        $this->marks = $marks;
     }
 
 

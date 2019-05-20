@@ -31,19 +31,22 @@ class JournalSubjectController extends AbstractController
         $subjects = $manager->getRepository(JournalSubject::class)
             ->find($request->get('subject_alis'));
 
-        $students = $manager->getRepository(JournalStudent::class)->createQueryBuilder('stud')
-        ->leftJoin('stud.marks','m')
-        ->leftJoin('m.dateMark','d')
-        ->leftJoin('d.subject','s')
-        ->where('s.id = :subject_id')
-        ->setParameter('subject_id',$request->get('subject_alis'))
-
+        $students = $manager->getRepository(JournalStudent::class)
+            ->createQueryBuilder('s')
+            ->leftJoin('s.marks','m')
+            ->leftJoin('m.subject','sub')
+            ->andWhere('sub.id = :subject_id')
+            ->andWhere('sub = m.subject')
+            ->setParameter('subject_id',$request->get('subject_alis'))
+//            ->groupBy('sub.id')
             ->getQuery()
             ->execute();
-dd($students);
+//        dd($students);
+
         return $this->render('journal/journal_subject/subject.html.twig',[
 
             'subject'=>$subjects,
+            'students'=>$students,
 
         ]);
 

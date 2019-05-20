@@ -17,13 +17,14 @@
 {% endfor %}
 </tr>
 {% set i = 1  %}
- {% for student in subject.students  %}
+ {% for student in students  %}
 <tr>
     <td>{{ i }}</td>
      <td data-student-id='{{ student.getId }}' class='table-subject-name'>{{ student.getName }}</td>
-    {{ dump(student) }}
-     <td data-column='column$num' class='table-subject-marks column column$num' data-subject-mark-id='$mark->id'>$select</td>
 
+    {% for mark in student.marks %}
+     <td data-column='column$num' class='table-subject-marks column column$num' data-subject-mark-id='$mark->id'>2</td>
+    {% endfor %}
 </tr>
      {% set i = i+1  %}
  {% endfor %}

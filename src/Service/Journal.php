@@ -19,6 +19,8 @@ class Journal
             $listDate[$i] = new JournalDateMark();
             $listDate[$i]->setTypeMark($typeMark);
             $listDate[$i]->setSubject($subject);
+            $listDate[$i]->setColor('#ffffff');
+            $listDate[$i]->setPage(0);
             $manager->persist($listDate[$i]);
         }
 
@@ -29,6 +31,7 @@ class Journal
            foreach ($listDate as $date){
                $mark = new JournalMark();
                $mark->setDateMark($date);
+               $mark->setSubject($subject);
                $mark->setStudent($student);
                $manager->persist($mark);
            }

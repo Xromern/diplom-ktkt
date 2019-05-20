@@ -40,7 +40,7 @@ class JournalStudent
 
     /**
      * One student has many marks. This is the inverse side.
-     * @ORM\OneToMany(targetEntity="JournalDateMark", mappedBy="student")
+     * @ORM\OneToMany(targetEntity="JournalMark", mappedBy="student")
      */
     private $marks;
 
