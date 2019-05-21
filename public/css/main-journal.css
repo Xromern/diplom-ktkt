@@ -371,6 +371,7 @@ input{
 th {
 
 }
+
 table {
     width: 1200px;
     margin: 0 auto;
@@ -430,11 +431,8 @@ table {
     width: 26px;
     padding: 3px;
 }
-
-.container-table-subject-journal .table-subject-name{
-    width:auto;
+.table-subject-journal td{
     padding: 3px;
-    display: block;
 }
 
 .table-subject-average{
@@ -487,11 +485,4 @@ height: auto;
 .container-subject-block .button{
     width: 46%;
     display: inline-block;
-}
-.test{
-    position: relative;
-    width: 600px;
-    height: 600px;
-    background-color: #1b1e21;
-
 }

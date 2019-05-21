@@ -28,24 +28,35 @@ class JournalSubjectController extends AbstractController
     public function index(Request $request,ObjectManager $manager)
     {
 
-        $subjects = $manager->getRepository(JournalSubject::class)
+        $subject = $manager->getRepository(JournalSubject::class)
             ->find($request->get('subject_alis'));
 
-        $students = $manager->getRepository(JournalStudent::class)
-            ->createQueryBuilder('s')
-            ->leftJoin('s.marks','m')
-            ->leftJoin('m.subject','sub')
-            ->andWhere('sub.id = :subject_id')
-            ->andWhere('sub = m.subject')
-            ->setParameter('subject_id',$request->get('subject_alis'))
-//            ->groupBy('sub.id')
-            ->getQuery()
-            ->execute();
+        $students = [];
+        foreach ($subject->getStudents() as $item) {
+
+            $mark = $manager->getRepository(JournalMark::class)
+                ->createQueryBuilder('m')
+                ->leftJoin('m.student','stud')
+                ->leftJoin('m.subject','sub')
+                ->leftJoin('m.dateMark','d')
+                ->andWhere('d.page =  :page')
+                ->andWhere('stud.id = :student_id')
+                ->andWhere('sub.id =  :subject_id')
+                ->setParameter('subject_id', 20)
+                ->setParameter('page',0)
+                ->setParameter('student_id',$item->getId())
+                ->getQuery()
+                ->execute();
+                $convertName = Service\Helper::convertName($item->getName());
+                $array = array('student'=>$item,'studentName'=>$convertName,'mark'=>$mark);
+                $students[] =$array;
+
+        }
 //        dd($students);
 
         return $this->render('journal/journal_subject/subject.html.twig',[
 
-            'subject'=>$subjects,
+            'subject'=>$subject,
             'students'=>$students,
 
         ]);

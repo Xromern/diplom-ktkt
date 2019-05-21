@@ -29,4 +29,14 @@ class Helper
         }
         return $string;
     }
+
+    public static function convertName($str){
+
+
+        $m = explode(' ', $str);
+
+        return  $m[0] . ' ' . substr($m[1],0,2) . '.' . substr($m[2],0,2) . '.' ;
+
+
+    }
 }
