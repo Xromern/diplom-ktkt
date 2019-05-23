@@ -49,9 +49,12 @@
             <span class="modal-close">✘</span>
 
             <div class="modal-container-date-subject">
+                <div class="row-date-modal">
                 <input type="date" class="date-subject-modal" >
+                <select class="select-type-mark"></select>
+                    <input type="color" class="color-mark" style="padding: 0;background-color: #FFFFFF; border: #1e5ad1;" >
+                </div>
                 <div class="subject-modal-block-attestation">
-                    Атестація  <input type="checkbox" class="checkbox-subject-modal" ></div>
                 <textarea class="textarea-subject-modal"></textarea>
 
                 <div class="button button-update-subject-date">Зберегти</div>
@@ -61,7 +64,7 @@
 
     </div>
     <script>
-        showSubjectJournal()
+        //showSubjectJournal()
 
         function showSubjectJournal() {
             $.ajax({
@@ -84,5 +87,199 @@
             });
         }
 
+        $('html').on('change', '.table-subject-select',function () {
+            updateMark($(this).val(), $(this).attr('data-id-mark'));
+        })
+
+        function updateMark(mark, mark_id,student_id) {
+
+            $.ajax({
+                type: 'POST',
+                url: "{{ path('markUpdate') }}",
+                data: ({
+                    'mark': mark,
+                    'mark_id': mark_id,
+
+                }),
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+
+                    showSubjectJournal();
+                }
+            });
+        }
+
+        $('html').on('click', '.button-update-subject-date', function () {
+
+            updateDate();
+
+            showSubjectJournal();
+
+        });
+
+        function updateDate() {
+
+            let date_id = $('.modal-update-subject').attr('data-date-id');
+            let date = $('.date-subject-modal').val();
+            let description = $('.textarea-subject-modal').val();
+            let typeMark = $('.select-type-mark').val();
+            let color = $('.color-mark').val();
+            console.log(color);
+            $.ajax({
+                type: 'POST',
+               url: '{{ path('dateMarkUpdate') }}',
+                data: ({
+                    "date_id": date_id,
+                    "date":date,
+                    "description":description,
+                    "type_mark_id":typeMark,
+                    "color":color
+                }),
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    //console.log(result)
+
+                }
+            });
+        }
+
+        function getDate(date_id) {
+
+            $.ajax({
+                type: 'POST',
+                url: '/journal/getDate',
+                data: ({
+                    "date_id": date_id
+                }),
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    $('.date-subject-modal').val(result['date']);
+                    $('.textarea-subject-modal').val(result['description']);
+                    $('.checkbox-subject-modal').prop('checked', result['attestation']);
+                }
+            });
+        }
+
+        function getTypeMark(){
+            $.ajax({
+                type: 'post',
+                url: "{{ path('journal_type_mark') }}",
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    console.log(result)
+                    $('.select-type-mark').html(result)
+                }
+            });
+        }
+
+        let modal = document.getElementById('myModal');
+
+        let span = document.getElementsByClassName("modal-close")[0];
+
+        let modal_content = document.getElementsByClassName("modal-close")[0];
+        //если кликаю на крестик, добавлюя id коммента в модальное окно для редактирование комменатрия
+        $('html').on('click', '.button-show-modal-update-subject', function () {
+            showSubjectTeacherList()
+            getSubjectStudent()
+            getSubjectName();
+            getTypeMark();
+            modal.style.display = "block";
+
+        });
+
+        span.onclick = function () {
+            $('.student_select').html("");
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                $('.student_select').html("");
+
+                modal.style.display = "none";
+            }
+        }
+
+
+        let modal_date = document.getElementById('modal-date');
+
+        $('html').on('click', '.button-update-subject-date', function () {
+
+            var date_id = $('.modal-update-subject').attr('data-date-id');
+            var date = $('.date-subject-modal').val();
+            var description = $('.textarea-subject-modal').val();
+            var attestation = $('.checkbox-subject-modal').is(':checked');
+            attestation = attestation?1:0;
+            updateDate(date_id,date,description,attestation);
+
+            showSubjectJournal();
+
+        });
+
+
+        //если кликаю на крестик, добавлюя id коммента в модальное окно для редактирование комменатрия
+        $('html').on('click', '.journal-table-date', function () {
+            let date_id =  $(this).attr('data-date-id');
+            $('.modal-update-subject').attr('data-date-id',date_id);
+            //getDate(date_id);
+            modal_date.style.display = "block";
+            getTypeMark();
+
+
+        });
+
+        span.onclick = function () {
+            $('.date-subject-modal').val('');
+            $('.textarea-subject-modal').val('');
+            $('.checkbox-subject-modal').val('')
+            modal_date.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal_date) {
+
+
+                modal_date.style.display = "none";
+            }
+        }
+
+        $('html').on('mouseover', '.column', function() {
+
+            let table2 = $(this).parent().parent();
+            let column = $(this).data('column') + "";
+            $(table2).find("." + column).addClass('hov-column');
+
+        });
+        $('html').on('mouseout', '.column', function() {
+
+            let table2 = $(this).parent().parent();
+            let column = $(this).data('column') + "";
+            $(table2).find("." + column).removeClass('hov-column');
+
+        });
     </script>
 {% endblock %}

@@ -1,40 +1,52 @@
-{% set i = 0 %}
+{% set i = 1 %}
 <thead>
 <tr>
     <th class="subject-counter-students" rowspan="2">id</th>
     <th class="name-student" rowspan="2">Прізвище та ініціали</th>
     <th colspan="30">Місяць, число</th>
-    <th rowspan=2 width="25px" >с/б</th>
+    <th rowspan=2 width="35px">с/б</th>
 </tr>
-
 <tr>
-
 {% for d in subject.getDateMarks   %}
-<th
-
-    class="journal-table-date" column{{ i }}
-    data-date-id=''
-    data-date-id-subject=''
-    data-date-number = ' {{ i }}'>
+<th class="journal-table-date column column{{ i }}"
+    style="background: {{ d.color }}"
+    data-column='column{{ i }}'
+    data-date-id='{{ d.getId }}'
+    data-date-number='{{ i }}'
+    title="{{ d.getTypeMark.name }}. {{ d.description }}"
+>
     {% if d.getDate is not null %}
     {{ d.getDate|date('m d') }}
-
     {% endif %}
-
 </th>
     {% set i = i+1  %}
 {% endfor %}
-
 </tr>
-
 {% set i = 1  %}
  {% for student in students  %}
-<tr>
+<tr class="student-row">
     <td>{{ i }}</td>
     <td data-student-id='{{ student.student.getId }}' class='table-subject-name'>{{ student.studentName }}</td>
-
+    {% set c = 1 %}
     {% for mark in student.mark %}
-     <td>2</td>
+     <td data-column='column{{ c }}' style="background: {{ mark.getDateMark.color }}" class='table-subject-marks column column{{ c }}' data-subject-mark-id='{{ mark.getId }}'>
+         <select data-column='column{{ c }}' data-id-mark='{{ mark.getId }}' class='table-subject-select column column{{ c }}'>
+             <option></option>
+             {% for j in 1..subject.getGradingSystem.getSystem %}
+                 {% if mark.getMark == j %}
+                     <option selected>{{ mark.getMark }}</option>
+                 {% else %}
+                     <option>{{ j }}</option>
+                 {% endif %}
+             {% endfor %}
+             {% if mark.getMark == 'Н' %}
+             <option selected>Н</option>
+             {% else %}
+             <option>Н</option>
+             {% endif %}
+         </select>
+     </td>
+        {% set c = c+1  %}
     {% endfor %}
     <td class="average_mark"></td>
 </tr>

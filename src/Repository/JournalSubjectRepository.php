@@ -19,6 +19,35 @@ class JournalSubjectRepository extends ServiceEntityRepository
         parent::__construct($registry, JournalSubject::class);
     }
 
+    /**
+     * @param mixed $groupAlis
+     * @param mixed $subjectAlis
+     * @return JournalGroup
+     */
+    public function getSubjectByAlis($groupAlis,$subjectAlis){
+        return $this->createQueryBuilder('s')
+            ->where("s.id = :subjectAlis or s.alis_en = :subjectAlis")
+            ->setParameter('subjectAlis',$subjectAlis)
+            ->leftJoin('s.group','g')
+            ->andWhere("g.id = :groupAlis or g.alis_en = :groupAlis")
+            ->setParameter('groupAlis',$groupAlis)
+            ->getQuery()
+            ->execute()[0];
+    }
+
+    public function checkForUniqueness($subjectName,$group_id){
+        return $this
+            ->createQueryBuilder('s')
+            ->leftJoin('s.group','g')
+            ->andWhere('g.id = :group_id')
+            ->andWhere('s.name = :name')
+            ->setParameter('group_id',$group_id)
+            ->setParameter('name',$subjectName)
+            ->getQuery()
+            ->execute();
+
+    }
+
     // /**
     //  * @return JournalSubject[] Returns an array of JournalSubject objects
     //  */

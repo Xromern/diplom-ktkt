@@ -13,6 +13,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 class Journal
 {
+
     public static function createJournal(JournalTypeMark $typeMark, JournalSubject $subject,$listStudent,&$manager){
         $listDate = [];
         for($i = 0; $i<30; $i++){
@@ -37,7 +38,8 @@ class Journal
            }
        }
 
-
     }
+
+
 
 }

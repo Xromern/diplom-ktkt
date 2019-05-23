@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 
+use App\Entity\JournalGradingSystem;
 use App\Entity\JournalGroup;
 use App\Entity\JournalSpecialty;
 use App\Entity\JournalTeacher;
@@ -31,7 +32,6 @@ class JournalGroupController extends AbstractController
                 'specialty'=>$specialty
             ]);
         }else{
-           // dd($specialty[0]->getGroups()[0]->getStudents()[0]);
             return $this->render('journal/journal_group/list-group-specialty.html.twig', [
                 'controller_name' => 'JournalGroupController',
                 'specialty'=>$specialty
@@ -44,10 +44,22 @@ class JournalGroupController extends AbstractController
      */
     public function showGroup(Request $request,ObjectManager $manager)
     {
-        $journalGroup =  $manager->getRepository(JournalGroup::class)
-            ->getGroupByAlis($request->get('group_alis'));
 
         $formControl = $manager->getRepository(JournalTypeFormControl::class)->findAll();
+
+        $journalGroup = $manager->getRepository(JournalGroup::class)
+            ->getGroupByAlis($request->get('group_alis'));
+
+        $gradingSystem = $manager->getRepository(JournalGradingSystem::class)->findAll();
+
+
+        $subjects = $manager->getRepository(JournalTypeFormControl::class)
+            ->createQueryBuilder('tfc')
+            ->leftJoin('tfc.subjects','s')
+            ->leftJoin('s.group','g')
+            ->andWhere('g.id = :group_id')
+            ->setParameter('group_id',$journalGroup->getId())
+            ->getQuery();
 
         if(!$journalGroup){
             return $this->render('journal/Exception/error404.html.twig',['message_error'=>'Така група не інуснує.']);
@@ -55,7 +67,9 @@ class JournalGroupController extends AbstractController
 
         return $this->render('journal/journal_group/one-group.html.twig',[
             'group'=>$journalGroup,
-            'formControl'=>$formControl
+            'formControl'=>$formControl,
+            'gradingSystem'=>$gradingSystem,
+            'subjects'=>$subjects
         ]);
 
     }

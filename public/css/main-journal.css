@@ -393,10 +393,11 @@ table {
 
     transition:0s;
 }
-.table-subject-tr:hover select,.table-subject-tr:hover{
+.table-subject-tr:hover select,.student-row:hover{
     background-color: #c9daff;
     transition:0s;
 }
+
 .container-table-subject-journal td,.container-table-subject-journal th{
     border: 1px solid black;
 
@@ -485,4 +486,22 @@ height: auto;
 .container-subject-block .button{
     width: 46%;
     display: inline-block;
+}
+.table-subject-select{
+     width: 24px !important;
+    height: 24px !important;
+    font-size: 16px;
+    font-weight: bold;
+ }
+
+.select-type-mark{
+    width: 200px;
+    height: 25px;
+}
+tr:hover td{
+    background-color:  #c9daff!important;
+}
+.textarea-subject-modal{
+    margin-top:10px;
+    width: 550px !important;
 }

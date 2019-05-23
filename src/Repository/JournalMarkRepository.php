@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\JournalMark;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use App\Service;
+
 
 /**
  * @method JournalMark|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +19,23 @@ class JournalMarkRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, JournalMark::class);
+    }
+
+    public function getOnMarksByStudent($student,$subject_id,$page = 0){
+       $marks = $this->createQueryBuilder('m')
+           ->leftJoin('m.student','stud')
+           ->leftJoin('m.subject','sub')
+           ->leftJoin('m.dateMark','d')
+           ->andWhere('d.page =  :page')
+           ->andWhere('stud.id = :student_id')
+           ->andWhere('sub.id =  :subject_id')
+           ->setParameter('subject_id', $subject_id)
+           ->setParameter('page',$page)
+           ->setParameter('student_id',$student->getId())
+           ->getQuery()
+           ->execute();
+        $convertName = Service\Helper::convertName($student->getName());
+        return  array('student'=>$student,'studentName'=>$convertName,'mark'=>$marks);
     }
 
     // /**

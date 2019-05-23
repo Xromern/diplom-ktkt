@@ -31,7 +31,7 @@ class JournalMark
     /**
      * Many mark have one date. This is the owning side.
      * @ORM\ManyToOne(targetEntity="JournalDateMark", inversedBy="marks")
-     * @ORM\JoinColumn(name="subject_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="date_mark_id", referencedColumnName="id")
      */
     private $dateMark;
 
