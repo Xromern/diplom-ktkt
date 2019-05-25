@@ -76,6 +76,10 @@ class JournalDateMark
     public function setDate($date): void
     {
         $this->date = $date;
+
+        if( $this->date==null){
+            $this->typeMark = null;
+        }
     }
 
     /**

@@ -388,7 +388,7 @@ main{
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 99999; /* Sit on top */
     padding-top: 50px; /* Location of the box */
     left: 0;
     top: 0;
@@ -407,6 +407,7 @@ main{
     padding:0px 20px 20px 20px;
     border: 1px solid #888;
     max-width: 800px;
+    z-index: 99999;
 }
 
 /* The Close Button */

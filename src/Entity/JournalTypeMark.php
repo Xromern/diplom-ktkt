@@ -27,6 +27,11 @@ class JournalTypeMark
      */
     private $date;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $color;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,6 +67,22 @@ class JournalTypeMark
     public function setDate($date): void
     {
         $this->date = $date;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * @param mixed $color
+     */
+    public function setColor($color): void
+    {
+        $this->color = $color;
     }
 
 

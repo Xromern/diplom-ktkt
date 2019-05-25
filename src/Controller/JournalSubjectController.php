@@ -40,6 +40,8 @@ class JournalSubjectController extends AbstractController
 
         }
 
+
+
         return $this->render('journal/journal_subject/subject.html.twig',[
 
             'subject'=>$subject,
@@ -57,6 +59,24 @@ class JournalSubjectController extends AbstractController
     public function showTableSubject(Request $request,ObjectManager $manager)
     {
 
+        $subject = $manager->getRepository(JournalSubject::class)
+            ->find($request->get('subject_alis'));
+
+        $students = [];
+
+        foreach ($subject->getStudents() as $student) {
+
+            $students[] = $manager->getRepository(JournalMark::class)
+                ->getOnMarksByStudent($student,$subject->getId(),$page = 0);
+
+        }
+
+        return $this->render('journal/journal_subject/head-table.html.twig',[
+
+            'subject'=>$subject,
+            'students'=>$students,
+
+        ]);
 
     }
 
@@ -85,8 +105,84 @@ class JournalSubjectController extends AbstractController
         $date = $manager->getRepository(JournalDateMark::class)
             ->find($request->get('date_id'));
 
-        $typeMark = $manager->getRepository(JournalTypeMark::class)->find($request->get('type_mark_id'));
-        $d = new \DateTime($request->get('date'));
+
+        if($request->get('date')=="" || $request->get('date')==null ) {
+            $d=null;
+        }else{
+            $d = new \DateTime($request->get('date'));
+        }
+
+
+
+        if($d==null){
+
+            $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
+                ->leftJoin('d.subject','s')
+                ->andWhere('s.id = :subject_id')
+                ->andWhere("(d.id > :date_id AND d.date IS NOT NULL) ")
+                ->setParameter('date_id',$request->get('date_id'))
+                ->setParameter('subject_id',$date->getSubject()->getId())
+                ->getQuery()
+                ->execute();
+
+            if($checkDate){
+                return new JsonResponse(array('type' => 'error','message'=>'Неможливо поставити пусту дату'));
+
+            }
+
+
+//            $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
+////                ->leftJoin('d.marks','m')
+////                ->andWhere("m.mark IS NOT NULL OR m.mark != '' ")
+////                ->andWhere("d.id = :date_id")
+////                ->setParameter('date_id',$request->get('date_id'))
+//                            ->getQuery()
+//                    ->execute();
+//
+//                if($checkDate){
+//                    return new JsonResponse(array('type' => 'error','message'=>'У студентів є оцінки'));
+//
+//            }
+        }
+
+        $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
+            ->leftJoin('d.subject','s')
+            ->andWhere('s.id = :subject_id')
+            ->andWhere('d.date >= :date')
+            ->andWhere('d.id < :date_id')
+            ->orWhere('d.id > :date_id and :date > d.date')
+            ->setParameter('subject_id',$date->getSubject()->getId())
+            ->setParameter('date',$d)
+            ->setParameter('date_id',$request->get('date_id'))
+            ->getQuery()
+            ->execute();
+
+        if($checkDate){
+            return new JsonResponse(array('type' => 'error','message'=>'Неможливо поставити меншу дату'));
+        }
+
+        $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
+            ->leftJoin('d.subject','s')
+            ->andWhere('s.id = :subject_id')
+            ->andWhere("(d.id < :date_id AND d.date IS NULL) ")
+            ->setParameter('date_id',$request->get('date_id'))
+            ->setParameter('subject_id',$date->getSubject()->getId())
+            ->getQuery()
+            ->execute();
+
+        if($checkDate){
+            return new JsonResponse(array('type' => 'error','message'=>'Пропущено день'));
+        }
+
+        if($d==null){
+
+            $typeMark = $manager->getRepository(JournalTypeMark::class)->findAll()[0];
+
+        }else{
+            $typeMark = $manager->getRepository(JournalTypeMark::class)->find( $request->get('type_mark_id'));
+
+        }
+
         $date->setDescription($request->get('description'));
         $date->setDate($d);
         $date->setColor($request->get('color'));
@@ -127,7 +223,7 @@ class JournalSubjectController extends AbstractController
         $formControl = $manager->getRepository(JournalTypeFormControl::class)->find($request->get('form_control_id'));
         $grading_system_id = $manager->getRepository(JournalGradingSystem::class)->find($request->get('grading_system_id'));
 
-        if(strlen($request->get('name_subject') <= 2 )){
+        if(mb_strlen($request->get('name_subject')) <= 3 ){
             return new JsonResponse(array('type' => 'error','message'=>'Занадто коротка назва'));
 
         }

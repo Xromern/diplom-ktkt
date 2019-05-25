@@ -46,7 +46,7 @@
     <div id="modal-date" class="modal modal-date-subject">
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="modal-close">✘</span>
+            <span class="modal-close modal-close-edit-date">✘</span>
 
             <div class="modal-container-date-subject">
                 <div class="row-date-modal">
@@ -66,13 +66,21 @@
     <script>
         //showSubjectJournal()
 
+
+        function disabledTable() {
+            let table ='.table-subject-journal';
+            $(table).find(".journal-table-date").removeClass('journal-table-date-click');
+            $(table).find("*").attr("disabled", "disabled");
+            $(table).css({'filter': 'blur(3px)'})
+        }
+
         function showSubjectJournal() {
             $.ajax({
                 type: 'post',
                 url: "{{ path('showTableSubject') }}",
                 data: ({
 
-                    "subject_id": '{{ subject.getId }}'
+                    "subject_alis": '{{ subject.getId }}'
                 }),
                 error: function () {
                     note({
@@ -81,7 +89,11 @@
                         time: 15
                     });
                 },
+                beforeSend:function(){
+
+                },
                 success: function (result) {
+                    $('.table-subject-journal').css({'filter': 'blur(0px)'});
                     $('.table-subject-journal').html(result)
                 }
             });
@@ -108,6 +120,7 @@
                         time: 15
                     });
                 },
+                beforeSend : function(){disabledTable()},
                 success: function (result) {
 
                     showSubjectJournal();
@@ -117,7 +130,7 @@
 
         $('html').on('click', '.button-update-subject-date', function () {
 
-            updateDate();
+           // updateDate();
 
             showSubjectJournal();
 
@@ -131,9 +144,10 @@
             let typeMark = $('.select-type-mark').val();
             let color = $('.color-mark').val();
             console.log(color);
+            $("YOUR_TABLE").find("*").attr("disabled", "disabled");
             $.ajax({
                 type: 'POST',
-               url: '{{ path('dateMarkUpdate') }}',
+                url: '{{ path('dateMarkUpdate') }}',
                 data: ({
                     "date_id": date_id,
                     "date":date,
@@ -141,6 +155,7 @@
                     "type_mark_id":typeMark,
                     "color":color
                 }),
+                beforeSend : function(){disabledTable()},
                 error: function () {
                     note({
                         content: "Сталася помилка, перезавантажте сторінку.",
@@ -149,7 +164,11 @@
                     });
                 },
                 success: function (result) {
-                    //console.log(result)
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 5
+                    });
 
                 }
             });
@@ -203,9 +222,7 @@
         let modal_content = document.getElementsByClassName("modal-close")[0];
         //если кликаю на крестик, добавлюя id коммента в модальное окно для редактирование комменатрия
         $('html').on('click', '.button-show-modal-update-subject', function () {
-            showSubjectTeacherList()
-            getSubjectStudent()
-            getSubjectName();
+
             getTypeMark();
             modal.style.display = "block";
 
@@ -229,20 +246,19 @@
 
         $('html').on('click', '.button-update-subject-date', function () {
 
-            var date_id = $('.modal-update-subject').attr('data-date-id');
-            var date = $('.date-subject-modal').val();
-            var description = $('.textarea-subject-modal').val();
-            var attestation = $('.checkbox-subject-modal').is(':checked');
-            attestation = attestation?1:0;
-            updateDate(date_id,date,description,attestation);
+            updateDate();
 
+            $('.date-subject-modal').val('');
+            $('.textarea-subject-modal').val('');
+            $('.checkbox-subject-modal').val('')
+            modal_date.style.display = "none";
             showSubjectJournal();
 
         });
 
 
-        //если кликаю на крестик, добавлюя id коммента в модальное окно для редактирование комменатрия
-        $('html').on('click', '.journal-table-date', function () {
+
+        $('html').on('click', '.journal-table-date-click', function () {
             let date_id =  $(this).attr('data-date-id');
             $('.modal-update-subject').attr('data-date-id',date_id);
             //getDate(date_id);
@@ -252,7 +268,9 @@
 
         });
 
-        span.onclick = function () {
+        let close_modal_edit_date = document.getElementsByClassName("modal-close-edit-date")[0];
+
+        close_modal_edit_date.onclick = function () {
             $('.date-subject-modal').val('');
             $('.textarea-subject-modal').val('');
             $('.checkbox-subject-modal').val('')
@@ -261,7 +279,6 @@
 
         window.onclick = function (event) {
             if (event.target == modal_date) {
-
 
                 modal_date.style.display = "none";
             }

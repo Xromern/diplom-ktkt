@@ -218,22 +218,27 @@ class AppFixtures extends Fixture
 
         $typeMark1=  new JournalTypeMark();
         $typeMark1->setName('Оцінка');
+        $typeMark1->setColor('none');
         $manager->persist($typeMark1);
 
         $typeMark1=  new JournalTypeMark();
         $typeMark1->setName('Атестація');
+        $typeMark1->setColor('#00008B');
         $manager->persist($typeMark1);
 
         $typeMark1=  new JournalTypeMark();
         $typeMark1->setName('Контрольна');
+        $typeMark1->setColor('#FD5E53');
         $manager->persist($typeMark1);
 
         $typeMark1=  new JournalTypeMark();
         $typeMark1->setName('Самостійна');
+        $typeMark1->setColor('#7FFFD4');
         $manager->persist($typeMark1);
 
         $typeMark1=  new JournalTypeMark();
         $typeMark1->setName('Лабораторна');
+        $typeMark1->setColor('#006633');
         $manager->persist($typeMark1);
 
 
