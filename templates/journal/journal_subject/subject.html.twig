@@ -6,8 +6,14 @@
 {% block body %}
 
 
-    <div class="container-table-subject-journal">
 
+    <div class="container-table-subject-journal">
+        <div class="block-type-mark">
+            {% for type in typeMark %}
+                <div class="type-mark-color" style="background:{{ type.getColor }}"></div>
+                <div>{{ type.getName }}</div>
+            {% endfor %}
+        </div>
         <table class="table-subject-journal table ver" >
             {{ include('journal/journal_subject/head-table.html.twig',{'subject':subject}) }}
 
@@ -52,7 +58,6 @@
                 <div class="row-date-modal">
                 <input type="date" class="date-subject-modal" >
                 <select class="select-type-mark"></select>
-                    <input type="color" class="color-mark" style="padding: 0;background-color: #FFFFFF; border: #1e5ad1;" >
                 </div>
                 <div class="subject-modal-block-attestation">
                 <textarea class="textarea-subject-modal"></textarea>
@@ -64,8 +69,6 @@
 
     </div>
     <script>
-        //showSubjectJournal()
-
 
         function disabledTable() {
             let table ='.table-subject-journal';
@@ -124,6 +127,11 @@
                 success: function (result) {
 
                     showSubjectJournal();
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 5
+                    });
                 }
             });
         }
@@ -142,9 +150,6 @@
             let date = $('.date-subject-modal').val();
             let description = $('.textarea-subject-modal').val();
             let typeMark = $('.select-type-mark').val();
-            let color = $('.color-mark').val();
-            console.log(color);
-            $("YOUR_TABLE").find("*").attr("disabled", "disabled");
             $.ajax({
                 type: 'POST',
                 url: '{{ path('dateMarkUpdate') }}',
@@ -153,7 +158,6 @@
                     "date":date,
                     "description":description,
                     "type_mark_id":typeMark,
-                    "color":color
                 }),
                 beforeSend : function(){disabledTable()},
                 error: function () {
@@ -178,7 +182,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '/journal/getDate',
+                url: '{{ path('dateGet') }}',
                 data: ({
                     "date_id": date_id
                 }),
@@ -192,7 +196,7 @@
                 success: function (result) {
                     $('.date-subject-modal').val(result['date']);
                     $('.textarea-subject-modal').val(result['description']);
-                    $('.checkbox-subject-modal').prop('checked', result['attestation']);
+                    $('.select-type-mark:nth-child('+result['type_mark_id']+')').attr("selected", "selected");
                 }
             });
         }
@@ -209,7 +213,6 @@
                     });
                 },
                 success: function (result) {
-                    console.log(result)
                     $('.select-type-mark').html(result)
                 }
             });
@@ -261,9 +264,12 @@
         $('html').on('click', '.journal-table-date-click', function () {
             let date_id =  $(this).attr('data-date-id');
             $('.modal-update-subject').attr('data-date-id',date_id);
-            //getDate(date_id);
+
             modal_date.style.display = "block";
-            getTypeMark();
+            setTimeout(function () {
+                getTypeMark();
+                getDate(date_id);
+            },400)
 
 
         });

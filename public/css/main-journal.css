@@ -367,11 +367,6 @@ input{
     width: 25px;
 }
 
- td,
-th {
-
-}
-
 table {
     width: 1200px;
     margin: 0 auto;
@@ -488,10 +483,12 @@ height: auto;
     display: inline-block;
 }
 .table-subject-select{
-     width: 20px !important;
-    height: 24px !important;
+     width: 100%;
+    height: 100%;
     font-size: 16px;
     font-weight: bold;
+    border-color: #1ea471;
+    margin-left:3px ;
  }
 
 .select-type-mark{
@@ -508,4 +505,27 @@ tr:hover td{
 
 .color-mark{
     cursor: pointer;
+}
+.table-subject-marks{
+    width: 30px !important;
+    /*padding: 0 0 0 3px!important;*/
+}
+.block-type-mark{
+    width: 1200px;
+    margin:0 auto;
+}
+
+.block-type-mark div{
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.type-mark-color{
+    width: 12px;
+    height: 12px;
+    border:1px solid #1b1e21;
+}
+
+.disabled-td{
+   background: #a19ba8 !important;
 }

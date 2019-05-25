@@ -33,6 +33,8 @@ class JournalSubjectController extends AbstractController
 
         $students = [];
 
+        $typeMark = $manager->getRepository(JournalTypeMark::class)->findAll();
+
         foreach ($subject->getStudents() as $student) {
 
             $students[] = $manager->getRepository(JournalMark::class)
@@ -46,6 +48,7 @@ class JournalSubjectController extends AbstractController
 
             'subject'=>$subject,
             'students'=>$students,
+            'typeMark'=>$typeMark
 
         ]);
 
@@ -112,8 +115,6 @@ class JournalSubjectController extends AbstractController
             $d = new \DateTime($request->get('date'));
         }
 
-
-
         if($d==null){
 
             $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
@@ -130,19 +131,6 @@ class JournalSubjectController extends AbstractController
 
             }
 
-
-//            $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
-////                ->leftJoin('d.marks','m')
-////                ->andWhere("m.mark IS NOT NULL OR m.mark != '' ")
-////                ->andWhere("d.id = :date_id")
-////                ->setParameter('date_id',$request->get('date_id'))
-//                            ->getQuery()
-//                    ->execute();
-//
-//                if($checkDate){
-//                    return new JsonResponse(array('type' => 'error','message'=>'У студентів є оцінки'));
-//
-//            }
         }
 
         $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
@@ -185,7 +173,6 @@ class JournalSubjectController extends AbstractController
 
         $date->setDescription($request->get('description'));
         $date->setDate($d);
-        $date->setColor($request->get('color'));
         $date->setTypeMark($typeMark);
         $manager->persist($date);
         $manager->flush();
@@ -193,6 +180,27 @@ class JournalSubjectController extends AbstractController
         return new JsonResponse(array('type' => 'info','message'=>'Дата оновлена'));
 
     }
+
+    /**
+     * @Route("/journal/ajax/dateGet", name="dateGet")
+     */
+    public function dateGet(Request $request,ObjectManager $manager)
+    {
+        $date = $manager->getRepository(JournalDateMark::class)->find($request->get('date_id'));
+        if($date->getDate()!=null){
+            $d = $date->getDate()->format('Y-m-d');
+        }else{
+            $d = null;
+        }
+        return new JsonResponse(
+            array(
+            'description' => $date->getDescription(),
+            'date'=> $d,
+            'type_mark_id'=>$date->getTypeMark()->getId()
+            )
+        );
+    }
+
 
     /**
      * @Route("/journal/ajax/markUpdate", name="markUpdate")

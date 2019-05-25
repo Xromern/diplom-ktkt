@@ -32,6 +32,11 @@ class JournalTypeMark
      */
     private $color;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $average;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -85,5 +90,25 @@ class JournalTypeMark
         $this->color = $color;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getAverage()
+    {
+        return $this->average;
+    }
+
+    /**
+     * @param mixed $average
+     */
+    public function setAverage($average): void
+    {
+        $this->average = $average;
+    }
+
+    public function __construct()
+    {
+        $this->average = 0;
+    }
 
 }
