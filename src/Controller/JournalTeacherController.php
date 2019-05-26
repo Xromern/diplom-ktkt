@@ -6,8 +6,10 @@ use App\Entity\JournalCode;
 use App\Entity\JournalGroup;
 use App\Entity\JournalSpecialty;
 use App\Entity\JournalStudent;
+use App\Entity\JournalSubject;
 use App\Entity\JournalTeacher;
 use App\Service\Helper;
+use PhpParser\Builder\Class_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -165,4 +167,32 @@ class JournalTeacherController extends AbstractController
         return new Response($string);
     }
 
+
+
+    /**
+     * @Route("/journal/ajax/teacherSelect", name="teacherSelect")
+     */
+    public function teacherSelect(Request $request, ObjectManager $manager){
+        $subject = $manager->getRepository(JournalSubject::class)->find($request->get('subject_id',0));
+        if($subject){
+            $mainTeacher = $subject->getMainTeacher();
+        }else{
+            $mainTeacher = null;
+        }
+
+        $teachers = $manager->getRepository(JournalTeacher::class)->findAll();
+
+        $string="<option value='0'></option>";
+        foreach ($teachers as $item){
+            if($mainTeacher != null) $teacherId = $mainTeacher->getId(); else $teacherId = 0;
+            if($item->getId() == $teacherId){
+                $selected = "selected";
+            }else{
+                $selected = "";
+            }
+            $string.="<option $selected value='".$item->getId()."'>".$item->getName()."</option>";
+        }
+        return new JsonResponse(array('teachers'=>$string));
+
+    }
 }

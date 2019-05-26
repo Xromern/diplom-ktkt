@@ -1,7 +1,7 @@
 
 {% extends 'base-journal.html.twig' %}
 
-{% block title %}Групи{% endblock %}
+{% block title %}{{ subject.getGroup.getName }} - {{ subject.getName }}{% endblock %}
 
 {% block body %}
 
@@ -37,7 +37,7 @@
                 <div class="button button-update-subject">Зберегти</div>
             </div>
             <div class="container-table-students-subject">
-                @include('MainSite.preloader')
+                <div class="preLoader" id="preloader-students"></div>
                 <div class="field_block_2 student_select">
                     <table class="student_ student_yes">
                     </table>
@@ -69,6 +69,180 @@
 
     </div>
     <script>
+        let preloaderStudents = new Preloader(
+
+            $('#preloader-students'),
+
+            '{{ asset("images/preloader/preloader.gif") }}'
+        );
+
+        $('html').on('click', '.button-show-modal-update-subject', function () {
+            showSubjectTeacherList()
+            getSubjectStudent()
+            getSubjectName()
+            modal.style.display = "block";
+
+
+        });
+
+        function deleteStudentFromSubject(student_id) {
+            $.ajax({
+                type: 'delete',
+                url: '/journal/deleteStudentFromSubject',
+                data: ({
+                    "subject_id": '{{ subject.getId }}',
+                    "student_id": student_id
+                }),
+                beforeSend: function () {
+                    $('.student_select').html("");
+                    $('.preLoader').show();
+                },
+                complete: function () {
+                    $('.preLoader').hide();
+                    getSubjectStudent();
+                },
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    if (result == "true") {
+                        note({
+                            content: "Студента успішно выдалено.",
+                            type: "info",
+                            time: 5
+                        });
+                    } else {
+                        note({
+                            content: result,
+                            type: "error",
+                            time: 3
+                        });
+                    }
+
+
+                }
+            });
+        }
+
+        function addStudentToSubject(student_id) {
+            $.ajax({
+                type: 'POST',
+                url: '/journal/addStudentToSubject',
+                data: ({
+                    "subject_id": '{{subject.getId}}',
+                    "student_id": student_id
+                }),
+                beforeSend: function () {
+                    $('.student_select').html("");
+                    $('.preLoader').show();
+                },
+                complete: function () {
+                    $('.preLoader').hide();
+                    getSubjectStudent();
+                },
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    if (result == "true") {
+                        note({
+                            content: "Студента успішно додано.",
+                            type: "info",
+                            time: 5
+                        });
+                    } else {
+                        note({
+                            content: result,
+                            type: "error",
+                            time: 3
+                        });
+                    }
+
+
+                }
+            });
+        }
+
+        function getSubjectStudent() {
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('getSubjectStudents') }}',
+                data: ({
+                    "subject_id": '{{subject.getId}}',
+                }),
+                beforeSend: function () {
+                    $('.preLoader').show();
+                },
+                complete: function () {
+                    $('.preLoader').hide();
+                },
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+
+                    $('.student_select').html(result);
+
+                }
+            });
+        }
+
+
+        function getSubjectName() {
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('subjectNameGet') }}',
+                data: ({
+                    "subject_id": '{{ subject.getId}}'
+                }),
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    $('.input-update-subject').val(result['name']);
+
+                }
+            });
+        }
+
+        function showSubjectTeacherList() {
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('teacherSelect') }}',
+                data: ({
+                    "subject_id": '{{ subject.getId}}'
+                }),
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    $('.select-teacher').html(result['teachers']);
+                }
+            });
+        }
 
         function disabledTable() {
             let table ='.table-subject-journal';
@@ -195,8 +369,9 @@
                 },
                 success: function (result) {
                     $('.date-subject-modal').val(result['date']);
+
                     $('.textarea-subject-modal').val(result['description']);
-                    $('.select-type-mark:nth-child('+result['type_mark_id']+')').attr("selected", "selected");
+                    $('.select-type-mark').val(result['type_mark_id']);
                 }
             });
         }
@@ -214,6 +389,7 @@
                 },
                 success: function (result) {
                     $('.select-type-mark').html(result)
+
                 }
             });
         }
@@ -266,10 +442,10 @@
             $('.modal-update-subject').attr('data-date-id',date_id);
 
             modal_date.style.display = "block";
-            setTimeout(function () {
+
                 getTypeMark();
                 getDate(date_id);
-            },400)
+
 
 
         });
@@ -279,7 +455,7 @@
         close_modal_edit_date.onclick = function () {
             $('.date-subject-modal').val('');
             $('.textarea-subject-modal').val('');
-            $('.checkbox-subject-modal').val('')
+            $('.select-type-mark').val('');
             modal_date.style.display = "none";
         }
 
@@ -288,6 +464,38 @@
 
                 modal_date.style.display = "none";
             }
+        }
+
+        remove_student();
+
+        function remove_student() {
+            $('html').on('click', '.student_yes tr', function (e) {
+                var student_id = $(this).attr('data-id-student');
+                deleteStudentFromSubject(student_id);
+
+                $(this).prependTo($('.student_no'));
+                calculation_height();
+                showSubjectJournal()
+            });
+        }
+
+        add_student();
+
+        function add_student() {
+            $('html').on('click', '.student_no tr', function (e) {
+                var student_id = $(this).attr('data-id-student');
+                addStudentToSubject(student_id);
+
+                $(this).prependTo($('.student_yes'));
+                calculation_height();
+                showSubjectJournal()
+            });
+        }
+
+        function calculation_height() {
+            var length = $('.student_no tr').length;
+            var min_height = length * 35.3;
+            $('.student_select').css('min-height', min_height + 'px');
         }
 
         $('html').on('mouseover', '.column', function() {

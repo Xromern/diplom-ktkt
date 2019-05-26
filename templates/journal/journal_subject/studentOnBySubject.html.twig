@@ -1,0 +1,23 @@
+
+{% set i = 1 %}
+
+<table class='student_ student_yes'>
+    {% for student in studentsYes %}
+    <tr data-id-student='{{ student.getId }}'>
+    <td style='padding:0px; text-align:center;'>{{ i }}</td>
+    <td>{{ student.getName }}</td>
+    </tr>
+    {% set i = i + 1 %}
+    {% endfor %}
+</table>
+
+{% set i = 1 %}
+<table class='student_ student_no'>
+    {% for student in studentsNo %}
+        <tr data-id-student='{{ student.getId }}'>
+            <td style='padding:0px; text-align:center;'>{{ i }}</td>
+            <td>{{ student.getName }}</td>
+        </tr>
+    {% set i = i + 1 %}
+    {% endfor %}
+</table>

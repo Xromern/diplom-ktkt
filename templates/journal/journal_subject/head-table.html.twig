@@ -2,6 +2,7 @@
 {% set disabled = "" %}
 {% set dateDisabled = "" %}
 {% set checkDate = true %}
+{% set title = "" %}
 <thead>
 <tr>
     <th class="subject-counter-students" rowspan="2">id</th>
@@ -27,7 +28,7 @@
     style="background: {{ d.getTypeMark.getColor }}"
     data-column='column{{ i }}'
     data-date-id='{{ d.getId }}'
-    title="{{ d.getTypeMark.name }}. {{ d.description }}">
+    title="  {{d.getDate|date('d-m-Y') }}; {{ d.getTypeMark.name }}; {{ d.description }}">
     <div style="background: #fff">
     {% if d.getDate is not null %}
     {{ d.getDate|date('m d') }}
@@ -47,9 +48,9 @@
 
 {% for mark in student.mark %}
 
-{% if mark.getDateMark.getDate is null %} {% set disabled = "disabled-td" %}{% endif %}
+{% if mark.getDateMark.getDate is null %} {% set disabled = "disabled-td"%}{%  set title = 'title = Спочатку_поставте_дату ' %}{% endif %}
 
- <td data-column='column{{ c }}' style="background-color: {{ mark.getDateMark.getTypeMark.getColor }};"  class='table-subject-marks {{ disabled }} column column{{ c }}' data-subject-mark-id='{{ mark.getId }}'>
+ <td {{ title }} data-column='column{{ c }}' style="background-color: {{ mark.getDateMark.getTypeMark.getColor }};"  class='table-subject-marks {{ disabled }} column column{{ c }}' data-subject-mark-id='{{ mark.getId }}'>
      <select data-id-mark='{{ mark.getId }}' class='table-subject-select {{ disabled }}'>
          {% if mark.getDateMark.getDate is not null and mark.getDateMark.getTypeMark.getAverage == 0%}
              <option></option>
@@ -75,7 +76,7 @@
          {% endif %}
      </select>
  </td>
-    {% set c = c + 1  %}{% set disabled = "" %}
+    {% set c = c + 1  %}{% set disabled = "" %}{%  set title = "" %}
 {% endfor %}
     {% if(counter_marks!=0) %}
       <td class="average_mark">{{ (average/counter_marks)|round(1, 'floor')  }}</td>

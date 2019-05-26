@@ -292,7 +292,7 @@
         $('.select-curator').html(' ');
         $.ajax({
             type: 'POST',
-            url: '{{ path('journal_curator_select') }}',
+            url: '{{ path('teacherSelect') }}',
             error:function(){
                 note({
                     content: "Сталась помилка, перезавантажте сторінку.",
@@ -301,7 +301,7 @@
                 });
             },
             success: function(result){
-                $('.select-teacher').html(result);
+                $('.select-teacher').html(result['teachers']);
             }
         });
     }

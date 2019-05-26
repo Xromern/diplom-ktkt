@@ -42,8 +42,6 @@ class JournalSubjectController extends AbstractController
 
         }
 
-
-
         return $this->render('journal/journal_subject/subject.html.twig',[
 
             'subject'=>$subject,
@@ -51,8 +49,6 @@ class JournalSubjectController extends AbstractController
             'typeMark'=>$typeMark
 
         ]);
-
-
 
     }
 
@@ -201,6 +197,16 @@ class JournalSubjectController extends AbstractController
         );
     }
 
+    /**
+     * @Route("/journal/ajax/subjectNameGet", name="subjectNameGet")
+     */
+    public function subjectNameGet(Request $request,ObjectManager $manager)
+    {
+        $subject = $manager->getRepository(JournalSubject::class)->find($request->get('subject_id'));
+
+        return new JsonResponse(array('name'=>$subject->getName()));
+
+    }
 
     /**
      * @Route("/journal/ajax/markUpdate", name="markUpdate")
@@ -259,6 +265,46 @@ class JournalSubjectController extends AbstractController
         $manager->flush();
 
         return new JsonResponse(array('type' => 'info','message'=>'Предмет створено.'));
+    }
+
+    /**
+     * @Route("/journal/ajax/getSubjectStudents", name="getSubjectStudents")
+     */
+    public function getSubjectStudents(Request $request, ObjectManager $manager)
+    {
+        $subject = $manager->getRepository(JournalSubject::class)->find($request->get('subject_id'));
+
+        $arrayIdStudentSubject = [];
+        foreach ($subject->getStudents() as $student) {
+            $arrayIdStudentSubject[] = $student->getId();
+        }
+
+        $group = $manager->getRepository(JournalGroup::class)->find($subject->getGroup()->getId());
+
+        $arrayIdStudentGroup = [];
+        foreach ($group->getStudents() as $student) {
+            $arrayIdStudentGroup[] = $student->getId();
+        }
+
+        $arrayIdStudentNotSubject = [];
+
+        foreach ($arrayIdStudentGroup as $item){
+            if(!in_array($item,$arrayIdStudentSubject))
+            $arrayIdStudentNotSubject[] = $item;
+        }
+        $studentsNotSubject = [];
+
+        foreach ($arrayIdStudentNotSubject as $item) {
+            $studentsNotSubject[] = $manager->getRepository(JournalStudent::class)->find($item);
+        }
+
+
+        $tables = $this->render('journal/journal_subject/studentOnBySubject.html.twig',array(
+         'studentsYes'=>$subject->getStudents(),
+         'studentsNo'=>$studentsNotSubject
+        ));
+
+        return ($tables);
     }
 
 }

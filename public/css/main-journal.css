@@ -263,22 +263,25 @@ input{
 
 .container-table-students-subject tr {
     margin-top: 10px;
+    border: 1px solid #fff;
 }
 
 .container-table-students-subject .sd-student-name {
     width: 320px !important;
 }
-.container-table-students-subject .student_ .rewmove-student {
-    width: 10%;
-}
+
 .container-table-students-subject .student_select {
     padding: 0;
 }
 
 .container-table-students-subject .student_ td {
     border-color: #fff;
-    padding: 2px;
+    padding: 7px;
     cursor: pointer;
+}
+
+.container-table-students-subject .student_ td:nth-child(2) {
+    width: 400px;
 }
 
 .container-table-students-subject .student_no {
@@ -527,5 +530,5 @@ tr:hover td{
 }
 
 .disabled-td{
-   background: #a19ba8 !important;
+   background: #ded8e5 !important;
 }
