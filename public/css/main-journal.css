@@ -480,6 +480,7 @@ height: auto;
 .container-subject-block{
     width: 500px;
     margin: 0 auto;
+    margin-bottom: 10px;
 }
 .container-subject-block .button{
     width: 46%;

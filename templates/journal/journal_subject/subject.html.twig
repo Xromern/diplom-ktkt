@@ -5,8 +5,6 @@
 
 {% block body %}
 
-
-
     <div class="container-table-subject-journal">
         <div class="block-type-mark">
             {% for type in typeMark %}
@@ -16,8 +14,16 @@
         </div>
         <table class="table-subject-journal table ver" >
             {{ include('journal/journal_subject/head-table.html.twig',{'subject':subject}) }}
-
         </table>
+    </div>
+
+    <div class="container-subject-block row-paginate-subject">
+
+        {{ include('journal/journal_subject/subject-paginate.html.twig',{
+            'page':app.request.attributes.get('_route_params')['page'],
+            'totalPage':totalPage
+        }) }}
+
     </div>
 
 
@@ -251,12 +257,13 @@
             $(table).css({'filter': 'blur(3px)'})
         }
 
-        function showSubjectJournal() {
+        function showSubjectJournal(page = "{{ (app.request.attributes.get('_route_params'))['page'] }}") {
+            disabledTable();
             $.ajax({
                 type: 'post',
                 url: "{{ path('showTableSubject') }}",
                 data: ({
-
+                    "page":page,
                     "subject_alis": '{{ subject.getId }}'
                 }),
                 error: function () {
@@ -275,6 +282,54 @@
                 }
             });
         }
+
+        function paginateSubject(page) {
+            $('.button-prev-page').removeClass('click');
+            $('.button-next-page').removeClass('click');
+            disabledTable();
+            $.ajax({
+                type: 'post',
+                url: "{{ path('paginateSubject') }}",
+                data: ({
+                    "page":page,
+                    "subject_alis": '{{ subject.getId }}'
+                }),
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    $('.row-paginate-subject').html(result);
+                    $('.button-prev-page').addClass('click');
+                    $('.button-next-page').addClass('click');
+                }
+            });
+        }
+
+        $('html').on('click', '.button-prev-page.click',function () {
+            history.pushState({},
+                'page',
+                '/journal/group/'+"{{
+                    (app.request.attributes.get('_route_params'))['group_alis'] }}/{{ (app.request.attributes.get('_route_params'))['subject_alis'] }}/"+$(this).data('page'));
+           showSubjectJournal($(this).data('page'));
+           paginateSubject($(this).data('page'));
+
+        })
+
+        $('html').on('click', '.button-next-page.click',function () {
+            history.pushState({},
+                'page',
+                '/journal/group/'+"{{
+                    (app.request.attributes.get('_route_params'))['group_alis'] }}/{{ (app.request.attributes.get('_route_params'))['subject_alis'] }}/"+$(this).data('page'));
+            showSubjectJournal($(this).data('page'));
+            paginateSubject($(this).data('page'));
+
+        })
+
+
 
         $('html').on('change', '.table-subject-select',function () {
             updateMark($(this).val(), $(this).attr('data-id-mark'));
@@ -299,8 +354,10 @@
                 },
                 beforeSend : function(){disabledTable()},
                 success: function (result) {
+                    setTimeout(function () {
+                        showSubjectJournal();
+                    },400)
 
-                    showSubjectJournal();
                     note({
                         content: result['message'],
                         type: result['type'],
@@ -311,8 +368,6 @@
         }
 
         $('html').on('click', '.button-update-subject-date', function () {
-
-           // updateDate();
 
             showSubjectJournal();
 
@@ -342,6 +397,7 @@
                     });
                 },
                 success: function (result) {
+                        showSubjectJournal();
                     note({
                         content: result['message'],
                         type: result['type'],
@@ -388,7 +444,45 @@
                     });
                 },
                 success: function (result) {
-                    $('.select-type-mark').html(result)
+                    $('.select-type-mark').html(result);
+
+                }
+            });
+        }
+
+
+        $('html').on('click', '.button-create-page', function () {
+
+            createPage()
+
+        });
+
+        function createPage(){
+            $.ajax({
+                type: 'post',
+                data: ({
+                    "subject_id": '{{ subject.getId }}'
+                }),
+                url: "{{ path('subjectPageAdd') }}",
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 10
+                    });
+                    history.pushState({},
+                        'page',
+                        '/journal/group/'+"{{
+                            (app.request.attributes.get('_route_params'))['group_alis'] }}/{{ (app.request.attributes.get('_route_params'))['subject_alis'] }}/"+result['page']);
+                    showSubjectJournal(result['page']);
+
 
                 }
             });

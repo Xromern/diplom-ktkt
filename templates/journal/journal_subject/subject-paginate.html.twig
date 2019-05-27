@@ -1,0 +1,19 @@
+{% if page > 0 %}
+  <div data-page="{{ page - 1 }}" class="button button-prev-page click"> < </div>
+
+{% else %}
+
+  <div class="button" style="visibility: hidden"> 0 </div>
+
+{% endif %}
+
+
+{% if page < totalPage %}
+
+  <div data-page="{{ page + 1 }}" class="button button-prev-page click"> > </div>
+
+{% elseif page == totalPage %}
+
+  <div class="button button-create-page"> Додати сторінку</div>
+
+{% endif %}

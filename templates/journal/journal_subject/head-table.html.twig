@@ -3,7 +3,8 @@
 {% set dateDisabled = "" %}
 {% set checkDate = true %}
 {% set title = "" %}
-<thead>
+<caption><b>{{ subject.getName }} ({{ subject.getMainTeacher.getName }})</b></caption>
+<thead data-page = '{{ dates[0].getPage }}'>
 <tr>
     <th class="subject-counter-students" rowspan="2">id</th>
     <th class="name-student" rowspan="2">Прізвище та ініціали</th>
@@ -11,9 +12,7 @@
     <th rowspan=2 width="35px">с/б</th>
 </tr>
 <tr>
-{% for d in subject.getDateMarks %}
-
-
+{% for d in dates %}
 
 {% if d.getDate is not null or checkDate == true %}
     {% set dateDisabled = "journal-table-date-click" %}

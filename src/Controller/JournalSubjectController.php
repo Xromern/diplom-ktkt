@@ -23,9 +23,15 @@ class JournalSubjectController extends AbstractController
 {
 
     /**
-     * @Route("/journal/group/{group_alis}/{subject_alis}", name="journal_show_subject")
+     * @Route("/journal/group/{group_alis}/{subject_alis}/{page}",
+     *   name="journal_show_subject",
+     *  defaults={"page": "0"},
+     *  requirements={
+     *     "page": "\d+"
+     * }
+     *  )
      */
-    public function index(Request $request,ObjectManager $manager)
+    public function index(Request $request, ObjectManager $manager)
     {
 
         $subject = $manager->getRepository(JournalSubject::class)
@@ -35,22 +41,56 @@ class JournalSubjectController extends AbstractController
 
         $typeMark = $manager->getRepository(JournalTypeMark::class)->findAll();
 
+        $pages = $manager->getRepository(JournalDateMark::class)->getCountPage($subject->getId());
+        if ($pages - 1 < $request->get('page', 0)) {
+            return $this->render('Journal/Exception/error404.html.twig', [
+
+                'message_error' => 'Сторінка не знайдена'
+            ]);
+        }
+
+
+        $dates = $manager->getRepository(JournalDateMark::class)
+            ->getOnByPage($subject->getId(), $request->get('page', 0));
+
+
         foreach ($subject->getStudents() as $student) {
 
             $students[] = $manager->getRepository(JournalMark::class)
-                ->getOnMarksByStudent($student,$subject->getId(),$page = 0);
+                ->getOnMarksByStudent($student, $subject->getId(), $request->get('page'));
 
         }
 
-        return $this->render('journal/journal_subject/subject.html.twig',[
+//        dd($request->get('page'));
+        return $this->render('journal/journal_subject/subject.html.twig', [
 
-            'subject'=>$subject,
-            'students'=>$students,
-            'typeMark'=>$typeMark
+            'subject' => $subject,
+            'students' => $students,
+            'typeMark' => $typeMark,
+            'dates' => $dates,
+            'totalPage' => $pages - 1,
 
         ]);
 
     }
+
+    /**
+     * @Route("/journal/ajax/paginateSubject", name="paginateSubject")
+     */
+    public function paginateSubject(Request $request, ObjectManager $manager)
+    {
+        $subject = $manager->getRepository(JournalSubject::class)
+            ->find($request->get('subject_alis'));
+
+        $pages = $manager->getRepository(JournalDateMark::class)->getCountPage($subject->getId());
+
+        return $this->render('journal/journal_subject/subject-paginate.html.twig', array(
+            'page'=>$request->get('page'),
+            'totalPage'=>$pages-1
+        ));
+    }
+
+
 
     /**
      * @Route("/journal/ajax/showTableSubject", name="showTableSubject")
@@ -63,10 +103,14 @@ class JournalSubjectController extends AbstractController
 
         $students = [];
 
+
+        $dates = $manager->getRepository(JournalDateMark::class)
+            ->getOnByPage($subject->getId(),$request->get('page',0));
+
         foreach ($subject->getStudents() as $student) {
 
             $students[] = $manager->getRepository(JournalMark::class)
-                ->getOnMarksByStudent($student,$subject->getId(),$page = 0);
+                ->getOnMarksByStudent($student,$subject->getId(),$request->get('page',0));
 
         }
 
@@ -74,6 +118,8 @@ class JournalSubjectController extends AbstractController
 
             'subject'=>$subject,
             'students'=>$students,
+            'dates'=>$dates,
+
 
         ]);
 
@@ -226,6 +272,44 @@ class JournalSubjectController extends AbstractController
     }
 
     /**
+     * @Route("/journal/ajax/subjectPageAdd", name="subjectPageAdd")
+     */
+    public function addPageSubject(Request $request, ObjectManager $manager)
+    {
+        $subject = $manager->getRepository(JournalSubject::class)->find($request->get('subject_id'));
+        $pages = $manager->getRepository(JournalDateMark::class)->getCountPage($subject->getId());
+
+        $lastDateLastPage = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
+            ->leftJoin('d.subject','s')
+            ->andWhere('s.id = :subject_id')
+            ->andWhere('d.page = :page')
+            ->setParameter('subject_id',$request->get('subject_id'))
+            ->setParameter('page',$pages)
+            ->orderBy('d.id','desc')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->execute();
+
+        if($lastDateLastPage[0]->getDate() == null){
+            return new JsonResponse(array('type' => 'error','message'=>'Спочатку запвоніть журнал'));
+
+        }
+
+        $arrayIdStudentSubject = [];
+        foreach ($subject->getStudents() as $student) {
+            $arrayIdStudentSubject[] = $student->getId();
+        }
+
+        $typeMark = $manager->getRepository(JournalTypeMark::class)->findOneBy(array('name'=>'Оцінка'));
+
+        Service\Journal::createPageJournal($pages,$typeMark,$subject,$arrayIdStudentSubject,$manager);
+        $manager->flush();
+
+        return new JsonResponse(array('type' => 'info','message'=>'Сторінку журнала створено','page'=>$pages));
+
+    }
+
+    /**
      * @Route("/journal/ajax/subjectAdd", name="subjectAdd")
      */
     public function addSubject(Request $request, ObjectManager $manager)
@@ -260,7 +344,7 @@ class JournalSubjectController extends AbstractController
 
         $manager->persist($subject);
 
-        Service\Journal::createJournal($typeMark,$subject,$listStudent,$manager);
+        Service\Journal::createPageJournal(0,$typeMark,$subject,$listStudent,$manager);
 
         $manager->flush();
 

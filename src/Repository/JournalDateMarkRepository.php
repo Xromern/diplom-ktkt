@@ -19,13 +19,25 @@ class JournalDateMarkRepository extends ServiceEntityRepository
         parent::__construct($registry, JournalDateMark::class);
     }
 
-    public function getPageSubject(int $subject_id){
-        return  $this->createQueryBuilder('d')
+    public function getCountPage(int $subject_id){
+        return count($this->createQueryBuilder('d')
             ->select('distinct(d.page) as page')
             ->leftJoin('d.subject','s')
             ->andWhere('s.id = :subject_id')
-            ->setParameter('subject_id',20)
+            ->setParameter('subject_id',$subject_id)
             ->orderBy('page','asc')
+            ->getQuery()
+            ->execute());
+
+    }
+
+    public function getOnByPage(int $subject_id,int $page){
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.subject','s')
+            ->andWhere('s.id = :subject_id')
+            ->andWhere('d.page = :page')
+            ->setParameter('subject_id',$subject_id)
+            ->setParameter('page',$page)
             ->getQuery()
             ->execute();
 
