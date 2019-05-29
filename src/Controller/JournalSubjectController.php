@@ -178,9 +178,7 @@ class JournalSubjectController extends AbstractController
         $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
             ->leftJoin('d.subject','s')
             ->andWhere('s.id = :subject_id')
-            ->andWhere('d.date >= :date')
-            ->andWhere('d.id < :date_id')
-            ->orWhere('d.id > :date_id and :date > d.date')
+            ->andWhere('d.date >= :date and d.id < :date_id')//выбираю  все дати которые >= текущей и стоят до этой даты
             ->setParameter('subject_id',$date->getSubject()->getId())
             ->setParameter('date',$d)
             ->setParameter('date_id',$request->get('date_id'))
@@ -190,6 +188,21 @@ class JournalSubjectController extends AbstractController
         if($checkDate){
             return new JsonResponse(array('type' => 'error','message'=>'Неможливо поставити меншу дату'));
         }
+
+        $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
+            ->leftJoin('d.subject','s')
+            ->andWhere('s.id = :subject_id')
+            ->andWhere('d.date <= :date and d.id > :date_id')//выбираю  все дати которые >= текущей и стоят до этой даты
+            ->setParameter('subject_id',$date->getSubject()->getId())
+            ->setParameter('date',$d)
+            ->setParameter('date_id',$request->get('date_id'))
+            ->getQuery()
+            ->execute();
+
+        if($checkDate){
+            return new JsonResponse(array('type' => 'error','message'=>'Неможливо поставити більшу дату'));
+        }
+
 
         $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
             ->leftJoin('d.subject','s')
@@ -210,6 +223,21 @@ class JournalSubjectController extends AbstractController
 
         }else{
             $typeMark = $manager->getRepository(JournalTypeMark::class)->find( $request->get('type_mark_id'));
+
+        }
+
+        if($typeMark->average() == 1){
+            $students = $date->getSujbect->getStudents();
+
+            foreach ($students as $s){
+                $marks = $manager->getRepository(JournalMark::class)->createQueryBuilder('m')
+                    ->leftJoin('m.student','stud')
+                    ->leftJoin('m.subjects','sub')
+                    ->leftJoin('m.date','d')
+                    ->andWhere('stud.id = :student_id')
+                   // ->adnWhere('')
+
+            }
 
         }
 
@@ -369,7 +397,7 @@ class JournalSubjectController extends AbstractController
         }
 
         $checkNameSubject = $manager->getRepository(JournalSubject::class)
-            ->checkForUniqueness($request->get('name_subject'),$group->getId());
+            ->checkForUniqueness($request->get('name_subject'),$group->getId(),$subject->getId());
 
         if(count(($checkNameSubject))!=0){
             return new JsonResponse(array('type' => 'error','message'=>'Предмет з таким іменем вже існує.'));

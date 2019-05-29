@@ -35,14 +35,16 @@ class JournalSubjectRepository extends ServiceEntityRepository
             ->execute()[0];
     }
 
-    public function checkForUniqueness($subjectName,$group_id){
+    public function checkForUniqueness($subjectName,$group_id,$subject_id = 0){
         return $this
             ->createQueryBuilder('s')
             ->leftJoin('s.group','g')
             ->andWhere('g.id = :group_id')
             ->andWhere('s.name = :name')
+            ->andWhere('s.id != :subject_id')
             ->setParameter('group_id',$group_id)
             ->setParameter('name',$subjectName)
+            ->setParameter('subject_id',$subject_id)
             ->getQuery()
             ->execute();
 

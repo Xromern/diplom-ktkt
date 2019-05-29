@@ -149,6 +149,7 @@
                         time: 10
                     });
                     getSubjectStudent();
+                    showSubjectJournal();
                 }
             });
         }
@@ -181,7 +182,7 @@
                 success: function (result) {
 
                     $('.student_select').html(result);
-
+                    showSubjectJournal();
                 }
             });
         }

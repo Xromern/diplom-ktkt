@@ -8,7 +8,6 @@
         {% if subject.getMainTeacher !=null%}
         ({{ subject.getMainTeacher.getName }})
         {% endif %}
-
     </b>
 </caption>
 <thead data-page = '{{ dates[0].getPage }}'>
@@ -34,7 +33,9 @@
     style="background: {{ d.getTypeMark.getColor }}"
     data-column='column{{ i }}'
     data-date-id='{{ d.getId }}'
+    {% if d.getDate is not null %}
     title="  {{d.getDate|date('d-m-Y') }}; {{ d.getTypeMark.name }}; {{ d.description }}">
+    {% endif %}
     <div style="background: #fff">
     {% if d.getDate is not null %}
     {{ d.getDate|date('m d') }}
