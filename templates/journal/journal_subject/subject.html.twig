@@ -92,20 +92,17 @@
         });
 
         function deleteStudentFromSubject(student_id) {
+            $('.student_select').html('');
+
             $.ajax({
-                type: 'delete',
-                url: '/journal/deleteStudentFromSubject',
+                type: 'POST',
+                url: '{{ path('deleteStudentFromSubject') }}',
                 data: ({
                     "subject_id": '{{ subject.getId }}',
                     "student_id": student_id
                 }),
                 beforeSend: function () {
-                    $('.student_select').html("");
-                    $('.preLoader').show();
-                },
-                complete: function () {
-                    $('.preLoader').hide();
-                    getSubjectStudent();
+                    preloaderStudents.showPeloader();
                 },
                 error: function () {
                     note({
@@ -115,40 +112,28 @@
                     });
                 },
                 success: function (result) {
-                    if (result == "true") {
-                        note({
-                            content: "Студента успішно выдалено.",
-                            type: "info",
-                            time: 5
-                        });
-                    } else {
-                        note({
-                            content: result,
-                            type: "error",
-                            time: 3
-                        });
-                    }
-
-
+                    note({
+                        content:result['message'],
+                        type: result['type'],
+                        time: 10
+                    });
+                    getSubjectStudent();
                 }
             });
         }
 
         function addStudentToSubject(student_id) {
+            $('.student_select').html('');
+
             $.ajax({
                 type: 'POST',
-                url: '/journal/addStudentToSubject',
+                url: '{{ path('addStudentOnSubject') }}',
                 data: ({
                     "subject_id": '{{subject.getId}}',
                     "student_id": student_id
                 }),
                 beforeSend: function () {
-                    $('.student_select').html("");
-                    $('.preLoader').show();
-                },
-                complete: function () {
-                    $('.preLoader').hide();
-                    getSubjectStudent();
+                    preloaderStudents.showPeloader();
                 },
                 error: function () {
                     note({
@@ -158,26 +143,19 @@
                     });
                 },
                 success: function (result) {
-                    if (result == "true") {
-                        note({
-                            content: "Студента успішно додано.",
-                            type: "info",
-                            time: 5
-                        });
-                    } else {
-                        note({
-                            content: result,
-                            type: "error",
-                            time: 3
-                        });
-                    }
-
-
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 10
+                    });
+                    getSubjectStudent();
                 }
             });
         }
 
         function getSubjectStudent() {
+                $('.student_select').html('');
+            preloaderStudents.showPeloader();
 
             $.ajax({
                 type: 'POST',
@@ -186,10 +164,11 @@
                     "subject_id": '{{subject.getId}}',
                 }),
                 beforeSend: function () {
-                    $('.preLoader').show();
+                    preloaderStudents.showPeloader();
                 },
-                complete: function () {
-                    $('.preLoader').hide();
+                complete: function(){
+                    preloaderStudents.hidePrloaer();
+
                 },
                 error: function () {
                     note({
@@ -198,6 +177,7 @@
                         time: 15
                     });
                 },
+
                 success: function (result) {
 
                     $('.student_select').html(result);
@@ -228,6 +208,42 @@
                 }
             });
         }
+
+        $('html').on('click', '.button-update-subject', function () {
+            updateSubject();
+
+
+        });
+
+        function updateSubject() {
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('updateSubject') }}',
+                data: ({
+                    "subject_id": '{{ subject.getId}}',
+                    'name_subject': $('.input-update-subject').val(),
+                    'teacher_id':$('.select-teacher').val()
+                }),
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 15
+                    });
+                    showSubjectJournal();
+
+                }
+            });
+        }
+
 
         function showSubjectTeacherList() {
 

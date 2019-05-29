@@ -218,7 +218,7 @@ class AppFixtures extends Fixture
 
         $typeMark1=  new JournalTypeMark();
         $typeMark1->setName('Оцінка');
-        $typeMark1->setColor('none');
+        $typeMark1->setColor('#ffffff');
         $manager->persist($typeMark1);
 
         $typeMark1=  new JournalTypeMark();

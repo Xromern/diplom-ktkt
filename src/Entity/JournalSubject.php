@@ -266,6 +266,12 @@ class JournalSubject
     }
 
 
+    public function removeStudent($student)
+    {
+        //optionally add a check here to see that $group exists before removing it.
+       $this->students->removeElement($student);
+    }
+
     public function __construct()
     {
         $this->dateMarks= new ArrayCollection();

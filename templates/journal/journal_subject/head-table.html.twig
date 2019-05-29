@@ -3,7 +3,14 @@
 {% set dateDisabled = "" %}
 {% set checkDate = true %}
 {% set title = "" %}
-<caption><b>{{ subject.getName }} ({{ subject.getMainTeacher.getName }})</b></caption>
+<caption>
+    <b>{{ subject.getName }}
+        {% if subject.getMainTeacher !=null%}
+        ({{ subject.getMainTeacher.getName }})
+        {% endif %}
+
+    </b>
+</caption>
 <thead data-page = '{{ dates[0].getPage }}'>
 <tr>
     <th class="subject-counter-students" rowspan="2">id</th>

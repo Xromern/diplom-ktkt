@@ -278,20 +278,20 @@ class JournalSubjectController extends AbstractController
     {
         $subject = $manager->getRepository(JournalSubject::class)->find($request->get('subject_id'));
         $pages = $manager->getRepository(JournalDateMark::class)->getCountPage($subject->getId());
-
+//dd($pages);
         $lastDateLastPage = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
             ->leftJoin('d.subject','s')
             ->andWhere('s.id = :subject_id')
             ->andWhere('d.page = :page')
             ->setParameter('subject_id',$request->get('subject_id'))
-            ->setParameter('page',$pages)
+            ->setParameter('page',$pages-1)
             ->orderBy('d.id','desc')
             ->setMaxResults(1)
             ->getQuery()
             ->execute();
 
         if($lastDateLastPage[0]->getDate() == null){
-            return new JsonResponse(array('type' => 'error','message'=>'Спочатку запвоніть журнал'));
+            return new JsonResponse(array('type' => 'error','message'=>'Спочатку запвоніть журнал','page'=>$pages-1));
 
         }
 
@@ -351,6 +351,41 @@ class JournalSubjectController extends AbstractController
         return new JsonResponse(array('type' => 'info','message'=>'Предмет створено.'));
     }
 
+
+    /**
+     * @Route("/journal/ajax/updateSubject", name="updateSubject")
+     */
+    public function updateSubject(Request $request, ObjectManager $manager)
+    {
+
+        $subject = $manager->getRepository(JournalSubject::class)->find($request->get('subject_id'));
+        $group = $manager->getRepository(JournalGroup::class)->find($subject->getGroup()->getId());
+        $teacher = $manager->getRepository(JournalTeacher::class)->find($request->get('teacher_id'));
+
+
+        if(mb_strlen($request->get('name_subject')) <= 3 ){
+            return new JsonResponse(array('type' => 'error','message'=>'Занадто коротка назва'));
+
+        }
+
+        $checkNameSubject = $manager->getRepository(JournalSubject::class)
+            ->checkForUniqueness($request->get('name_subject'),$group->getId());
+
+        if(count(($checkNameSubject))!=0){
+            return new JsonResponse(array('type' => 'error','message'=>'Предмет з таким іменем вже існує.'));
+
+        }
+
+        $subject->setName($request->get('name_subject'));//$request->get('name_subject'));
+        $subject->setMainTeacher($teacher);
+
+        $manager->persist($subject);
+
+        $manager->flush();
+
+        return new JsonResponse(array('type' => 'info','message'=>'Предмет оновлено.'));
+    }
+
     /**
      * @Route("/journal/ajax/getSubjectStudents", name="getSubjectStudents")
      */
@@ -389,6 +424,41 @@ class JournalSubjectController extends AbstractController
         ));
 
         return ($tables);
+    }
+
+    /**
+     * @Route("/journal/ajax/deleteStudentFromSubject", name="deleteStudentFromSubject")
+     */
+    public function deleteStudentFromSubject(Request $request, ObjectManager $manager){
+        Service\Journal::deleteStudentFromSubject($manager,$request->get('subject_id'),$request->get('student_id'));
+
+
+        return new JsonResponse(array('type' => 'info','message'=>'Студента видалено.'));
+    }
+
+    /**
+     * @Route("/journal/ajax/addStudentOnSubject", name="addStudentOnSubject")
+     */
+    public function addStudentOnSubject(Request $request, ObjectManager $manager){
+
+        $subject = $manager->getRepository(JournalSubject::class)->find($request->get('subject_id'));
+
+        $listStudent = [];
+
+        $listStudent[] =  $request->get('student_id');
+
+        $listDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
+            ->leftJoin('d.subject','sub')
+            ->andWhere('sub.id = :subject_id')
+            ->setParameter('subject_id',$request->get('subject_id'))
+            ->getQuery()
+            ->execute();
+
+
+        Service\Journal::addStudentOnSubject($manager,$subject,$listStudent,$listDate,0);
+
+        $manager->flush();
+        return new JsonResponse(array('type' => 'info','message'=>'Студента видалено.'));
     }
 
 }

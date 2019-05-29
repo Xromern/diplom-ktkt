@@ -138,6 +138,12 @@ class JournalStudent
         $this->code = $code;
     }
 
+    public function removeSubject($subjects)
+    {
+        //optionally add a check here to see that $group exists before removing it.
+        $this->subjects->removeElement($subjects);
+    }
+
     public function __construct()
     {
         $this->subjects = new ArrayCollection();
