@@ -73,6 +73,12 @@ class JournalSubjectController extends AbstractController
         ]);
 
     }
+    /**
+     * @Route("/journal/group")
+     */
+    public function r(){
+        return $this->redirect("/journal/");
+    }
 
     /**
      * @Route("/journal/ajax/paginateSubject", name="paginateSubject")
@@ -226,18 +232,52 @@ class JournalSubjectController extends AbstractController
 
         }
 
-        if($typeMark->average() == 1){
-            $students = $date->getSujbect->getStudents();
+        if($typeMark->getAverage() == 1){
+            $students = $date->getSubject()->getStudents();
 
             foreach ($students as $s){
                 $marks = $manager->getRepository(JournalMark::class)->createQueryBuilder('m')
                     ->leftJoin('m.student','stud')
-                    ->leftJoin('m.subjects','sub')
-                    ->leftJoin('m.date','d')
+                    ->leftJoin('m.subject','sub')
+                    ->leftJoin('m.dateMark','d')
                     ->andWhere('stud.id = :student_id')
-                   // ->adnWhere('')
+                    ->andWhere('sub.id = :subject_id')
+                    ->andWhere('d.id < :date_id')
+                    ->setParameter('student_id',$s->getId())
+                    ->setParameter('date_id',$date->getId())
+                    ->setParameter('subject_id',$date->getSubject()->getId())
+                    ->getQuery()
+                    ->execute();
+                $average = 0;$counter = 0;
+                foreach ($marks as $mark){
+                    if(is_numeric($mark->getMark())){
+                        $average+=$mark->getMark();
+                        $counter++;
+                    }
+                    if($mark->getDateMark()->getTypeMark()->getAverage()==1){
+                        $average=0;
+                        $counter=0;
+                    }
+                }
+
+                $m = $manager->getRepository(JournalMark::class)->createQueryBuilder('m')
+                    ->leftJoin('m.student','stud')
+                    ->leftJoin('m.subject','sub')
+                    ->leftJoin('m.dateMark','d')
+                    ->andWhere('stud.id = :student_id')
+                    ->andWhere('sub.id = :subject_id')
+                    ->andWhere('d.id = :date_id')
+                    ->setParameter('student_id',$s->getId())
+                    ->setParameter('date_id',$date->getId())
+                    ->setParameter('subject_id',$date->getSubject()->getId())
+                    ->getQuery()
+                    ->execute()[0];
+                $average = $counter!=0?$average/$counter:$average;
+                $m->setMark(ceil($average));
+                $manager->persist($m);
 
             }
+            $manager->flush();
 
         }
 

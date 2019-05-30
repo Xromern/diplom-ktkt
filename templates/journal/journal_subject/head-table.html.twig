@@ -75,11 +75,7 @@
                  <option>Н</option>
              {% endif %}
          {% elseif  mark.getDateMark.getTypeMark.getAverage == 1 %}
-             {% if(counter_marks!=0) %}
-             <option selected disabled>{{ (average/counter_marks)|round(1, 'floor') }}</option>
-             {% else %}
-             <option selected disabled>{{ average }}</option>
-             {% endif %}
+             <option selected disabled>{{ mark.getMark }}</option>
          {% endif %}
      </select>
  </td>
