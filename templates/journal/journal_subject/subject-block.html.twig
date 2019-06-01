@@ -1,8 +1,9 @@
-{% for itemFormControl in formControl %}
+{% for itemFormControl in subjects %}
     {% if itemFormControl.subjects|length != 0 %}
     <div class='block-specialty'>
         <div class='line-specialty'>{{ itemFormControl.name }}</div>
         {% for subject in itemFormControl.subjects %}
+            {% if subject.getGroup.getId == group.getId %}
             <a href='{{ path('journal_show_subject',{'group_alis':group.alisen,'subject_alis':subject.getId}) }}'class='block-group'>
                 <div class='block-subject-name'>{{ subject.name }}</div>
                 <div class='block-group-curator'><div>Викладач:</div>
@@ -14,6 +15,7 @@
                 </div>
                 <div class='block-group-count-student'><div>Система оцiнювання:</div> 5 бальна</div>
             </a>
+            {% endif %}
             {% endfor %}
         {% endif %}
 {% endfor %}

@@ -59,7 +59,7 @@ class JournalGroupController extends AbstractController
             ->leftJoin('s.group','g')
             ->andWhere('g.id = :group_id')
             ->setParameter('group_id',$journalGroup->getId())
-            ->getQuery();
+            ->getQuery()->execute();
 
         if(!$journalGroup){
             return $this->render('journal/Exception/error404.html.twig',['message_error'=>'Така група не інуснує.']);
@@ -129,6 +129,10 @@ class JournalGroupController extends AbstractController
             ->getGroupByAlis($request->get('group_id'));
 
         $specialty =  $manager->getRepository(JournalSpecialty::class)->find($request->get('specialty_id'));
+
+        if(!$specialty) return new JsonResponse(array('type' => 'error','message'=>'Такої спеціальності не існує.'));
+
+
         $curator =  $manager->getRepository(JournalTeacher::class)->find($request->get('curator_id'));
 
         $journalGroup->setName($request->get('group_name'));

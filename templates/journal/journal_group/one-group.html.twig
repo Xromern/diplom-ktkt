@@ -35,7 +35,7 @@
     </div>
     <div class="preLoader" id="preloader-list-subject">  </div>
     <div class="container-subjects">
-        {{ include('journal/journal_subject/subject-block.html.twig',{'subjectList':subjects}) }}
+        {{ include('journal/journal_subject/subject-block.html.twig',{'subjects':subjects,'group':group}) }}
     </div>
 
 </div>
@@ -264,9 +264,11 @@
             }),
             beforeSend: function() {
                 preloaderAddSubject.showPeloader();
+                $('.student_ ').hide();
             },
             complete: function() {
                 preloaderAddSubject.hidePrloaer();
+                $('.student_ ').show();
             },
             error: function() {
                 note({

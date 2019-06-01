@@ -274,7 +274,11 @@
             $(table).css({'filter': 'blur(3px)'})
         }
 
-        function showSubjectJournal(page = "{{ (app.request.attributes.get('_route_params'))['page'] }}") {
+        function showSubjectJournal(page =null) {
+            if(page == null){
+                page = $('.table-subject-journal thead').data('page');
+            }
+
             disabledTable();
             $.ajax({
                 type: 'post',
@@ -380,6 +384,41 @@
                         type: result['type'],
                         time: 5
                     });
+                }
+            });
+        }
+
+        $('html').on('click', '.button-delete-subject', function () {
+            if(confirm('Вы дійсно хочете видалити предмет?'))
+            deleteSubject();
+
+        });
+
+        function deleteSubject(){
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('deleteSubject') }}',
+                data: ({
+                    "subject_id": '{{ subject.getId }}',
+                }),
+                beforeSend : function(){disabledTable()},
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 5
+                    });
+                    setTimeout(function () {
+                        location.href = "{{ path('journal_show_one_group',{'group_alis':subject.getGroup.getAlisEn}) }}"
+                    },2000)
+
                 }
             });
         }

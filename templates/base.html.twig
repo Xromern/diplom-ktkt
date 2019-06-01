@@ -8,6 +8,7 @@
         <link href="{{ asset('css/main.css') }}" rel="stylesheet"/>
 
         <link href="{{ asset('css/big-buttons.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('css/slider.css') }}" rel="stylesheet"/>
         <link href="{{ asset('css/pagination.css') }}" rel="stylesheet"/>
         <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
     {% endblock %}
@@ -18,11 +19,15 @@
         <script type="text/javascript" src="{{ asset('js/useful.js') }}"></script>
         <script type="text/javascript" src="{{ asset('js/preloader.js') }}"></script>
         <script type="text/javascript" src="{{ asset('js/ajax_move.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('js/slider.js') }}"></script>
 
     {% endblock %}
 </head>
 <div class="wrapper">
-    <section class="slider"></section>
+    <section class="slider">
+        {{ include('article/slider.html.twig') }}
+
+    </section>
 
     {{ include('article/big-buttons.html.twig') }}
     <main>

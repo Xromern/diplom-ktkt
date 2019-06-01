@@ -35,7 +35,14 @@ class JournalSubjectController extends AbstractController
     {
 
         $subject = $manager->getRepository(JournalSubject::class)
-            ->find($request->get('subject_alis'));
+            ->getSubjectByAlis($request->get('group_alis'),$request->get('subject_alis'));
+
+        if (!$subject) {
+            return $this->render('Journal/Exception/error404.html.twig', [
+
+                'message_error' => 'Сторінка не знайдена'
+            ]);
+        }
 
         $students = [];
 
@@ -49,10 +56,8 @@ class JournalSubjectController extends AbstractController
             ]);
         }
 
-
         $dates = $manager->getRepository(JournalDateMark::class)
             ->getOnByPage($subject->getId(), $request->get('page', 0));
-
 
         foreach ($subject->getStudents() as $student) {
 
@@ -61,7 +66,6 @@ class JournalSubjectController extends AbstractController
 
         }
 
-//        dd($request->get('page'));
         return $this->render('journal/journal_subject/subject.html.twig', [
 
             'subject' => $subject,
@@ -73,12 +77,11 @@ class JournalSubjectController extends AbstractController
         ]);
 
     }
+
     /**
      * @Route("/journal/group")
      */
-    public function r(){
-        return $this->redirect("/journal/");
-    }
+    public function r(){return $this->redirect("/journal/");}
 
     /**
      * @Route("/journal/ajax/paginateSubject", name="paginateSubject")
@@ -346,7 +349,7 @@ class JournalSubjectController extends AbstractController
     {
         $subject = $manager->getRepository(JournalSubject::class)->find($request->get('subject_id'));
         $pages = $manager->getRepository(JournalDateMark::class)->getCountPage($subject->getId());
-//dd($pages);
+
         $lastDateLastPage = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
             ->leftJoin('d.subject','s')
             ->andWhere('s.id = :subject_id')
@@ -502,6 +505,33 @@ class JournalSubjectController extends AbstractController
 
 
         return new JsonResponse(array('type' => 'info','message'=>'Студента видалено.'));
+    }
+
+
+    /**
+     * @Route("/journal/ajax/deleteSubject", name="deleteSubject")
+     */
+    public function deleteSubject(Request $request, ObjectManager $manager){
+
+        $subject = $manager->getRepository(JournalSubject::class)->find($request->get('subject_id'));
+
+        foreach ($subject->getStudents() as $student){
+
+            Service\Journal::deleteStudentFromSubject($manager,$subject->getId(),$student->getId());
+
+        }
+
+
+        foreach ($subject->getDateMarks() as $date){
+
+           $manager->remove($date);
+
+        }
+
+        $manager->remove($subject);
+        $manager->flush();
+
+        return new JsonResponse(array('type' => 'info','message'=>'Предмет видалено.'));
     }
 
     /**
