@@ -5,11 +5,17 @@
         <div class="block-button-login">
             <div>
                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                    {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}
-                    <a href="/profile" class="button">Профіль</a>
-                    <a  class="button" href="{{ path('fos_user_security_logout') }}">
-                        {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-                    </a>
+                    <div>
+                        {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}
+                    </div>
+
+                    <div>
+                        <a href="/profile" class="button">Профіль</a>
+                        <a  class="button" href="{{ path('fos_user_security_logout') }}">
+                            {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                        </a>
+                    </div>
+
                 {% else %}
                     <a href="/register" class="button">Реєстрація</a>
                     <a href="/login" class="button">Авторизація</a>

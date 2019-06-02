@@ -15,9 +15,13 @@
     background-color: #FFFFFF;
     padding: 15px;
     box-shadow: 0 0.5px 0 0 #ffffff inset, 0 1px 2px 0 #B3B3B3;
-    border-radius: 2px;
+    border-radius: 5px;
     margin-top: 20px;
 }
+.container-journal-block select,.container-journal-block input  {
+    border-radius: 3px;
+}
+
 .container-journal-center{
 
     width: 850px;
@@ -50,7 +54,7 @@
 
 }
 
-.container-journal input, .container-journal select {
+ input, select {
 
     padding: 0 20px;
     background: #F2F2F2;

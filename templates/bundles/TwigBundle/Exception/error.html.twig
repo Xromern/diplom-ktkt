@@ -1,0 +1,41 @@
+{% extends  ajax ? 'ajax.html.twig' : 'base.html.twig' %}
+
+{% block title %}Виникла помилка: {{ status_text }}{% endblock %}
+
+{% block body %}
+    <style>
+        .container-error { max-width: 600px; color: #222; font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        margin-left: auto;
+        margin-bottom: 150px;
+
+        }
+
+        .container-error h1 { color: #163C94; font-size: 24px; margin: 0 auto; text-align: center}
+        .container-error  h2 { font-size: 18px;   color: red }
+        .container-error img{
+            width: 200px;
+            margin: 0 auto;
+
+        }
+.preLoader{
+    display: block;
+    visibility: visible;
+}
+    </style>
+<div class="container-error">
+    <h1>Oops! Виникла помилка</h1>
+    <div class="preLoader" >
+
+    <img src="{{ asset('images/preloader/preloader.gif') }}"></div>
+    <h2>Сервер повернув "{{ status_code }} {{ status_text }}".</h2>
+
+    <p>
+        Щось зламано. Повідомте нам, що ви робили, коли сталася ця помилка.<br>
+        Ми це вирішимо якомога швидше. Вибачте за завдані незручності.
+    </p>
+</div>
+{% endblock %}
+
+
+
+

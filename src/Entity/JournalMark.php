@@ -111,4 +111,9 @@ class JournalMark
         $this->dateMark = $dateMark;
     }
 
+
+    public function __toString()
+    {
+        return "";
+    }
 }

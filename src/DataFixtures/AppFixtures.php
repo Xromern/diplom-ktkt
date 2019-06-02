@@ -13,6 +13,7 @@ use App\Entity\JournalStudent;
 use App\Entity\JournalTeacher;
 use App\Entity\JournalTypeFormControl;
 use App\Entity\JournalTypeMark;
+use App\Entity\User;
 use App\Service\Helper;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -320,6 +321,15 @@ class AppFixtures extends Fixture
         $advertisement->setTitle('Оголошення!');
         $advertisement->setDescription('Рейтинг успішності студентів 4-го курсу спеціальностей ЕУ,УТ,АД за результатами 7-го семестру навчання (2018-2019 н.р.) можна переглянути в розділі "Навчання - Стипендіальне забезпечення - Рейтинг успішності"');
         $manager->persist($advertisement);
+
+
+        $user = new User();
+        $user->setPassword('$2y$13$0XQoNXzgLsp/NaxSJp.9meKhVYJfWgVJCIcwjPzWyAZRIdjWWz/pW');
+        $user->setEmail('admin@admin.admin');
+        $user->setUsername('admin');
+        $user->addRole('ROLE_SUPER_ADMIN');
+        $user->setEnabled(1);
+        $manager->persist($user);
 
 
         $manager->flush();

@@ -439,6 +439,9 @@ main{
 .block-button-login{
     float: right;
 }
+.block-button-login div{
+    display: inline-block;
+}
 
 .block-button-login .button{
    margin-top: 4px;

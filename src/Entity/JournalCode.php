@@ -131,6 +131,9 @@ class JournalCode
         $this->user = $user;
     }
 
-
+    public function __toString()
+    {
+        return "";
+    }
 
 }

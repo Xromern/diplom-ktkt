@@ -207,6 +207,11 @@ class JournalGroup
         $this->subjects[] = $subjects;
     }
 
+    public function __toString()
+    {
+        return "";
+    }
+
     public function __construct()
     {
         $this->subjects = new ArrayCollection();

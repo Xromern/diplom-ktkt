@@ -272,6 +272,11 @@ class JournalSubject
        $this->students->removeElement($student);
     }
 
+    public function __toString()
+    {
+        return $this->name;
+    }
+
     public function __construct()
     {
         $this->dateMarks= new ArrayCollection();
