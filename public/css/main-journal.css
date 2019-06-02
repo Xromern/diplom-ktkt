@@ -300,7 +300,7 @@ input{
     background-color: #ffc9c9;
 }
 
-.container-table-students-subject .student_no tr:hover {
+.table-subject-journal .container-table-students-subject .student_no tr:hover {
     background-color: #adffb5;
 }
 
@@ -499,7 +499,7 @@ height: auto;
     width: 200px;
     height: 25px;
 }
-tr:hover td{
+.table-subject-journal tr:hover td{
     background-color:  #c9daff!important;
 }
 .textarea-subject-modal{

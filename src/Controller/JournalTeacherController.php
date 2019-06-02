@@ -65,7 +65,6 @@ class JournalTeacherController extends AbstractController
         $teacher= new JournalTeacher();
         $teacher->setName($request->get('teacher_name'));
         $teacher->setCode($code);
-
         $manager->persist($teacher);
 
         $manager->flush();

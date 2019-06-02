@@ -50,10 +50,9 @@ nav ul li a:hover {
     top:6px;
     z-index:70001;
     font-size:30px;
+    cursor: pointer;
 }
-.button-open-menu a {
-    text-decoration:none;
-}
+
 .btn-open:after {
     color:#fff;
     content:"\f0c9";

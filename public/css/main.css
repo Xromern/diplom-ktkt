@@ -314,8 +314,16 @@ main{
     padding: 0 10px;
     line-height: 17px;
     border-radius: 2px;
-    height: 100px;
+
     transition-duration: .2s;
+}
+.side-bar-container-caption{
+    text-align: center;
+    padding: 5px;
+    font-size: 18px;
+}
+.side-bar-container-text{
+    font-size: 12px;
 }
 /*end-side-bar*/
 
@@ -427,3 +435,13 @@ main{
     cursor: pointer;
 }
 /*end-modal*/
+
+.block-button-login{
+    float: right;
+}
+
+.block-button-login .button{
+   margin-top: 4px;
+    width: 200px;
+
+}

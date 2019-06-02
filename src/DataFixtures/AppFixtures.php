@@ -80,33 +80,63 @@ class AppFixtures extends Fixture
         $specialty4->setName('ЕП');
         $manager->persist($specialty4);
 
-        $teacher1 = new JournalTeacher();
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Ємець Петро Андрійович_'.Helper::generatePassword(30)));
+        $manager->persist($code);
+        $teacher1= new JournalTeacher();
         $teacher1->setName('Ємець Петро Андрійович');
+        $teacher1->setCode($code);
         $manager->persist($teacher1);
 
-        $teacher2 = new JournalTeacher();
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Данилова Віталіна Анатоліївна_'.Helper::generatePassword(30)));
+        $manager->persist($code);
+        $teacher2= new JournalTeacher();
         $teacher2->setName('Данилова Віталіна Анатоліївна');
+        $teacher2->setCode($code);
         $manager->persist($teacher2);
 
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Зуйкова Олена Вікторівна_'.Helper::generatePassword(30)));
+        $manager->persist($code);
         $teacher3= new JournalTeacher();
         $teacher3->setName('Зуйкова Олена Вікторівна');
+        $teacher3->setCode($code);
         $manager->persist($teacher3);
 
-        $teacher4 = new JournalTeacher();
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Мудрицький Артур Вікотрович_'.Helper::generatePassword(30)));
+        $manager->persist($code);
+        $teacher4= new JournalTeacher();
         $teacher4->setName('Мудрицький Артур Вікотрович');
+        $teacher4->setCode($code);
         $manager->persist($teacher4);
 
-        $teacher5 = new JournalTeacher();
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Нехай Валентин Валентинович_'.Helper::generatePassword(30)));
+        $manager->persist($code);
+        $teacher5= new JournalTeacher();
         $teacher5->setName('Нехай Валентин Валентинович');
+        $teacher5->setCode($code);
         $manager->persist($teacher5);
 
-        $teacher6 = new JournalTeacher();
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Крисько Тетяна Олександрівна_'.Helper::generatePassword(30)));
+        $manager->persist($code);
+        $teacher6= new JournalTeacher();
         $teacher6->setName('Крисько Тетяна Олександрівна');
+        $teacher6->setCode($code);
         $manager->persist($teacher6);
 
-        $teacher7 = new JournalTeacher();
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Любенко Андрій Андрійович_'.Helper::generatePassword(30)));
+        $manager->persist($code);
+        $teacher7= new JournalTeacher();
         $teacher7->setName('Любенко Андрій Андрійович');
+        $teacher7->setCode($code);
         $manager->persist($teacher7);
+
 
         $group1 = new JournalGroup();
         $group1->setName('ПС-1501');
@@ -265,6 +295,32 @@ class AppFixtures extends Fixture
         $system = new JournalGradingSystem();
         $system->setSystem('12');
         $manager->persist($system);
+
+        $advertisement = new Advertisement();
+        $advertisement->setTitle('Оголошення!');
+        $advertisement->setDescription('Графік звітів циклових комісій у ІІ семестрі 2018-2019 н.р. та бланки звітів циклової комісії та викладача можна переглянути у розділі "Викладачам - Інформаційно-методичний вісник»');
+        $manager->persist($advertisement);
+
+        $advertisement = new Advertisement();
+        $advertisement->setTitle('Оголошення!');
+        $advertisement->setDescription('План заходів до Міжнародного дня слов\'янської писемності та культуриможна переглянути в розділі "Викладачам - Плани"');
+        $manager->persist($advertisement);
+
+        $advertisement = new Advertisement();
+        $advertisement->setTitle('Оголошення!');
+        $advertisement->setDescription('З витягом із ліцензійних умов провадження освітньої діяльності (для заповнення бланку рейтингу) комісій у навчально-методичний кабінет можна ознайомитися у розділі «Викладачам - Інформаційно-методичний вісник»');
+        $manager->persist($advertisement);
+
+        $advertisement = new Advertisement();
+        $advertisement->setTitle('До уваги викладачів!');
+        $advertisement->setDescription('План роботи коледжу на травень 2019 року можна переглянути у розділі "Викладачам - Плани"');
+        $manager->persist($advertisement);
+
+        $advertisement = new Advertisement();
+        $advertisement->setTitle('Оголошення!');
+        $advertisement->setDescription('Рейтинг успішності студентів 4-го курсу спеціальностей ЕУ,УТ,АД за результатами 7-го семестру навчання (2018-2019 н.р.) можна переглянути в розділі "Навчання - Стипендіальне забезпечення - Рейтинг успішності"');
+        $manager->persist($advertisement);
+
 
         $manager->flush();
     }

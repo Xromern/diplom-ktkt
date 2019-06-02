@@ -3,7 +3,13 @@
 
         {% for item in advertisement %}
             <div class="side-bar-container">
-                {{ item.title }}
+                <div class="side-bar-container-caption">
+                    {{ item.title }}
+                </div>
+                <hr>
+                <div class="side-bar-container-text">
+                    {{ item.description }}
+                </div>
             </div>
         {% endfor %}
 

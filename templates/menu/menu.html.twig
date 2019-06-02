@@ -1,12 +1,12 @@
 <nav>
     <ul>
         <li class="navigation-menu-li-1"><a href="/" >Головна</a></li>
-        <li class="navigation-menu-li-2"><a href="#">Розклад</a></li>
+        <li class="navigation-menu-li-2"><a href="/journal">Журнал</a></li>
         <li class="navigation-menu-li-3"><a href="#">Вступникам</a></li>
         <li class="navigation-menu-li-4"><a href="#">Викладачам</a></li>
         <li class="navigation-menu-li-5"><a href="#">Контакти</a></li>
         <div class="button-open-menu">
-            <a class="btn-open" href="#"></a>
+            <div class="btn-open"></div>
         </div>
     </ul>
 
@@ -14,6 +14,7 @@
 <div class="overlay">
     <div class="wrap">
         <ul class="wrap-nav">
+            <li><a href="/journal">Журнал</a></li>
             <li><a href="#2">Про колледж</a>
                 <ul>
                     <li><a href="#">Історія колледжу</a></li>
@@ -116,37 +117,16 @@
         </div>
     </div>
 </div>
-
 <script>
-    $(document).ready(function(){
-        $(".button-open-menu a").click(function(){
-            $(".overlay").fadeToggle(200);
-            $(this).toggleClass('btn-open').toggleClass('btn-close');
-        });
+
+    $(".button-open-menu div").click(function(){
+        $(".overlay").fadeToggle(200);
+        $(this).toggleClass('btn-open').toggleClass('btn-close');
     });
+
     $('.overlay').on('click', function(){
         $(".overlay").fadeToggle(200);
-        $(".button a").toggleClass('btn-open').toggleClass('btn-close');
+        $(".button div").toggleClass('btn-open').toggleClass('btn-close');
         open = false;
-    });
-    remove();
-    function remove() {
-        if($(this).scrollTop()>70){
-            $('.container-logo').addClass('remove-logo');
-            $('.navigation-menu').addClass('navigation-menu-static');
-        }
-        else if ($(this).scrollTop()<70){
-            $('.container-logo').removeClass('remove-logo');
-            $('.navigation-menu').removeClass('navigation-menu-static');
-
-        }
-    }
-
-    jQuery(function($) {
-        $(window).scroll(function(){
-            remove();
-        })
-
-
     });
 </script>

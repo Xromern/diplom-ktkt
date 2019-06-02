@@ -25,16 +25,13 @@
         <script type="text/javascript" src="{{ asset('js/preloader.js') }}"></script>
         <script type="text/javascript" src="{{ asset('js/ajax_move.js') }}"></script>
         <script type="text/javascript" src="{{ asset('js/slider.js') }}"></script>
-
+        <script type="text/javascript" src="{{ asset('js/menu.js') }}"></script>
     {% endblock %}
 </head>
 <div class="wrapper">
 
-    <div class="block-search">
-        <div class="header-top">
-            <div class="container-logo"><img src="{{asset("images/logo-head.png")}}" ></div>
-        </div>
-    </div>
+    {{ include('menu/head-search.html.twig') }}
+
     <div class="navigation-menu">
         {{ include('menu/menu.html.twig') }}
     </div>

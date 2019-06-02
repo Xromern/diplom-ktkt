@@ -9,6 +9,9 @@
     <link href="{{ asset('css/slider.css') }}" rel="stylesheet"/>
     <link href="{{ asset('css/login.css') }}" rel="stylesheet"/>
     <link href="{{ asset('css/util.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/menu.css') }}" rel="stylesheet"/>
+    <script type="text/javascript" src="{{ asset('js/notification.js') }}"></script>
+
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
@@ -17,11 +20,13 @@
 {% block javascripts %}
     <script type="text/javascript" src="{{ asset('js/jquery-3.4.0.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/login.js') }}"></script>
-
-
 {% endblock %}
 </head>
-<div class="block-search">
+
+{{ include('menu/head-search.html.twig') }}
+
+<div class="navigation-menu">
+    {{ include('menu/menu.html.twig') }}
 </div>
 <div class="wrapper">
     {% block user %}{% endblock %}

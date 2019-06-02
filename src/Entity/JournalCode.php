@@ -34,6 +34,14 @@ class JournalCode
     private $teacher;
 
     /**
+     * One group has One curator.
+     * @ORM\OneToOne(targetEntity="User", inversedBy="code")
+     * @ORM\JoinColumn(name="code_id", referencedColumnName="id", nullable=true)
+     */
+    private $user;
+
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $date_use;
@@ -106,6 +114,23 @@ class JournalCode
     {
         $this->date_use = $date_use;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param mixed $user
+     */
+    public function setUser($user): void
+    {
+        $this->user = $user;
+    }
+
 
 
 }
