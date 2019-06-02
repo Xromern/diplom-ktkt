@@ -41,7 +41,6 @@ class ArticleController extends AbstractController
                 'condition'=>false
             ]);
         }
-        dump($paginationArticle);
         if($request->isXmlHttpRequest()) {
             return $this->render('article/articles-paginate.html.twig', [
                 'articles' => $paginationArticle,

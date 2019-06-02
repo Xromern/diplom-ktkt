@@ -134,3 +134,8 @@ a:focus::before {
     transform: scale(0.9);
     opacity: 0;
 }
+
+.big-buttons a:hover{
+    color: #4c5367 !important;
+
+}

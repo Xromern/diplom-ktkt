@@ -1,0 +1,61 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100 p-t-85 p-b-20">
+
+{{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'login100-form validate-form'}}) }}
+
+            <span class="login100-form-title">
+						Реєсстрація
+					</span>
+            <span class="r">
+						<img src="{{ asset('images/logo.png') }}" alt="KTKT" >
+            </span>
+        {{ form_row(form.email) }}
+
+
+
+        {{ form_row(form.username) }}
+
+
+
+        {{ form_row(form.plainPassword) }}
+
+    <div class="container-login100-form-btn">
+        <button type="submit" id="_submit" name="_submit" class="login100-form-btn">
+            Реєстрація
+        </button>
+    </div>
+    </div>
+{{ form_end(form) }}
+</div>
+</div>
+
+
+
+
+<script>
+    $('.input100').each(function() {
+        $(this).addClass('has-val');
+
+    })
+
+
+    /*==================================================================
+    [ Focus input ]*/
+    $('.input100').each(function(){
+        $(this).on('blur', function(){
+            if($(this).val().length !== 0) {
+                $(this).addClass('has-val');
+            }
+            else {
+                $(this).removeClass('has-val');
+            }
+        })
+    })
+
+
+
+</script>

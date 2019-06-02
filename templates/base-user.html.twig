@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<meta charset="UTF-8">
+<title>{% block title %}{% endblock %}</title>
+{% block stylesheets %}
+    <link href="{{ asset('css/notification.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/main.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/slider.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/login.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('css/util.css') }}" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+    {#    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=2" />#}
+{% endblock %}
+{% block javascripts %}
+    <script type="text/javascript" src="{{ asset('js/jquery-3.4.0.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/login.js') }}"></script>
+
+
+{% endblock %}
+</head>
+<div class="block-search">
+</div>
+<div class="wrapper">
+    {% block user %}{% endblock %}
+</div>
+
+</body>
+</html>

@@ -1,0 +1,152 @@
+<nav>
+    <ul>
+        <li class="navigation-menu-li-1"><a href="/" >Головна</a></li>
+        <li class="navigation-menu-li-2"><a href="#">Розклад</a></li>
+        <li class="navigation-menu-li-3"><a href="#">Вступникам</a></li>
+        <li class="navigation-menu-li-4"><a href="#">Викладачам</a></li>
+        <li class="navigation-menu-li-5"><a href="#">Контакти</a></li>
+        <div class="button-open-menu">
+            <a class="btn-open" href="#"></a>
+        </div>
+    </ul>
+
+</nav>
+<div class="overlay">
+    <div class="wrap">
+        <ul class="wrap-nav">
+            <li><a href="#2">Про колледж</a>
+                <ul>
+                    <li><a href="#">Історія колледжу</a></li>
+                    <li><a href="#">Навчальна база</a></li>
+                    <li><a href="#">Стуктура колледжу</a></li>
+                    <li><a href="#">Досягнення</a></li>
+                    <li><a href="#">Ліцензія та сертифікати</a></li>
+                    <li><a href="#">Висновки ЕК МОНУ</a></li>
+                    <li><a href="#">Символіка</a></li>
+                    <li><a href="#">Галерея</a> </li>
+                </ul>
+            </li>
+            <li><a href="#">Навчання</a>
+                <ul>
+                    <li><a href="https://www.google.hr/">Оплата за навчння</a></li>
+                    <li><a href="#">Розклади</a></li>
+                    <li><a href="#">Степендіальне забезпечання</a></li>
+                    <li><a href="#">Методичні матеріали</a></li>
+                    <li><a href="#">Практика та пацевлаштування</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Вступникам</a>
+                <ul>
+                    <li><a href="#">Перелік конкурсних пердметів</a></li>
+                    <li><a href="#">Правила прийому</a></li>
+                    <li><a href="#">Положення</a></li>
+                    <li><a href="#">Программа вступних випробувань</a></li>
+                    <li><a href="#">Розклади екзменів</a></li>
+                    <li><a href="#">Результати прийому</a></li>
+                    <li><a href="#">Підготовчі курси</a></li>
+
+                </ul>
+            </li>
+
+            <li><a href="#">Студентсво</a>
+                <ul>
+                    <li><a href="#">Студентське самоврядування</a></li>
+                    <li><a href="#">Студентська профспілка</a></li>
+                    <li><a href="#">Євроклуб</a></li>
+                </ul>
+            </li>
+
+            <li><a href="#">Викладачам</a>
+                <ul>
+                    <li><a href="#">Інформаційно-методичний вісник</a></li>
+                    <li><a href="#">Методичні матеріали</a></li>
+                    <li><a href="#">Атестація</a></li>
+                    <li><a href="#">Педагогічна рада</a></li>
+                    <li><a href="#">Трудовий колектив</a></li>
+                </ul>
+            </li>
+
+            <li><a href="#">Виховна робота</a>
+                <ul>
+                    <li><a href="#">Планування</a></li>
+                    <li><a href="#">Методичні матеріали</a></li>
+                    <li><a href="#">Громадянсько-правове виховання</a></li>
+                    <li><a href="#">Психологічна служба</a></li>
+                    <li><a href="#">Гуртки та секції</a></li>
+
+                </ul>
+            </li>
+
+            <li><a href="#">Публічна інформація</a>
+            </li>
+
+            <li><a href="#">Проекти</a>
+                <ul>
+                    <li><a href="#">Грантова діяльність</a></li>
+                    <li><a href="#">Олімпіади та конкурси</a></li>
+                    <li><a href="#">Конференції</a></li>
+                </ul>
+            </li>
+
+            <li><a href="#">Цивільний захист та БЖД</a>
+                <ul>
+                    <li><a href="#">Web</a></li>
+                    <li><a href="#">Graphic</a></li>
+                    <li><a href="#">Apps</a></li>
+                </ul>
+            </li>
+        </ul>
+        <div class="social">
+            <a href="https://www.facebook.com/ktkt.cntu">
+                <div class="social-icon">
+                    <i class="fa fa-facebook"></i>
+                </div>
+            </a>
+            <a href="https://www.facebook.com/ktkt.cntu">
+                <div class="social-icon">
+                    <i class="fa fa-facebook"></i>
+                </div>
+            </a>
+            <a href="https://www.facebook.com/ktkt.cntu">
+                <div class="social-icon">
+                    <i class="fa fa-facebook"></i>
+                </div>
+            </a>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $(".button-open-menu a").click(function(){
+            $(".overlay").fadeToggle(200);
+            $(this).toggleClass('btn-open').toggleClass('btn-close');
+        });
+    });
+    $('.overlay').on('click', function(){
+        $(".overlay").fadeToggle(200);
+        $(".button a").toggleClass('btn-open').toggleClass('btn-close');
+        open = false;
+    });
+    remove();
+    function remove() {
+        if($(this).scrollTop()>70){
+            $('.container-logo').addClass('remove-logo');
+            $('.navigation-menu').addClass('navigation-menu-static');
+        }
+        else if ($(this).scrollTop()<70){
+            $('.container-logo').removeClass('remove-logo');
+            $('.navigation-menu').removeClass('navigation-menu-static');
+
+        }
+    }
+
+    jQuery(function($) {
+        $(window).scroll(function(){
+            remove();
+        })
+
+
+    });
+</script>

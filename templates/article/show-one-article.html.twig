@@ -115,7 +115,7 @@
                         });
                     },
                     success: function () {
-                        showAjaxComment({{ article.id }}, '{{ path('showComments') }}');
+                        showAjaxComment({{ article.id }}, '{{ path('showComments') }}',preloaderCommentPagination);
 
                         note({
                             content: "Коментар успішно змінено.",

@@ -1,0 +1,67 @@
+{% trans_default_domain 'FOSUserBundle' %}
+
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100 p-t-85 p-b-20">
+            <form action="{{ path("fos_user_security_check") }}" method="post" class="login100-form validate-form">
+
+                <span class="r">
+						<img src="{{ asset('images/logo.png') }}" alt="KTKT" >
+                </span>
+                <span>
+					{% if error %}
+                        <div class="error-login">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+                </span>
+                {% if csrf_token %}
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+                {% endif %}
+
+                <div class="wrap-input100 m-t-85 m-b-35" data-validate = "Enter username">
+                    <input type="text" class="input100" id="username" name="_username" value="{{ last_username }}" required="required" autocomplete="username" />
+                    <span class="focus-input100" data-placeholder="{{ 'security.login.username'|trans }}"></span>
+
+                </div>
+
+                <div class="wrap-input100 m-b-50" data-validate="Enter password">
+                    <input type="password"  class="input100" id="password" name="_password" required="required" autocomplete="current-password" />
+                    <span class="focus-input100" data-placeholder="{{ 'security.login.password'|trans }}"></span>
+                </div>
+
+                <input type="checkbox" id="remember_me" name="_remember_me" value="on" />
+                <label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>
+
+                <div class="container-login100-form-btn">
+                    <button type="submit" id="_submit" name="_submit" class="login100-form-btn">
+                        {{ 'security.login.submit'|trans }}
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+        $('.input100').each(function() {
+                $(this).addClass('has-val');
+
+        })
+
+
+    /*==================================================================
+    [ Focus input ]*/
+    $('.input100').each(function(){
+        $(this).on('blur', function(){
+            if($(this).val().length !== 0) {
+                $(this).addClass('has-val');
+            }
+            else {
+                $(this).removeClass('has-val');
+            }
+        })
+    })
+
+
+
+</script>

@@ -9,8 +9,13 @@
 
         <link href="{{ asset('css/big-buttons.css') }}" rel="stylesheet"/>
         <link href="{{ asset('css/slider.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('css/menu.css') }}" rel="stylesheet"/>
+
         <link href="{{ asset('css/pagination.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('css/media-query.css') }}" rel="stylesheet"/>
         <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
     {% endblock %}
     {% block javascripts %}
         <script type="text/javascript" src="{{ asset('js/jquery-3.4.0.min.js') }}"></script>
@@ -24,11 +29,21 @@
     {% endblock %}
 </head>
 <div class="wrapper">
+
+    <div class="block-search">
+        <div class="header-top">
+            <div class="container-logo"><img src="{{asset("images/logo-head.png")}}" ></div>
+        </div>
+    </div>
+    <div class="navigation-menu">
+        {{ include('menu/menu.html.twig') }}
+    </div>
     <section class="slider">
         {{ include('article/slider.html.twig') }}
 
     </section>
-
+    {% block content %}
+    {% endblock %}
     {{ include('article/big-buttons.html.twig') }}
     <main>
 
