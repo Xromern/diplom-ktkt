@@ -466,7 +466,8 @@ table {
 }
 
 .select-grading-system{
-    width: 40px !important;
+    width: 50px !important;
+    padding: 0;
 }
 
 .modal-container-journal-add-subject input{
