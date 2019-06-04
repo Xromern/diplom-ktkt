@@ -2,16 +2,13 @@
 
 namespace App\Controller;
 
-
+use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Advertisement;
 use App\Entity\Article;
 use App\Entity\Comment;
-use App\Entity\User;
 use App\Form\CommentType;
-use http\Env\Request;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service;
 
@@ -20,7 +17,7 @@ class ArticleController extends AbstractController
     /**
      * @Route("/", name="articles")
      */
-    public function showArticles(\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator)
+    public function showArticles(\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator,UserInterface $user = null)
     {
         $em = $this->getDoctrine()->getManager();
 

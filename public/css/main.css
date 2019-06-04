@@ -446,5 +446,8 @@ main{
 .block-button-login .button{
    margin-top: 4px;
     width: 200px;
+}
 
+.comment-form .button{
+    margin-top: 10px;
 }

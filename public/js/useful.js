@@ -9,4 +9,5 @@ function getUrlVars()
         vars[hash[0]] = hash[1];
     }
     return vars;
+
 }

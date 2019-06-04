@@ -34,7 +34,7 @@ class ArticleManager
         $paginationComment = $paginator->paginate(
             $commentQuery,
             $page,
-            2
+            15
         );
 
         $paginationComment->setUsedRoute('article');

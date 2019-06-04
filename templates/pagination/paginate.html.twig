@@ -4,20 +4,20 @@
     <div class="pagination">
         {% if first is defined and current != first %}
             <span class="first">
-                <a  data-article-page='{{ first }}'  href="{{ path(route, query|merge({(pageParameterName): first})) }}">&lt;&lt;</a>
+                <a  data-article-page='{{ first }}'  href="{{ path(route, query|merge({(pageParameterName): first})) }}#top">&lt;&lt;</a>
             </span>
         {% endif %}
 
         {% if previous is defined %}
             <span class="previous">
-                <a data-article-page='{{ previous }}'   href="{{ path(route, query|merge({(pageParameterName): previous})) }}">&lt;</a>
+                <a data-article-page='{{ previous }}'   href="{{ path(route, query|merge({(pageParameterName): previous})) }}#top">&lt;</a>
             </span>
         {% endif %}
 
         {% for page in pagesInRange %}
             {% if page != current %}
                 <span class="page">
-                    <a data-article-page='{{ page }}' href="{{ path(route, query|merge({(pageParameterName): page})) }}">{{ page }}</a>
+                    <a data-article-page='{{ page }}' href="{{ path(route, query|merge({(pageParameterName): page})) }}#top">{{ page }}</a>
                 </span>
             {% else %}
                 <span data-article-page='{{ page }}'  class="current">{{ page }}</span>
@@ -26,13 +26,13 @@
 
         {% if next is defined %}
             <span class="next">
-                <a data-article-page='{{ next }}'  href="{{ path(route, query|merge({(pageParameterName): next})) }}">&gt;</a>
+                <a data-article-page='{{ next }}'  href="{{ path(route, query|merge({(pageParameterName): next})) }}#top">&gt;</a>
             </span>
         {% endif %}
 
         {% if last is defined and current != last %}
             <span class="last">
-                <a data-article-page='{{ last }}'  href="{{ path(route, query|merge({(pageParameterName): last})) }}">&gt;&gt;</a>
+                <a data-article-page='{{ last }}'  href="{{ path(route, query|merge({(pageParameterName): last})) }}#top">&gt;&gt;</a>
             </span>
         {% endif %}
     </div>

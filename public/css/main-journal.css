@@ -340,10 +340,10 @@ input{
 }
 
 .table.ver .row:hover {
-    background-color: #c9daff;
+    background-color: #ae9eff;
 }
 .table.ver .hov-column {
-    background-color: #c9daff !important;
+    background-color: #ae9eff !important;
 }
 
 .table td:hover {
@@ -396,7 +396,7 @@ table {
     transition:0s;
 }
 .table-subject-tr:hover select,.student-row:hover{
-    background-color: #c9daff;
+    background-color: #ae9eff;
     transition:0s;
 }
 
@@ -505,7 +505,7 @@ height: auto;
     height: 25px;
 }
 .table-subject-journal tr:hover td{
-    background-color:  #c9daff!important;
+    background-color: #ae9eff !important;
 }
 .textarea-subject-modal{
     margin-top:10px;

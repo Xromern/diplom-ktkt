@@ -17,8 +17,8 @@
         </div>
         {{ form_widget(formComment)}}
         {{ form_end(formComment) }}
-
     </div>
+
     <div class="preLoader" id="preloader-comment"></div>
     <div class="container-comments" id="dish-select-component-canvas">
 
@@ -52,7 +52,7 @@
             '{{ asset("images/preloader/preloader.gif") }}'
         );
 
-        $("#comment_text").removeAttr("required")
+        $("#comment_text").removeAttr("required");
         $(document).ready(function () {
             tinymce.init({
                 selector: '#' + editor_comment,
@@ -98,8 +98,44 @@
                 });
             }
 
-            function updateComment(comment_id, text) {
+            $('html').on('click', '.comment-form .button', function (e) {
 
+                e.preventDefault();
+
+                addComment(tinymce.get(editor_comment).getContent());
+
+            });
+
+            let addComment = (text) => {
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ path('addComment') }}',
+                    dataType: 'json',
+                    data: ({
+                        'article_id':{{ article.getId }},
+                        'text': text
+                    }),
+                    error: function () {
+                        note({
+                            content: "Сталась помилка при редагуванні коментаря",
+                            type: "error",
+                            time: 15
+                        });
+                    },
+                    success: function (result) {
+                        note({
+                            content: result['message'],
+                            type: result['type'],
+                            time: 15
+                        });
+                        if(!result['type'])
+                        showAjaxComment({{ article.id }}, '{{ path('showComments') }}',preloaderCommentPagination);
+
+                    }
+                });
+            };
+
+            let updateComment = (comment_id, text) => {
                 $.ajax({
                     type: 'POST',
                     url: '{{ path('updateComment') }}',
@@ -114,17 +150,19 @@
                             time: 15
                         });
                     },
-                    success: function () {
-                        showAjaxComment({{ article.id }}, '{{ path('showComments') }}',preloaderCommentPagination);
-
+                    success: function (result) {
                         note({
                             content: "Коментар успішно змінено.",
                             type: "info",
                             time: 15
                         });
+
+                        if(!result['type'])
+                        showAjaxComment({{ article.id }}, '{{ path('showComments') }}',preloaderCommentPagination);
+
                     }
                 });
-            }
+            };
 
             $('html').on('click', '.block-comment-button-remove', function () {
                 if (confirm('Ви дійсно хочете видалити коментар? ')) {

@@ -21,7 +21,11 @@ class CommentType extends AbstractType
                 'attr' => ['id' => 'editor-comment']
 
             ))
-            ->add('save', SubmitType::class, ['label' => 'Отправить'])
+            ->add('save', SubmitType::class, array(
+                'label' => 'Отправить',
+                'attr' => ['class' => 'button']
+
+            ))
             ->getForm();
     }
 

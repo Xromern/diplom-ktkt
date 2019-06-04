@@ -4,6 +4,9 @@
 namespace App\Service;
 
 
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\ValidatorBuilder;
+
 class Helper
 {
 
@@ -31,12 +34,23 @@ class Helper
     }
 
     public static function convertName($str){
-
-
         $m = explode(' ', $str);
-
         return  $m[0] . ' ' . substr($m[1],0,2) . '.' . substr($m[2],0,2) . '.' ;
-
-
     }
+
+    public static function isEmpty($obj){
+       if(!isset($obj) || empty($obj) || $obj == false){
+           die(new JsonResponse(array('type' => 'error','message'=>'Сталася помилка.')));
+       }
+    }
+
+    public static function validate($obj){
+        $validator  =  (new ValidatorBuilder())->enableAnnotationMapping()->getValidator();
+        $errors = $validator->validate($obj);
+
+        if (count($errors) > 0) {
+            die(json_encode(array('type' => 'error','message'=> $errors[0]->getMessage())));
+        }
+    }
+
 }

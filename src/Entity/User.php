@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use FOS\UserBundle\Model\User as BaseUser;
 
@@ -21,6 +22,12 @@ class User extends BaseUser
      * @ORM\OneToOne(targetEntity="JournalCode", mappedBy="user")
      */
     private $code;
+
+    /**
+     * One article has many comments. This is the inverse side.
+     * @ORM\OneToMany(targetEntity="Comment", mappedBy="user", cascade={"persist", "remove" })
+     */
+    private $comments;
 
     public function getId(): ?int
     {
@@ -43,4 +50,25 @@ class User extends BaseUser
         $this->code = $code;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @param mixed $comments
+     */
+    public function setComments($comments): void
+    {
+        $this->comments = $comments;
+    }
+
+    public function __construct()
+    {
+        $this->comments = new ArrayCollection();
+        parent::__construct();
+    }
 }

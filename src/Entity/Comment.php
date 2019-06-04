@@ -18,18 +18,29 @@ class Comment
      */
     private $id;
 
-  //  private  $user;
-
     /**
-     * Many comment have one article. This is the owning side.
+     * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="Article", inversedBy="comments" )
      * @ORM\JoinColumn(name="article_id", referencedColumnName="id")
      */
-    private  $article;
+    private $article;
+
+    /**
+     * @Assert\NotBlank
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="comments" )
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
 
     /**
      * @ORM\Column(type="text")
      * @Assert\NotBlank
+     * @Assert\Length(
+     *      min = 15,
+     *      max = 500,
+     *      minMessage = "Ваш коментар повинен бути мінімум {{ limit }} символів",
+     *      maxMessage = "Ваш коментар повинен бути максимум  {{ limit }} символів"
+     * )
      */
     private $text;
 
@@ -45,6 +56,7 @@ class Comment
      */
     private $created_at;
 
+
     /**
      * @return mixed
      */
@@ -54,12 +66,13 @@ class Comment
     }
 
     /**
-     * @return mixed
+     * @param Article $article
      */
     public function setArticle(Article $article)
     {
         $this->article = $article;
     }
+
 
     /**
      * @return mixed
@@ -69,8 +82,10 @@ class Comment
         return $this->text;
     }
 
+
     /**
-     * @param mixed $text
+     * @param $text
+     * @throws \Exception
      */
     public function setText($text): void
     {
@@ -80,7 +95,7 @@ class Comment
     }
 
     /**
-     * @return mixed
+     * @return \DateTime
      */
     public function getUpdateAt()
     {
@@ -88,7 +103,7 @@ class Comment
     }
 
     /**
-     * @param mixed $update_at
+     * @param $update_at
      */
     public function setUpdateAt($update_at): void
     {
@@ -96,7 +111,7 @@ class Comment
     }
 
     /**
-     * @return mixed
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -104,25 +119,50 @@ class Comment
     }
 
     /**
-     * @param mixed $created_at
+     * @param $created_at
      */
     public function setCreatedAt($created_at): void
     {
         $this->created_at = $created_at;
     }
 
-
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param $user
+     */
+    public function setUser($user): void
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * Comment constructor.
+     * @throws \Exception
+     */
     public function __construct()
     {
         $this->created_at = new \DateTime("now");
         $this->update_at =  new \DateTime("now");
     }
 
+    /**
+     * @return mixed
+     */
     public function __toString(){
         return $this->text;
     }
