@@ -8,8 +8,8 @@
     <div class="article-sheet-caption">{{   article.title}}</div>
     <div class="article-sheet">
         {{ article.body|raw  }}
-
     </div>
+    {% if app.user %}
     <div class="container-form">
         {{ form_start(formComment, {  'method': 'POST', 'attr': {'class': 'comment-form'} }) }}
         <div class="my-custom-class-for-errors">
@@ -18,7 +18,7 @@
         {{ form_widget(formComment)}}
         {{ form_end(formComment) }}
     </div>
-
+    {% endif %}
     <div class="preLoader" id="preloader-comment"></div>
     <div class="container-comments" id="dish-select-component-canvas">
 
@@ -89,7 +89,7 @@
                         note({
                             content: "Сталась помилка, перезавантажте сторінку.",
                             type: "error",
-                            time: 15
+                            time: 10
                         });
                     },
                     success: function (result) {
@@ -119,16 +119,17 @@
                         note({
                             content: "Сталась помилка при редагуванні коментаря",
                             type: "error",
-                            time: 15
+                            time: 10
                         });
                     },
                     success: function (result) {
                         note({
                             content: result['message'],
                             type: result['type'],
-                            time: 15
+                            time: 10
                         });
-                        if(!result['type'])
+
+                        if(result['type']==='info')
                         showAjaxComment({{ article.id }}, '{{ path('showComments') }}',preloaderCommentPagination);
 
                     }
@@ -138,6 +139,7 @@
             let updateComment = (comment_id, text) => {
                 $.ajax({
                     type: 'POST',
+                    dataType: 'json',
                     url: '{{ path('updateComment') }}',
                     data: ({
                         "comment_id": comment_id,
@@ -152,12 +154,12 @@
                     },
                     success: function (result) {
                         note({
-                            content: "Коментар успішно змінено.",
-                            type: "info",
+                            content: result['message'],
+                            type: ['type'],
                             time: 15
                         });
 
-                        if(!result['type'])
+                        if(result['type']==='info')
                         showAjaxComment({{ article.id }}, '{{ path('showComments') }}',preloaderCommentPagination);
 
                     }
@@ -166,12 +168,41 @@
 
             $('html').on('click', '.block-comment-button-remove', function () {
                 if (confirm('Ви дійсно хочете видалити коментар? ')) {
-                    $('.preLoader').show();
-                    var id_comment = $(this).parent().attr('data-id');
-                    //console.log(id_comment);
-                    // deleteComment(id_comment);
+
+                    let id_comment = $(this).parent().attr('data-id');
+
+                    deleteComment(id_comment);
                 }
             });
+
+            let deleteComment = (comment_id) => {
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: '{{ path('deleteComment') }}',
+                    data: ({
+                        "comment_id": comment_id,
+                    }),
+                    error: function () {
+                        note({
+                            content: "Сталась помилка при редагуванні коментаря",
+                            type: "error",
+                            time: 15
+                        });
+                    },
+                    success: function (result) {
+                        note({
+                            content: result['message'],
+                            type: ['type'],
+                            time: 15
+                        });
+
+                        if(result['type']==='info')
+                            showAjaxComment({{ article.id }}, '{{ path('showComments') }}',preloaderCommentPagination);
+
+                    }
+                });
+            };
 
             var modal = document.getElementById('myModal');
 

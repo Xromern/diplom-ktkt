@@ -14,9 +14,28 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class CommentRepository extends ServiceEntityRepository
 {
+    /**
+     * CommentRepository constructor.
+     * @param RegistryInterface $registry
+     */
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Comment::class);
+    }
+
+    /**
+     * @param $comment_id
+     * @param $user_id
+     * @return mixed
+     */
+    public function findByUser($comment_id, $user_id){
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.user','u')
+            ->andWhere('c.id = :comment_id and u.id = :user_id')
+            ->setParameter('comment_id',$comment_id)
+            ->setParameter('user_id',$user_id)
+            ->getQuery()
+            ->execute();
     }
 
     // /**

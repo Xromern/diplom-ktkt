@@ -60,6 +60,7 @@ class JournalTeacherController extends AbstractController
 
         $code = new JournalCode();
         $code->setKeyP(Helper::createAlias($request->get('teacher_name')).'_'.Helper::generatePassword(30));
+        $code->setRole('ROLE_TEACHER');
         $manager->persist($code);
 
         $teacher= new JournalTeacher();

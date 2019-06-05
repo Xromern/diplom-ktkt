@@ -50,14 +50,7 @@ class CommentController extends AbstractController
     {
         Service\Helper::isEmpty($user);
 
-        $comment = $manager->getRepository(Comment::class)
-            ->createQueryBuilder('c')
-            ->leftJoin('c.user','u')
-            ->andWhere('c.id = :comment_id and u.id = :user_id')
-            ->setParameter('comment_id',$request->get('comment_id'))
-            ->setParameter('user_id',$user->getId())
-            ->getQuery()
-            ->execute()[0];
+        $comment = $manager->getRepository(Comment::class)->findByUser($request->get('comment_id'),$user->getId())[0];
 
         Service\Helper::isEmpty($comment);
         Service\Helper::validate($comment);
@@ -67,7 +60,29 @@ class CommentController extends AbstractController
 
        $manager->flush();
 
-       return new \Symfony\Component\HttpFoundation\Response();
+        return new JsonResponse(array('type' => 'info','message'=>'Коментар успішно змінено.'));
+    }
+
+    /**
+     * @param Request $request
+     * @param ObjectManager $manager
+     * @param UserInterface|null $user
+     * @return JsonResponse
+     * @Route("/deleteComment", name="deleteComment", methods="POST")
+     */
+    public function deleteComment(Request $request, ObjectManager $manager, UserInterface $user = null)
+    {
+        Service\Helper::isEmpty($user);
+
+        $comment = $manager->getRepository(Comment::class)->findByUser($request->get('comment_id'),$user->getId())[0];
+
+        Service\Helper::isEmpty($comment);
+
+        $manager->remove($comment);
+
+        $manager->flush();
+
+        return new JsonResponse(array('type' => 'info','message'=>'Коментар успішно видалено.'));
     }
 
     /**

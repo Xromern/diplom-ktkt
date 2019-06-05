@@ -9,11 +9,14 @@
             <div class='block-comment-container-date'>05-04-2019</div>
             <div class='block-comment-container-status'>Студент</div>
         </div>
-        <div class='block-comment-container-action' data-id='{{ comment.id }}'>
-
-            <div class='block-comment-button-edit' >✎</div>
-            <div class='block-comment-button-remove'>✘</div>
-        </div>
+        {% if app.User %}
+            {% if app.User.getId == comment.getUser.getId %}
+            <div class='block-comment-container-action' data-id='{{ comment.id }}'>
+                <div class='block-comment-button-edit' >✎</div>
+                <div class='block-comment-button-remove'>✘</div>
+            </div>
+            {% endif %}
+        {% endif %}
     </div>
 
     <div class='block-comment-container-body'>

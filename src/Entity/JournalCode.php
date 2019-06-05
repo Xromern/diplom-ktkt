@@ -36,10 +36,13 @@ class JournalCode
     /**
      * One group has One curator.
      * @ORM\OneToOne(targetEntity="User", inversedBy="code")
-     * @ORM\JoinColumn(name="code_id", referencedColumnName="id", nullable=true)
      */
     private $user;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $role;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -129,6 +132,22 @@ class JournalCode
     public function setUser($user): void
     {
         $this->user = $user;
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    /**
+     * @param mixed $role
+     */
+    public function setRole($role): void
+    {
+        $this->role = $role;
     }
 
     public function __toString()

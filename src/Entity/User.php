@@ -70,5 +70,6 @@ class User extends BaseUser
     {
         $this->comments = new ArrayCollection();
         parent::__construct();
+        $this->roles = array('ROLE_USER');
     }
 }

@@ -3,10 +3,10 @@ security:
         FOS\UserBundle\Model\UserInterface: bcrypt
 
     role_hierarchy:
-        ROLE_ADMIN:       ROLE_USER
+        ROLE_USER:       ROLE_USER
         ROLE_TEACHER:     ROLE_TEACHER
-        ROLE_STUDENT:     ROLE_TEACHER
-        ROLE_SUPER_ADMIN: ROLE_ADMIN
+        ROLE_STUDENT:     ROLE_STUDENT
+        ROLE_ADMIN: ROLE_ADMIN
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
@@ -30,9 +30,10 @@ security:
     # Note: Only the *first* access control that matches will be used
 #    access_denied_url: /
 
-    access_denied_url: /
+#    access_denied_url: /
     access_control:
         - { path: ^/login$,  allow_if: "!is_authenticated()"  }
         - { path: ^/register$,  allow_if: "!is_authenticated()"  }
         - { path: ^/resetting,  allow_if: "!is_authenticated()" }
-        - { path: ^/admin/, role: ROLE_ADMIN }
+        - { path: ^/admin/, roles: ROLE_ADMIN }
+        - { path: ^/journal/*, roles:  [ROLE_ADMIN, ROLE_STUDENT, ROLE_TEACHER ] }

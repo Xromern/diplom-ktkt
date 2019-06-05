@@ -68,12 +68,15 @@ class JournalStudentController extends AbstractController
 
         $code = new JournalCode();
         $code->setKeyP(Helper::createAlias($request->get('student_name')).'_'.Helper::generatePassword(30));
+        $code->setRole('ROLE_STUDENT');
+
         $manager->persist($code);
 
         $student = new JournalStudent();
         $student->setName(trim($request->get('student_name')));
         $student->setGroup($group);
         $student->setCode($code);
+
 
         $manager->persist($student);
 
