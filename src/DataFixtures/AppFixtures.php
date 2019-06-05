@@ -22,45 +22,125 @@ use phpDocumentor\Reflection\Types\Integer;
 
 class AppFixtures extends Fixture
 {
-    public function loadk(ObjectManager $manager)
-    {
-        /*$category = [];
-        for($i=0;$i<5;$i++){
-
-            $category[] = (new CategoryArticle())->setTitle('category');
-            $manager->persist($category[$i]);
-
-        }*/
-        for($i = 0;$i<8;$i++ ) {
-            $advertisement= new Advertisement();
-            $advertisement->setTitle('title test '.$i);
-            $advertisement->setDescription('description test '.$i);
-            $manager->persist($advertisement);
-        }
-        for($i = 0;$i<67;$i++ ) {
-            $article = new Article();
-            $article->setBody('body test: '.$i);
-            $article->setDescription('description test: '.$i);
-            $article->setTitle('title test: '.$i);
-            $article->setImage('ktkt.png');
-
-            $randStart = rand(0,5);
-            $randEnd = rand(0,5);
-
-          /*  for($i = $randStart;$i<$randEnd;$i++){
-                $article->setCategories($category[$i]);
-            }*/
-
-            $manager->persist($article);
-        }
-        //
-
-        $manager->flush();
-    }
 
     public function load(ObjectManager $manager)
     {
 
+        $generateName =  Helper::generateName();
+
+        $arrayTeacher = self::JournalTeacherCode($manager,$generateName);
+
+        self::JournalGroup($manager,$arrayTeacher);
+
+        self::JournalStudentCode($manager,$group1);
+
+        self::JournalTypeMark($manager);
+
+        self::JournalTypeFormControl($manager);
+
+        self::loadJournalGradingSystem($manager);
+
+        self::loadAdvertisement($manager);
+
+        self::loadUser($manager);
+
+        $manager->flush();
+    }
+
+    private function JournalTeacherCode(ObjectManager &$manager,$generateName){
+        $arrayTeacher = [];
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Ємець Петро Андрійович_'.Helper::generatePassword(30)));
+        $code->setRole('ROLE_TEACHER');
+        $manager->persist($code);
+        $teacher= new JournalTeacher();
+        $teacher->setName('Ємець Петро Андрійович');
+        $teacher->setCode($code);
+        $manager->persist($teacher);
+        $arrayTeacher[] = $teacher;
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Данилова Віталіна Анатоліївна_'.Helper::generatePassword(30)));
+        $code->setRole('ROLE_TEACHER');
+        $manager->persist($code);
+        $teacher= new JournalTeacher();
+        $teacher->setName('Данилова Віталіна Анатоліївна');
+        $teacher->setCode($code);
+        $manager->persist($teacher);
+        $arrayTeacher[] = $teacher;
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Зуйкова Олена Вікторівна_'.Helper::generatePassword(30)));
+        $code->setRole('ROLE_TEACHER');
+        $manager->persist($code);
+        $teacher= new JournalTeacher();
+        $teacher->setName('Зуйкова Олена Вікторівна');
+        $teacher->setCode($code);
+        $manager->persist($teacher);
+        $arrayTeacher[] = $teacher;
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Мудрицький Артур Вікотрович_'.Helper::generatePassword(30)));
+        $code->setRole('ROLE_TEACHER');
+        $manager->persist($code);
+        $teacher= new JournalTeacher();
+        $teacher->setName('Мудрицький Артур Вікотрович');
+        $teacher->setCode($code);
+        $manager->persist($teacher);
+        $arrayTeacher[] = $teacher;
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Нехай Валентин Валентинович_'.Helper::generatePassword(30)));
+        $code->setRole('ROLE_TEACHER');
+        $manager->persist($code);
+        $teacher= new JournalTeacher();
+        $teacher->setName('Нехай Валентин Валентинович');
+        $teacher->setCode($code);
+        $manager->persist($teacher);
+        $arrayTeacher[] = $teacher;
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Крисько Тетяна Олександрівна_'.Helper::generatePassword(30)));
+        $code->setRole('ROLE_TEACHER');
+        $manager->persist($code);
+        $teacher= new JournalTeacher();
+        $teacher->setName('Крисько Тетяна Олександрівна');
+        $teacher->setCode($code);
+        $manager->persist($teacher);
+        $arrayTeacher[] = $teacher;
+
+        $code = new JournalCode();
+        $code->setKeyP(Helper::createAlias('Любенко Андрій Андрійович_'.Helper::generatePassword(30)));
+        $code->setRole('ROLE_TEACHER');
+        $manager->persist($code);
+        $teacher= new JournalTeacher();
+        $teacher->setName('Любенко Андрій Андрійович');
+        $teacher->setCode($code);
+        $manager->persist($teacher);
+        $arrayTeacher[] = $teacher;
+
+        for ($i=0;$i<20;$i++){
+            $code = new JournalCode();
+            $randomIndex = rand(0,count($generateName));
+            $name = $generateName[$randomIndex];
+            unset($generateName[$randomIndex]);
+            sort($generateName);
+            $code->setKeyP(Helper::createAlias($name.'_'.Helper::generatePassword(30)));
+            $code->setRole('ROLE_TEACHER');
+            $manager->persist($code);
+            $teacher= new JournalTeacher();
+            $teacher->setName($name);
+            $teacher->setCode($code);
+            $manager->persist($teacher);
+            $arrayTeacher[] = $teacher;
+        }
+
+        return $arrayTeacher;
+    }
+
+    private function JournalGroup(ObjectManager &$manager,&$arrayTeacher){
+        $i=0;
         $specialty1 = new JournalSpecialty();
         $specialty1->setDescription('Это ПС');
         $specialty1->setName('ПС');
@@ -81,94 +161,49 @@ class AppFixtures extends Fixture
         $specialty4->setName('ЕП');
         $manager->persist($specialty4);
 
-        $code = new JournalCode();
-        $code->setKeyP(Helper::createAlias('Ємець Петро Андрійович_'.Helper::generatePassword(30)));
-        $manager->persist($code);
-        $teacher1= new JournalTeacher();
-        $teacher1->setName('Ємець Петро Андрійович');
-        $teacher1->setCode($code);
-        $manager->persist($teacher1);
+        $specialty4 = new JournalSpecialty();
+        $specialty4->setDescription('Это УТ');
+        $specialty4->setName('УТ');
+        $manager->persist($specialty4);
 
-
-        $code = new JournalCode();
-        $code->setKeyP(Helper::createAlias('Данилова Віталіна Анатоліївна_'.Helper::generatePassword(30)));
-        $manager->persist($code);
-        $teacher2= new JournalTeacher();
-        $teacher2->setName('Данилова Віталіна Анатоліївна');
-        $teacher2->setCode($code);
-        $manager->persist($teacher2);
-
-        $code = new JournalCode();
-        $code->setKeyP(Helper::createAlias('Зуйкова Олена Вікторівна_'.Helper::generatePassword(30)));
-        $manager->persist($code);
-        $teacher3= new JournalTeacher();
-        $teacher3->setName('Зуйкова Олена Вікторівна');
-        $teacher3->setCode($code);
-        $manager->persist($teacher3);
-
-        $code = new JournalCode();
-        $code->setKeyP(Helper::createAlias('Мудрицький Артур Вікотрович_'.Helper::generatePassword(30)));
-        $manager->persist($code);
-        $teacher4= new JournalTeacher();
-        $teacher4->setName('Мудрицький Артур Вікотрович');
-        $teacher4->setCode($code);
-        $manager->persist($teacher4);
-
-        $code = new JournalCode();
-        $code->setKeyP(Helper::createAlias('Нехай Валентин Валентинович_'.Helper::generatePassword(30)));
-        $manager->persist($code);
-        $teacher5= new JournalTeacher();
-        $teacher5->setName('Нехай Валентин Валентинович');
-        $teacher5->setCode($code);
-        $manager->persist($teacher5);
-
-        $code = new JournalCode();
-        $code->setKeyP(Helper::createAlias('Крисько Тетяна Олександрівна_'.Helper::generatePassword(30)));
-        $manager->persist($code);
-        $teacher6= new JournalTeacher();
-        $teacher6->setName('Крисько Тетяна Олександрівна');
-        $teacher6->setCode($code);
-        $manager->persist($teacher6);
-
-        $code = new JournalCode();
-        $code->setKeyP(Helper::createAlias('Любенко Андрій Андрійович_'.Helper::generatePassword(30)));
-        $manager->persist($code);
-        $teacher7= new JournalTeacher();
-        $teacher7->setName('Любенко Андрій Андрійович');
-        $teacher7->setCode($code);
-        $manager->persist($teacher7);
-
+        $specialty4 = new JournalSpecialty();
+        $specialty4->setDescription('Это ТТ');
+        $specialty4->setName('ТТ');
+        $manager->persist($specialty4);
 
         $group1 = new JournalGroup();
         $group1->setName('ПС-1501');
         $group1->setDescription('Это група пс');
-        $group1->setCurator($teacher2);
+        $group1->setCurator($arrayTeacher[++$i]);
         $group1->setSpecialty($specialty1);
         $manager->persist($group1);
 
         $group2 = new JournalGroup();
         $group2->setName('КС-1502');
         $group2->setDescription('Это група КС');
-        $group2->setCurator($teacher1);
+        $group2->setCurator($arrayTeacher[++$i]);
         $group2->setSpecialty($specialty2);
         $manager->persist($group2);
 
         $group3 = new JournalGroup();
         $group3->setName('АД-1502');
         $group3->setDescription('Это група АД');
-        $group3->setCurator($teacher3);
+        $group3->setCurator($arrayTeacher[++$i]);
         $group3->setSpecialty($specialty3);
         $manager->persist($group3);
 
         $group4 = new JournalGroup();
         $group4->setName('ПС-1401');
         $group4->setDescription('Это група пс');
-        $group4->setCurator($teacher4);
+        $group4->setCurator($arrayTeacher[++$i]);
         $group4->setSpecialty($specialty1);
         $manager->persist($group4);
+    }
 
+    private function JournalStudentCode(ObjectManager &$manager,&$group1){
         $code = new JournalCode();
         $code->setKeyP(Helper::createAlias('Аврамішин Іван Сергійович').'_'.Helper::generatePassword(30));
+        $code->setRole('ROLE_STUDENT');
         $manager->persist($code);
 
         $student = new JournalStudent();
@@ -179,6 +214,7 @@ class AppFixtures extends Fixture
 
         $code = new JournalCode();
         $code->setKeyP(Helper::createAlias('Брей Ігор Володимирович').'_'.Helper::generatePassword(30));
+        $code->setRole('ROLE_STUDENT');
         $manager->persist($code);
 
         $student = new JournalStudent();
@@ -189,6 +225,7 @@ class AppFixtures extends Fixture
 
         $code = new JournalCode();
         $code->setKeyP(Helper::createAlias('Бузинов Владислав Михайлович').'_'.Helper::generatePassword(30));
+        $code->setRole('ROLE_STUDENT');
         $manager->persist($code);
 
         $student = new JournalStudent();
@@ -199,6 +236,7 @@ class AppFixtures extends Fixture
 
         $code = new JournalCode();
         $code->setKeyP(Helper::createAlias('Дударенко Володимер Володимирович').'_'.Helper::generatePassword(30));
+        $code->setRole('ROLE_STUDENT');
         $manager->persist($code);
 
         $student = new JournalStudent();
@@ -209,6 +247,7 @@ class AppFixtures extends Fixture
 
         $code = new JournalCode();
         $code->setKeyP(Helper::createAlias('Завгородня Поліна Сергіївна').'_'.Helper::generatePassword(30));
+        $code->setRole('ROLE_STUDENT');
         $manager->persist($code);
 
         $student = new JournalStudent();
@@ -219,6 +258,7 @@ class AppFixtures extends Fixture
 
         $code = new JournalCode();
         $code->setKeyP(Helper::createAlias('Івасюк Данило Валерійович').'_'.Helper::generatePassword(30));
+        $code->setRole('ROLE_STUDENT');
         $manager->persist($code);
 
         $student = new JournalStudent();
@@ -229,6 +269,7 @@ class AppFixtures extends Fixture
 
         $code = new JournalCode();
         $code->setKeyP(Helper::createAlias('Криієнко Богдан Олександрович').'_'.Helper::generatePassword(30));
+        $code->setRole('ROLE_STUDENT');
         $manager->persist($code);
 
         $student = new JournalStudent();
@@ -239,6 +280,7 @@ class AppFixtures extends Fixture
 
         $code = new JournalCode();
         $code->setKeyP(Helper::createAlias('Матвієнко Валерія Іорівна').'_'.Helper::generatePassword(30));
+        $code->setRole('ROLE_STUDENT');
         $manager->persist($code);
 
         $student = new JournalStudent();
@@ -246,7 +288,9 @@ class AppFixtures extends Fixture
         $student->setGroup($group1);
         $student->setCode($code);
         $manager->persist($student);
+    }
 
+    private function JournalTypeMark(ObjectManager &$manager){
         $typeMark1=  new JournalTypeMark();
         $typeMark1->setName('Оцінка');
         $typeMark1->setColor('#ffffff');
@@ -271,8 +315,9 @@ class AppFixtures extends Fixture
         $typeMark1->setName('Лабораторна');
         $typeMark1->setColor('#006633');
         $manager->persist($typeMark1);
+    }
 
-
+    private function JournalTypeFormControl(ObjectManager &$manager){
         $typeJournal = new JournalTypeFormControl();
         $typeJournal->setName('Журнал');
         $manager->persist($typeJournal);
@@ -288,7 +333,9 @@ class AppFixtures extends Fixture
 
         $typeJournal->setName('Практика');
         $manager->persist($typeJournal);
+    }
 
+    private function loadJournalGradingSystem(ObjectManager &$manager){
         $system = new JournalGradingSystem();
         $system->setSystem('5');
         $manager->persist($system);
@@ -296,7 +343,9 @@ class AppFixtures extends Fixture
         $system = new JournalGradingSystem();
         $system->setSystem('12');
         $manager->persist($system);
+    }
 
+    private function loadAdvertisement(ObjectManager &$manager){
         $advertisement = new Advertisement();
         $advertisement->setTitle('Оголошення!');
         $advertisement->setDescription('Графік звітів циклових комісій у ІІ семестрі 2018-2019 н.р. та бланки звітів циклової комісії та викладача можна переглянути у розділі "Викладачам - Інформаційно-методичний вісник»');
@@ -321,17 +370,44 @@ class AppFixtures extends Fixture
         $advertisement->setTitle('Оголошення!');
         $advertisement->setDescription('Рейтинг успішності студентів 4-го курсу спеціальностей ЕУ,УТ,АД за результатами 7-го семестру навчання (2018-2019 н.р.) можна переглянути в розділі "Навчання - Стипендіальне забезпечення - Рейтинг успішності"');
         $manager->persist($advertisement);
+    }
 
+    private function loadUser(ObjectManager &$manager){
 
         $user = new User();
         $user->setPassword('$2y$13$0XQoNXzgLsp/NaxSJp.9meKhVYJfWgVJCIcwjPzWyAZRIdjWWz/pW');
         $user->setEmail('admin@admin.admin');
         $user->setUsername('admin');
-        $user->addRole('ROLE_SUPER_ADMIN');
+        $user->addRole('ROLE_ADMIN');
+        $user->setEnabled(1);
+        $manager->persist($user);
+
+        $user = new User();
+        $user->setPassword('$2y$13$0XQoNXzgLsp/NaxSJp.9meKhVYJfWgVJCIcwjPzWyAZRIdjWWz/pW');
+        $user->setEmail('user@user.user');
+        $user->setUsername('user');
+        $user->addRole('ROLE_USER');
+        $user->setEnabled(1);
+        $manager->persist($user);
+
+        $user = new User();
+        $user->setPassword('$2y$13$0XQoNXzgLsp/NaxSJp.9meKhVYJfWgVJCIcwjPzWyAZRIdjWWz/pW');
+        $user->setEmail('teacher@teacher.teacher');
+        $user->setUsername('teacher');
+        $user->addRole('ROLE_TEACHER');
+        $user->setEnabled(1);
+        $manager->persist($user);
+
+        $user = new User();
+        $user->setPassword('$2y$13$0XQoNXzgLsp/NaxSJp.9meKhVYJfWgVJCIcwjPzWyAZRIdjWWz/pW');
+        $user->setEmail('student@student.student');
+        $user->setUsername('student');
+        $user->addRole('ROLE_TEACHER');
         $user->setEnabled(1);
         $manager->persist($user);
 
 
-        $manager->flush();
     }
+
+
 }

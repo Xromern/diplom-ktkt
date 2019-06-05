@@ -20,7 +20,7 @@ class ArticleController extends AbstractController
     public function showArticles(\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator,UserInterface $user = null)
     {
         $em = $this->getDoctrine()->getManager();
-
+        Service\Helper::generateName();
         $paginationArticle = Service\ArticleManager::getPaginateArticles(
             $em,
             $request->get('page', 1),
