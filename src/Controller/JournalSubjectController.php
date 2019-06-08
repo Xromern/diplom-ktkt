@@ -100,28 +100,22 @@ class JournalSubjectController extends AbstractController
         ));
     }
 
-
-
     /**
      * @Route("/journal/ajax/showTableSubject", name="showTableSubject", methods={"POST"})
      */
     public function showTableSubject(Request $request,ObjectManager $manager)
     {
-
         $subject = $manager->getRepository(JournalSubject::class)
             ->find($request->get('subject_alis'));
 
         $students = [];
 
-
         $dates = $manager->getRepository(JournalDateMark::class)
             ->getOnByPage($subject->getId(),$request->get('page',0));
 
         foreach ($subject->getStudents() as $student) {
-
             $students[] = $manager->getRepository(JournalMark::class)
-                ->getOnMarksByStudent($student,$subject->getId(),$request->get('page',0));
-
+            ->getOnMarksByStudent($student,$subject->getId(),$request->get('page',0));
         }
 
         return $this->render('journal/journal_subject/head-table.html.twig',[
@@ -194,51 +188,7 @@ class JournalSubjectController extends AbstractController
 
         if($typeMark->getAverage() == 1){
             $students = $journalDateMark->getSubject()->getStudents();
-
-            foreach ($students as $s){
-                $marks = $manager->getRepository(JournalMark::class)->createQueryBuilder('m')
-                    ->leftJoin('m.student','stud')
-                    ->leftJoin('m.subject','sub')
-                    ->leftJoin('m.dateMark','d')
-                    ->andWhere('stud.id = :student_id')
-                    ->andWhere('sub.id = :subject_id')
-                    ->andWhere('d.id < :date_id')
-                    ->setParameter('student_id',$s->getId())
-                    ->setParameter('date_id',$journalDateMark->getId())
-                    ->setParameter('subject_id',$journalDateMark->getSubject()->getId())
-                    ->getQuery()
-                    ->execute();
-                $average = 0;$counter = 0;
-                foreach ($marks as $mark){
-                    if(is_numeric($mark->getMark())){
-                        $average+=$mark->getMark();
-                        $counter++;
-                    }
-                    if($mark->getDateMark()->getTypeMark()->getAverage()==1){
-                        $average=0;
-                        $counter=0;
-                    }
-                }
-
-                $m = $manager->getRepository(JournalMark::class)->createQueryBuilder('m')
-                    ->leftJoin('m.student','stud')
-                    ->leftJoin('m.subject','sub')
-                    ->leftJoin('m.dateMark','d')
-                    ->andWhere('stud.id = :student_id')
-                    ->andWhere('sub.id = :subject_id')
-                    ->andWhere('d.id = :date_id')
-                    ->setParameter('student_id',$s->getId())
-                    ->setParameter('date_id',$journalDateMark->getId())
-                    ->setParameter('subject_id',$journalDateMark->getSubject()->getId())
-                    ->getQuery()
-                    ->execute()[0];
-                $average = $counter!=0?$average/$counter:$average;
-                $m->setMark(ceil($average));
-                $manager->persist($m);
-
-            }
-            $manager->flush();
-
+            Service\Journal::setAttestation($students,$manager,$journalDateMark);
         }
 
         $journalDateMark->setDescription($request->get('description'));

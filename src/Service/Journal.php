@@ -16,13 +16,21 @@ use FOS\UserBundle\Model\User;
 class Journal
 {
     /**
-     * Получить учителя по пользователя
+     * Получить учителя по пользователю
      */
     public static function Teacher(User $user){
         if(in_array('ROLE_TEACHER',$user->getRoles())){
             return $user->getCode()->getTeacher();
         }else{
            return false;
+        }
+    }
+
+    public static function Student(User $user){
+        if(in_array('ROLE_STUDENT',$user->getRoles())){
+            return $user->getCode()->getStudent();
+        }else{
+            return false;
         }
     }
 
@@ -36,9 +44,7 @@ class Journal
             $listDate[$i]->setPage($page);
             $manager->persist($listDate[$i]);
         }
-
         self::addStudentOnSubject($manager,$subject,$listStudent,$listDate,$page);
-
     }
 
     public static function deleteStudentFromSubject(ObjectManager &$manager,int $subject_id,int $student_id){
@@ -63,9 +69,7 @@ class Journal
             $manager->remove($m);
         }
 
-
         $manager->persist($subject);
-
         $manager->flush();
 
     }
@@ -85,6 +89,50 @@ class Journal
             }
         }
 
+    }
+
+    public static function setAttestation($students,&$manager,$journalDateMark){
+        foreach ($students as $s){
+            $marks = $manager->getRepository(JournalMark::class)->createQueryBuilder('m')
+                ->leftJoin('m.student','stud')
+                ->leftJoin('m.subject','sub')
+                ->leftJoin('m.dateMark','d')
+                ->andWhere('stud.id = :student_id')
+                ->andWhere('sub.id = :subject_id')
+                ->andWhere('d.id < :date_id')
+                ->setParameter('student_id',$s->getId())
+                ->setParameter('date_id',$journalDateMark->getId())
+                ->setParameter('subject_id',$journalDateMark->getSubject()->getId())
+                ->getQuery()
+                ->execute();
+            $average = 0;$counter = 0;
+            foreach ($marks as $mark){
+                if(is_numeric($mark->getMark())){
+                    $average+=$mark->getMark();
+                    $counter++;
+                }
+                if($mark->getDateMark()->getTypeMark()->getAverage()==1){
+                    $average=0;
+                    $counter=0;
+                }
+            }
+
+            $m = $manager->getRepository(JournalMark::class)->createQueryBuilder('m')
+                ->leftJoin('m.student','stud')
+                ->leftJoin('m.subject','sub')
+                ->leftJoin('m.dateMark','d')
+                ->andWhere('stud.id = :student_id')
+                ->andWhere('sub.id = :subject_id')
+                ->andWhere('d.id = :date_id')
+                ->setParameter('student_id',$s->getId())
+                ->setParameter('date_id',$journalDateMark->getId())
+                ->setParameter('subject_id',$journalDateMark->getSubject()->getId())
+                ->getQuery()
+                ->execute()[0];
+            $average = $counter!=0?$average/$counter:$average;
+            $m->setMark(ceil($average));
+            $manager->persist($m);
+        }
     }
 
 }

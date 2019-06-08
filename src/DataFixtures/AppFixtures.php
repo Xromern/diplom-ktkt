@@ -305,6 +305,7 @@ class AppFixtures extends Fixture
         $typeMark1=  new JournalTypeMark();
         $typeMark1->setName('Атестація');
         $typeMark1->setColor('#00008B');
+        $typeMark1->setAverage(1);
         $manager->persist($typeMark1);
 
         $typeMark1=  new JournalTypeMark();

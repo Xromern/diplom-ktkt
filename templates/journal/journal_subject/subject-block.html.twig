@@ -1,10 +1,10 @@
-{% for itemFormControl in subjects %}
+{% for itemFormControl in tfc %}
     {% if itemFormControl.subjects|length != 0 %}
     <div class='block-specialty'>
-        <div class='line-specialty'>{{ itemFormControl.name }}</div>
+        <div class='line-specialty'>{{ itemFormControl.tfc.getName }}</div>
         {% for subject in itemFormControl.subjects %}
             {% if subject.getGroup.getId == group.getId %}
-            <a href='{{ path('journal_show_subject',{'group_alis':group.alisen,'subject_alis':subject.getId}) }}'class='block-group'>
+            <a href='{{ path('journal_show_subject',{'group_alis':subject.getGroup.getAlisEn,'subject_alis':subject.getAlisEn}) }}'class='block-group'>
                 <div class='block-subject-name'>{{ subject.name }}</div>
                 <div class='block-group-curator'><div>Викладач:</div>
                     {% if subject.mainTeacher !=null %}

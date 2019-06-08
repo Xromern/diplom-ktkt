@@ -1,7 +1,8 @@
+
 {% for sp in specialty %}
     {% if sp.groups|length != 0 %}
         <div class='block-specialty'>
-            <div class='line-specialty'>{{ sp.name }}</div>
+            <div class='line-specialty'>{{ sp.specialty.getName }}</div>
             {% for group in sp.groups %}
                 <a href='{{ path('journal_show_one_group',{'group_alis':group.alisen}) }}' class='block-group'>
                     <div class='block-group-name'>{{ group.name }}</div>

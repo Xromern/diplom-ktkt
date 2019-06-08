@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\JournalGradingSystem;
 use App\Entity\JournalGroup;
 use App\Entity\JournalSpecialty;
+use App\Entity\JournalSubject;
 use App\Entity\JournalTeacher;
 use App\Entity\JournalTypeFormControl;
 use App\Repository\TeacherRepository;
@@ -31,20 +32,43 @@ class JournalGroupController extends AbstractController
             return $this->redirectToRoute('journal_show_one_group',['group_alis'=>$student->getGroup()->getAlisEn()]);
         }
 
-        $currentTeacher = Service\Journal::Teacher($this->getUser());
+        $specialty = $manager->getRepository(JournalSpecialty::class)->findAll();
 
-        $specialty = $manager->getRepository(JournalSpecialty::class)->getGroupOnByTeacher($currentTeacher->getId());
+        $listGroups = $manager->getRepository(JournalGroup::class)->createQueryBuilder('g')
+        ->leftJoin('g.curator','c')
+        ->leftJoin('g.subjects','s');
+        if($this->isGranted('ROLE_TEACHER')) {
+            $currentTeacher = Service\Journal::Teacher($this->getUser());
+            $listGroups->leftJoin('g.specialty', 'spec')
+                ->leftJoin('s.mainTeacher', 'mt')
+                ->andWhere('mt.id = :teacher_id or c.id = :teacher_id')
+                ->setParameter('teacher_id', $currentTeacher->getId());
+        }
+        $listGroups = $listGroups->orderBy('spec.id','desc')
+        ->getQuery()
+        ->execute();
+
+        $specialtyList = [];
+        foreach ($specialty as $item) {
+            $specialtyList[] = ['specialty'=>$item,'groups'=>[]];
+        }
+        foreach ($specialtyList as &$itemSpec){
+            foreach ($listGroups as $itemGroup){
+                if($itemSpec['specialty']->getId() == $itemGroup->getSpecialty()->getId())
+                array_push($itemSpec['groups'],$itemGroup);
+            }
+        }
 
         if ($request->isXmlHttpRequest())
         {
             return $this->render('journal/journal_group/group-block.html.twig', [
                 'controller_name' => 'JournalGroupController',
-                'specialty'=>$specialty
+                'specialty'=>$specialtyList
             ]);
         }else{
             return $this->render('journal/journal_group/list-group-specialty.html.twig', [
                 'controller_name' => 'JournalGroupController',
-                'specialty'=>$specialty
+                'specialty'=>$specialtyList
             ]);
         }
     }
@@ -55,22 +79,50 @@ class JournalGroupController extends AbstractController
      */
     public function showGroup(Request $request,ObjectManager $manager)
     {
-
-        $formControl = $manager->getRepository(JournalTypeFormControl::class)->findAll();
-
         $journalGroup = $manager->getRepository(JournalGroup::class)
             ->getGroupByAlis($request->get('group_alis'));
 
         $gradingSystem = $manager->getRepository(JournalGradingSystem::class)->findAll();
 
 
-        $subjects = $manager->getRepository(JournalTypeFormControl::class)
-            ->createQueryBuilder('tfc')
-            ->leftJoin('tfc.subjects','s')
+        $tfc = $manager->getRepository(JournalTypeFormControl::class)->findAll();
+        $subjects = $manager->getRepository(JournalSubject::class)->createQueryBuilder('s')
+            ->leftJoin('s.mainTeacher','mt')
             ->leftJoin('s.group','g')
-            ->andWhere('g.id = :group_id')
-            ->setParameter('group_id',$journalGroup->getId())
-            ->getQuery()->execute();
+            ->leftJoin('g.curator','c')
+            ->leftJoin('s.typeFormControl','tfc');
+        if($this->isGranted('ROLE_TEACHER')) {
+
+            $currentTeacher = Service\Journal::Teacher($this->getUser());
+            $subjects =  $subjects->andWhere('mt.id = :teacher_id or c.id = :teacher_id')
+                 ->andWhere('g.id = :group_id')
+                 ->setParameter('teacher_id', $currentTeacher->getId())
+                 ->setParameter('group_id', $journalGroup->getId());
+
+        }elseif($this->isGranted('ROLE_STUDENT')){
+
+            $currentStudent = Service\Journal::Student($this->getUser());
+            $subjects =  $subjects->leftJoin('g.students','stud')
+                ->andWhere('stud.id = :student_id')
+                ->andWhere('g.id = :group_id')
+                ->setParameter('teacher_id', $currentStudent->getId())
+                ->setParameter('group_id', $journalGroup->getId());
+        }
+
+        $subjects =  $subjects->orderBy('tfc.id')
+            ->getQuery()
+            ->execute();
+
+        $tfcList = [];
+        foreach ($tfc as $item) {
+            $tfcList[] = ['tfc'=>$item,'subjects'=>[]];
+        }
+        foreach ($tfcList as &$itemTfc){
+            foreach ($subjects as $itemSubject){
+                if($itemTfc['tfc']->getId() == $itemSubject->getTypeFormControl()->getId())
+                    array_push($itemTfc['subjects'],$itemSubject);
+            }
+        }
 
         if(!$journalGroup){
             return $this->render('journal/Exception/error404.html.twig',['message_error'=>'Така група не інуснує.']);
@@ -78,9 +130,9 @@ class JournalGroupController extends AbstractController
 
         return $this->render('journal/journal_group/one-group.html.twig',[
             'group'=>$journalGroup,
-            'formControl'=>$formControl,
+            'formControl'=>$tfc,
             'gradingSystem'=>$gradingSystem,
-            'subjects'=>$subjects
+            'tfc'=>$tfcList
         ]);
 
     }
