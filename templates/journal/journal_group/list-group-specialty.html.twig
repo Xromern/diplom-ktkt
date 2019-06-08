@@ -4,8 +4,10 @@
 {% block title %}Групи{% endblock %}
 
 {% block body %}
+
     <div class="container-journal-list container-journal-center">
         <div class="container-show-journal-list">
+            {% if is_granted('ROLE_ADMIN')  %}
             <div class="container-journal-block">
                 <div class="add-group-level-1">
                     <input type="text" class="edit-add-group-name" placeholder="ПП-0000" required="required"/>
@@ -19,14 +21,14 @@
                 </div>
                 <div class="add-group-level-2"><div class="button button-add-group">Додати групу</div></div>
             </div>
+            {% endif %}
             <div class="preLoader" id="preloader-group"></div>
-
             <div class="list-group">
               {{ include('journal/journal_group/group-block.html.twig',{'specialty':specialty})}}
             </div>
-
         </div>
     </div>
+    {% if is_granted('ROLE_ADMIN') %}
     <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content">
@@ -43,7 +45,7 @@
             </div>
         </div>
     </div>
-
+    {% endif %}
 <script>
     let preloaderSpecialty = new Preloader(
 

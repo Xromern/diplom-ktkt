@@ -10,9 +10,21 @@ use App\Entity\JournalStudent;
 use App\Entity\JournalSubject;
 use App\Entity\JournalTypeMark;
 use Doctrine\Common\Persistence\ObjectManager;
+use FOS\UserBundle\Model\User;
+
 
 class Journal
 {
+    /**
+     * Получить учителя по пользователя
+     */
+    public static function Teacher(User $user){
+        if(in_array('ROLE_TEACHER',$user->getRoles())){
+            return $user->getCode()->getTeacher();
+        }else{
+           return false;
+        }
+    }
 
     public static function createPageJournal(int $page,JournalTypeMark $typeMark, JournalSubject $subject,$listStudent,&$manager){
         $listDate = [];
@@ -74,6 +86,5 @@ class Journal
         }
 
     }
-
 
 }

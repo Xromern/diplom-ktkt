@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+<head>
 <meta charset="UTF-8">
 <title>{% block title %}{% endblock %}</title>
 {% block stylesheets %}
@@ -12,6 +12,7 @@
     <link href="{{ asset('css/main-journal.css') }}" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <style>.container-logo{display: none}</style>
 {% endblock %}
 {% block javascripts %}
     <script type="text/javascript" src="{{ asset('js/jquery-3.4.0.min.js') }}"></script>
@@ -19,13 +20,13 @@
     <script type="text/javascript" src="{{ asset('js/notification.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/useful.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/preloader.js') }}"></script>
-
-
-
 {% endblock %}
-
 </head>
+
+<body>
+
 <div class="wrapper">
+    {{ include('menu/head-search.html.twig') }}
     <div class="navigation-menu">
         {{ include('menu/menu.html.twig') }}
     </div>

@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\JournalDateMark;
+use App\Service\Journal;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @method JournalDateMark|null find($id, $lockMode = null, $lockVersion = null)
@@ -28,7 +30,6 @@ class JournalDateMarkRepository extends ServiceEntityRepository
             ->orderBy('page','asc')
             ->getQuery()
             ->execute());
-
     }
 
     public function getOnByPage(int $subject_id,int $page){
@@ -42,33 +43,62 @@ class JournalDateMarkRepository extends ServiceEntityRepository
             ->execute();
 
     }
-
-    // /**
-    //  * @return JournalDateMark[] Returns an array of JournalDateMark objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('j')
-            ->andWhere('j.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('j.id', 'ASC')
-            ->setMaxResults(10)
+    /**
+     *  Проверка даты на пустоту
+     */
+    public function checkDateOnEmpty(JournalDateMark $journalDateMark){
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.subject','s')
+            ->andWhere('s.id = :subject_id')
+            ->andWhere("(d.id > :date_id AND d.date IS NOT NULL) ")
+            ->setParameter('date_id',$journalDateMark->getId())
+            ->setParameter('subject_id',$journalDateMark->getSubject()->getId())
             ->getQuery()
-            ->getResult()
-        ;
+            ->execute();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?JournalDateMark
-    {
-        return $this->createQueryBuilder('j')
-            ->andWhere('j.exampleField = :val')
-            ->setParameter('val', $value)
+    /**
+     *  Проверка на то что дата не меньше предыдущих
+     */
+    public function checkDateOnMin(JournalDateMark $journalDateMark,$date){
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.subject','s')
+            ->andWhere('s.id = :subject_id')
+            ->andWhere('d.date >= :date and d.id < :date_id')//выбираю  все дати которые >= текущей и стоят до этой даты
+            ->setParameter('subject_id',$journalDateMark->getSubject()->getId())
+            ->setParameter('date',$date)
+            ->setParameter('date_id',$journalDateMark->getId())
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->execute();
     }
-    */
+
+    /**
+     *  Проверка на то что дата не больше последующих
+     */
+    public function checkDateOnMax(JournalDateMark $journalDateMark,$date){
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.subject','s')
+            ->andWhere('s.id = :subject_id')
+            ->andWhere('d.date <= :date and d.id > :date_id')
+            ->setParameter('subject_id',$journalDateMark->getSubject()->getId())
+            ->setParameter('date',$date)
+            ->setParameter('date_id',$journalDateMark->getId())
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     *  Проверка на то что день не пропущен
+     */
+    public function checkDateOnSkip(JournalDateMark $journalDateMark){
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.subject','s')
+            ->andWhere('s.id = :subject_id')
+            ->andWhere("(d.id < :date_id AND d.date IS NULL) ")
+            ->setParameter('date_id',$journalDateMark->getId())
+            ->setParameter('subject_id',$journalDateMark->getSubject()->getId())
+            ->getQuery()
+            ->execute();
+    }
+
 }

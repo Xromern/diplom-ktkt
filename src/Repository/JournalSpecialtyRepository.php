@@ -19,32 +19,16 @@ class JournalSpecialtyRepository extends ServiceEntityRepository
         parent::__construct($registry, JournalSpecialty::class);
     }
 
-    // /**
-    //  * @return JournalSpecialty[] Returns an array of JournalSpecialty objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('j')
-            ->andWhere('j.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('j.id', 'ASC')
-            ->setMaxResults(10)
+    public function getGroupOnByTeacher(int $teacher_id):array {
+      return  $this->createQueryBuilder('s')
+            ->leftJoin('s.groups','g')
+            ->leftJoin('g.subjects','sub')
+            ->leftJoin('sub.mainTeacher','mt')
+            ->leftJoin('g.curator','c')
+            ->andWhere('mt.id = :id_teacher or c.id = :id_teacher')
+            ->setParameter('id_teacher',$teacher_id)
             ->getQuery()
-            ->getResult()
-        ;
+            ->execute();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?JournalSpecialty
-    {
-        return $this->createQueryBuilder('j')
-            ->andWhere('j.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

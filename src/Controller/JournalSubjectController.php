@@ -18,7 +18,8 @@ use Symfony\Component\HttpFoundation\Request as Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Service;
-
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class JournalSubjectController extends AbstractController
 {
 
@@ -84,7 +85,7 @@ class JournalSubjectController extends AbstractController
     public function r(){return $this->redirect("/journal/");}
 
     /**
-     * @Route("/journal/ajax/paginateSubject", name="paginateSubject")
+     * @Route("/journal/ajax/paginateSubject", name="paginateSubject", methods={"POST"})
      */
     public function paginateSubject(Request $request, ObjectManager $manager)
     {
@@ -102,7 +103,7 @@ class JournalSubjectController extends AbstractController
 
 
     /**
-     * @Route("/journal/ajax/showTableSubject", name="showTableSubject")
+     * @Route("/journal/ajax/showTableSubject", name="showTableSubject", methods={"POST"})
      */
     public function showTableSubject(Request $request,ObjectManager $manager)
     {
@@ -135,7 +136,7 @@ class JournalSubjectController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/subjectShow", name="subjectShow")
+     * @Route("/journal/ajax/subjectShow", name="subjectShow", methods={"POST"})
      */
     public function showBlockSubjects(Request $request,ObjectManager $manager){
 
@@ -152,91 +153,47 @@ class JournalSubjectController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/dateMarkUpdate", name="dateMarkUpdate")
+     * @Route("/journal/ajax/dateMarkUpdate", name="dateMarkUpdate", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_TEACHER')")
      */
     public function dateMarkUpdate(Request $request,ObjectManager $manager){
-
-        $date = $manager->getRepository(JournalDateMark::class)
+        $journalDateMark = $manager->getRepository(JournalDateMark::class)
             ->find($request->get('date_id'));
 
-
         if($request->get('date')=="" || $request->get('date')==null ) {
-            $d=null;
+            $date=null;
         }else{
-            $d = new \DateTime($request->get('date'));
+            $date = new \DateTime($request->get('date'));
         }
 
-        if($d==null){
-
-            $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
-                ->leftJoin('d.subject','s')
-                ->andWhere('s.id = :subject_id')
-                ->andWhere("(d.id > :date_id AND d.date IS NOT NULL) ")
-                ->setParameter('date_id',$request->get('date_id'))
-                ->setParameter('subject_id',$date->getSubject()->getId())
-                ->getQuery()
-                ->execute();
-
-            if($checkDate){
-                return new JsonResponse(array('type' => 'error','message'=>'Неможливо поставити пусту дату'));
-
-            }
-
+        if($date==null){
+            $checkDate = $manager->getRepository(JournalDateMark::class)->checkDateOnEmpty($journalDateMark);
+            if($checkDate) die(new JsonResponse(array('type' => 'error','message'=>'Неможливо поставити пусту дату')));
         }
 
-        $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
-            ->leftJoin('d.subject','s')
-            ->andWhere('s.id = :subject_id')
-            ->andWhere('d.date >= :date and d.id < :date_id')//выбираю  все дати которые >= текущей и стоят до этой даты
-            ->setParameter('subject_id',$date->getSubject()->getId())
-            ->setParameter('date',$d)
-            ->setParameter('date_id',$request->get('date_id'))
-            ->getQuery()
-            ->execute();
-
+        $checkDate = $manager->getRepository(JournalDateMark::class)->checkDateOnMin($journalDateMark,$date);
         if($checkDate){
             return new JsonResponse(array('type' => 'error','message'=>'Неможливо поставити меншу дату'));
         }
 
-        $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
-            ->leftJoin('d.subject','s')
-            ->andWhere('s.id = :subject_id')
-            ->andWhere('d.date <= :date and d.id > :date_id')//выбираю  все дати которые >= текущей и стоят до этой даты
-            ->setParameter('subject_id',$date->getSubject()->getId())
-            ->setParameter('date',$d)
-            ->setParameter('date_id',$request->get('date_id'))
-            ->getQuery()
-            ->execute();
-
+        $checkDate = $manager->getRepository(JournalDateMark::class)->checkDateOnMax($journalDateMark,$date);
         if($checkDate){
             return new JsonResponse(array('type' => 'error','message'=>'Неможливо поставити більшу дату'));
         }
 
-
-        $checkDate = $manager->getRepository(JournalDateMark::class)->createQueryBuilder('d')
-            ->leftJoin('d.subject','s')
-            ->andWhere('s.id = :subject_id')
-            ->andWhere("(d.id < :date_id AND d.date IS NULL) ")
-            ->setParameter('date_id',$request->get('date_id'))
-            ->setParameter('subject_id',$date->getSubject()->getId())
-            ->getQuery()
-            ->execute();
-
+        $checkDate = $manager->getRepository(JournalDateMark::class)->checkDateOnSkip($journalDateMark);
         if($checkDate){
             return new JsonResponse(array('type' => 'error','message'=>'Пропущено день'));
         }
 
-        if($d==null){
-
+        if($date==null){
             $typeMark = $manager->getRepository(JournalTypeMark::class)->findAll()[0];
-
         }else{
             $typeMark = $manager->getRepository(JournalTypeMark::class)->find( $request->get('type_mark_id'));
-
         }
 
         if($typeMark->getAverage() == 1){
-            $students = $date->getSubject()->getStudents();
+            $students = $journalDateMark->getSubject()->getStudents();
 
             foreach ($students as $s){
                 $marks = $manager->getRepository(JournalMark::class)->createQueryBuilder('m')
@@ -247,8 +204,8 @@ class JournalSubjectController extends AbstractController
                     ->andWhere('sub.id = :subject_id')
                     ->andWhere('d.id < :date_id')
                     ->setParameter('student_id',$s->getId())
-                    ->setParameter('date_id',$date->getId())
-                    ->setParameter('subject_id',$date->getSubject()->getId())
+                    ->setParameter('date_id',$journalDateMark->getId())
+                    ->setParameter('subject_id',$journalDateMark->getSubject()->getId())
                     ->getQuery()
                     ->execute();
                 $average = 0;$counter = 0;
@@ -271,8 +228,8 @@ class JournalSubjectController extends AbstractController
                     ->andWhere('sub.id = :subject_id')
                     ->andWhere('d.id = :date_id')
                     ->setParameter('student_id',$s->getId())
-                    ->setParameter('date_id',$date->getId())
-                    ->setParameter('subject_id',$date->getSubject()->getId())
+                    ->setParameter('date_id',$journalDateMark->getId())
+                    ->setParameter('subject_id',$journalDateMark->getSubject()->getId())
                     ->getQuery()
                     ->execute()[0];
                 $average = $counter!=0?$average/$counter:$average;
@@ -284,10 +241,10 @@ class JournalSubjectController extends AbstractController
 
         }
 
-        $date->setDescription($request->get('description'));
-        $date->setDate($d);
-        $date->setTypeMark($typeMark);
-        $manager->persist($date);
+        $journalDateMark->setDescription($request->get('description'));
+        $journalDateMark->setDate($date);
+        $journalDateMark->setTypeMark($typeMark);
+        $manager->persist($journalDateMark);
         $manager->flush();
 
         return new JsonResponse(array('type' => 'info','message'=>'Дата оновлена'));
@@ -295,7 +252,7 @@ class JournalSubjectController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/dateGet", name="dateGet")
+     * @Route("/journal/ajax/dateGet", name="dateGet", methods={"POST"})
      */
     public function dateGet(Request $request,ObjectManager $manager)
     {
@@ -315,7 +272,7 @@ class JournalSubjectController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/subjectNameGet", name="subjectNameGet")
+     * @Route("/journal/ajax/subjectNameGet", name="subjectNameGet", methods={"POST"})
      */
     public function subjectNameGet(Request $request,ObjectManager $manager)
     {
@@ -326,7 +283,8 @@ class JournalSubjectController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/markUpdate", name="markUpdate")
+     * @Route("/journal/ajax/markUpdate", name="markUpdate", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_TEACHER')")
      */
     public function markUpdate(Request $request,ObjectManager $manager){
 
@@ -343,8 +301,9 @@ class JournalSubjectController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/subjectPageAdd", name="subjectPageAdd")
-     */
+    * @Route("/journal/ajax/subjectPageAdd", name="subjectPageAdd", methods={"POST"})
+    * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_TEACHER')")
+    */
     public function addPageSubject(Request $request, ObjectManager $manager)
     {
         $subject = $manager->getRepository(JournalSubject::class)->find($request->get('subject_id'));
@@ -381,7 +340,8 @@ class JournalSubjectController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/subjectAdd", name="subjectAdd")
+     * @Route("/journal/ajax/subjectAdd", name="subjectAdd", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function addSubject(Request $request, ObjectManager $manager)
     {
@@ -424,7 +384,8 @@ class JournalSubjectController extends AbstractController
 
 
     /**
-     * @Route("/journal/ajax/updateSubject", name="updateSubject")
+     * @Route("/journal/ajax/updateSubject", name="updateSubject", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function updateSubject(Request $request, ObjectManager $manager)
     {
@@ -458,7 +419,7 @@ class JournalSubjectController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/getSubjectStudents", name="getSubjectStudents")
+     * @Route("/journal/ajax/getSubjectStudents", name="getSubjectStudents", methods={"POST"})
      */
     public function getSubjectStudents(Request $request, ObjectManager $manager)
     {
@@ -498,18 +459,19 @@ class JournalSubjectController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/deleteStudentFromSubject", name="deleteStudentFromSubject")
+     * @Route("/journal/ajax/deleteStudentFromSubject", name="deleteStudentFromSubject", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function deleteStudentFromSubject(Request $request, ObjectManager $manager){
         Service\Journal::deleteStudentFromSubject($manager,$request->get('subject_id'),$request->get('student_id'));
-
 
         return new JsonResponse(array('type' => 'info','message'=>'Студента видалено.'));
     }
 
 
     /**
-     * @Route("/journal/ajax/deleteSubject", name="deleteSubject")
+     * @Route("/journal/ajax/deleteSubject", name="deleteSubject", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function deleteSubject(Request $request, ObjectManager $manager){
 
@@ -535,7 +497,8 @@ class JournalSubjectController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/addStudentOnSubject", name="addStudentOnSubject")
+     * @Route("/journal/ajax/addStudentOnSubject", name="addStudentOnSubject", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function addStudentOnSubject(Request $request, ObjectManager $manager){
 

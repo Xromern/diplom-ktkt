@@ -5,6 +5,7 @@
 
 {% block body %}
 <div class="change-group container-journal-center">
+    {% if is_granted('ROLE_ADMIN') %}
     <div class="container-journal-block">
         <div class="add-group-level-1">
             <input type="text" value="{{group.name}}" class="edit-add-group-name" placeholder="ПП-0000" required="required"/>
@@ -18,21 +19,20 @@
             <div class="button button-update-group">Зберегти</div>
             <div class="button button-delete-group">Видалити</div>
         </div>
-
-
     </div>
     <a href='{{ path('journal_student_list',{'group_alis':group.alisen}) }}' class='block-group'>
         <div class="block-group-caption">Студенти</div>
-
     </a>
+    {% endif %}
     <a href='/journal/groups/{{group.alisen}}/form6' class='block-group'>
         <div class="block-group-caption">Форма 6</div>
 
     </a>
-
+    {% if is_granted('ROLE_ADMIN') %}
     <div class="container-journal-block">
         <div class="button button-show-subject-add">Створит новий журнал</div>
     </div>
+    {% endif %}
     <div class="preLoader" id="preloader-list-subject">  </div>
     <div class="container-subjects">
         {{ include('journal/journal_subject/subject-block.html.twig',{'subjects':subjects,'group':group}) }}

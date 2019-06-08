@@ -30,9 +30,9 @@ class AppFixtures extends Fixture
 
         $arrayTeacher = self::JournalTeacherCode($manager,$generateName);
 
-        self::JournalGroup($manager,$arrayTeacher);
+       $arrayGroup = self::JournalGroup($manager,$arrayTeacher);
 
-        self::JournalStudentCode($manager,$group1);
+        self::JournalStudentCode($manager,$arrayGroup[0]);
 
         self::JournalTypeMark($manager);
 
@@ -170,13 +170,14 @@ class AppFixtures extends Fixture
         $specialty4->setDescription('Это ТТ');
         $specialty4->setName('ТТ');
         $manager->persist($specialty4);
-
+        $arrayGroup = [];
         $group1 = new JournalGroup();
         $group1->setName('ПС-1501');
         $group1->setDescription('Это група пс');
         $group1->setCurator($arrayTeacher[++$i]);
         $group1->setSpecialty($specialty1);
         $manager->persist($group1);
+        $arrayGroup[] = $group1;
 
         $group2 = new JournalGroup();
         $group2->setName('КС-1502');
@@ -184,6 +185,7 @@ class AppFixtures extends Fixture
         $group2->setCurator($arrayTeacher[++$i]);
         $group2->setSpecialty($specialty2);
         $manager->persist($group2);
+        $arrayGroup[] = $group2;
 
         $group3 = new JournalGroup();
         $group3->setName('АД-1502');
@@ -191,6 +193,7 @@ class AppFixtures extends Fixture
         $group3->setCurator($arrayTeacher[++$i]);
         $group3->setSpecialty($specialty3);
         $manager->persist($group3);
+        $arrayGroup[] = $group3;
 
         $group4 = new JournalGroup();
         $group4->setName('ПС-1401');
@@ -198,6 +201,9 @@ class AppFixtures extends Fixture
         $group4->setCurator($arrayTeacher[++$i]);
         $group4->setSpecialty($specialty1);
         $manager->persist($group4);
+        $arrayGroup[] = $group4;
+
+        return $arrayGroup;
     }
 
     private function JournalStudentCode(ObjectManager &$manager,&$group1){

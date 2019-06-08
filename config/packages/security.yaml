@@ -3,9 +3,9 @@ security:
         FOS\UserBundle\Model\UserInterface: bcrypt
 
     role_hierarchy:
-        ROLE_USER:       ROLE_USER
-        ROLE_TEACHER:     ROLE_TEACHER
-        ROLE_STUDENT:     ROLE_STUDENT
+        ROLE_USER: ROLE_USER
+        ROLE_TEACHER: ROLE_TEACHER
+        ROLE_STUDENT: ROLE_STUDENT
         ROLE_ADMIN: ROLE_ADMIN
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
@@ -25,6 +25,7 @@ security:
 
             logout:       true
             anonymous:    true
+            switch_user: true
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
@@ -36,4 +37,5 @@ security:
         - { path: ^/register$,  allow_if: "!is_authenticated()"  }
         - { path: ^/resetting,  allow_if: "!is_authenticated()" }
         - { path: ^/admin/, roles: ROLE_ADMIN }
-        - { path: ^/journal/*, roles:  [ROLE_ADMIN, ROLE_STUDENT, ROLE_TEACHER ] }
+        - { path: ^/journal, roles:  [ROLE_ADMIN, ROLE_STUDENT, ROLE_TEACHER ] }
+        - { path: ^/journal, roles:  [ROLE_ADMIN, ROLE_STUDENT, ROLE_TEACHER ] }

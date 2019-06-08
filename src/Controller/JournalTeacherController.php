@@ -4,19 +4,18 @@ namespace App\Controller;
 
 use App\Entity\JournalCode;
 use App\Entity\JournalGroup;
-use App\Entity\JournalSpecialty;
-use App\Entity\JournalStudent;
 use App\Entity\JournalSubject;
 use App\Entity\JournalTeacher;
+use App\Entity\User;
 use App\Service\Helper;
-use PhpParser\Builder\Class_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request as Request;
-
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\Common\Persistence\ObjectManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
 class JournalTeacherController extends AbstractController
 {
 
@@ -62,7 +61,7 @@ class JournalTeacherController extends AbstractController
         $code->setKeyP(Helper::createAlias($request->get('teacher_name')).'_'.Helper::generatePassword(30));
         $code->setRole('ROLE_TEACHER');
         $manager->persist($code);
-
+        $user = new User();
         $teacher= new JournalTeacher();
         $teacher->setName($request->get('teacher_name'));
         $teacher->setCode($code);
@@ -116,6 +115,12 @@ class JournalTeacherController extends AbstractController
         $manager->remove($teacher);
         if($teacher->getCode()){
             $code = $manager->getRepository(JournalCode::class)->find($teacher->getCode()->getId());
+            $user = $code->getUser();
+
+            if($user){
+                $user->removeRole('ROLE_TEACHER');
+            }
+
             $manager->remove($code);
         }
 

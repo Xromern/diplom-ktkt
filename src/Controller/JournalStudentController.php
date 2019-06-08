@@ -12,11 +12,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 class JournalStudentController extends AbstractController
 {
     /**
      * @Route("/journal/group/{group_alis}/students", name="journal_student_list")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function listStudent(Request $request, ObjectManager $manager)
     {
@@ -58,6 +61,7 @@ class JournalStudentController extends AbstractController
 
     /**
      * @Route("/journal/ajax/addStudent", name="addStudent")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function addStudent(Request $request, ObjectManager $manager)
     {
@@ -88,6 +92,7 @@ class JournalStudentController extends AbstractController
 
     /**
      * @Route("/journal/ajax/updateStudent", name="updateStudent")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function updateStudent(Request $request, ObjectManager $manager)
     {
@@ -118,6 +123,7 @@ class JournalStudentController extends AbstractController
 
     /**
      * @Route("/journal/ajax/deleteStudent", name="deleteStudent")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function deleteStudent(Request $request, ObjectManager $manager)
     {
@@ -128,6 +134,11 @@ class JournalStudentController extends AbstractController
         }
         if($student->getCode()){
             $code = $manager->getRepository(JournalCode::class)->find($student->getCode()->getId());
+            $user = $code->getUser();
+
+            if($user){
+                $user->removeRole('ROLE_STUDENT');
+            }
             $manager->remove($code);
         }
 

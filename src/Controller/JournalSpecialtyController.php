@@ -11,7 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request as Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\Common\Persistence\ObjectManager;
-
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class JournalSpecialtyController extends AbstractController
 {
     /**
@@ -35,6 +36,7 @@ class JournalSpecialtyController extends AbstractController
 
     /**
      * @Route("/journal/specialtyAdd", name="journal_specialty_add")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function specialtyAdd(Request $request,ObjectManager $manager)
     {
@@ -58,6 +60,7 @@ class JournalSpecialtyController extends AbstractController
 
     /**
      * @Route("/journal/specialtyDelete", name="journal_specialty_delete")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function specialtyDelete(Request $request,ObjectManager $manager)
     {
@@ -81,6 +84,7 @@ class JournalSpecialtyController extends AbstractController
 
     /**
      * @Route("/journal/specialtyUpdate", name="journal_specialty_update")
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function specialtyUpdate(Request $request,ObjectManager $manager)
     {

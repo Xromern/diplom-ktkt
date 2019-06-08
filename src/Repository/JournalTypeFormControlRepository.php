@@ -36,6 +36,8 @@ class JournalTypeFormControlRepository extends ServiceEntityRepository
             ->execute();
     }
 
+
+
     // /**
     //  * @return JournalTypeFormControl[] Returns an array of JournalTypeFormControl objects
     //  */

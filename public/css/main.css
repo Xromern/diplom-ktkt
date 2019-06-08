@@ -439,10 +439,15 @@ main{
 .block-button-login{
     float: right;
 }
-.block-button-login div{
-    display: inline-block;
+.block-button-login>div{
+    display: flex;
+    justify-content: space-around;
+    color: #163C94;
 }
-
+.container-head-info-user{
+    margin-right: 10px;
+    padding-top: 5px;
+}
 .block-button-login .button{
    margin-top: 4px;
     width: 200px;
@@ -451,3 +456,4 @@ main{
 .comment-form .button{
     margin-top: 10px;
 }
+
