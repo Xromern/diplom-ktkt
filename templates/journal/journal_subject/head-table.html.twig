@@ -3,6 +3,19 @@
 {% set dateDisabled = "" %}
 {% set checkDate = true %}
 {% set title = "" %}
+
+{% set edit = false %}
+{% if is_granted('ROLE_TEACHER') %}
+    {% set currentTeacher = app.user.getCode.getTeacher %}
+        {% if subject.getMainTeacher.getId == currentTeacher.getId %}
+            {% set edit = true %}
+        {% endif %}
+{% elseif  is_granted('ROLE_ADMIN') %}
+            {% set edit = true %}
+{% else %}
+    {% set currentTeacher = null %}
+{% endif %}
+
 <caption>
     <b>{{ subject.getName }}
         {% if subject.getMainTeacher !=null%}
@@ -19,8 +32,7 @@
 </tr>
 <tr>
 {% for d in dates %}
-
-{% if d.getDate is not null or checkDate == true %}
+{% if (d.getDate is not null or checkDate == true) and edit == true%}
     {% set dateDisabled = "journal-table-date-click" %}
 {% else %}
     {% set dateDisabled = "disabled-td" %}
@@ -59,7 +71,7 @@
 
  <td {{ title }} data-column='column{{ c }}' style="background-color: {{ mark.getDateMark.getTypeMark.getColor }};"  class='table-subject-marks {{ disabled }} column column{{ c }}' data-subject-mark-id='{{ mark.getId }}'>
      <select data-id-mark='{{ mark.getId }}' class='table-subject-select {{ disabled }}'>
-         {% if mark.getDateMark.getDate is not null and mark.getDateMark.getTypeMark.getAverage == 0%}
+         {% if mark.getDateMark.getDate is not null and mark.getDateMark.getTypeMark.getAverage == 0 and edit%}
              <option></option>
              {% for j in 1..subject.getGradingSystem.getSystem %}
                  {% if mark.getMark == j %}

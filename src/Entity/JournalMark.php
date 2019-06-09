@@ -42,6 +42,11 @@ class JournalMark
      */
     private $subject;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $missed = 0;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -109,6 +114,22 @@ class JournalMark
     public function setDateMark($dateMark): void
     {
         $this->dateMark = $dateMark;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMissed()
+    {
+        return $this->missed;
+    }
+
+    /**
+     * @param mixed $missed
+     */
+    public function setMissed($missed): void
+    {
+        $this->missed = $missed;
     }
 
 

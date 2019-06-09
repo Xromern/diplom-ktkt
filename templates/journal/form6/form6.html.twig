@@ -1,0 +1,9 @@
+{% extends 'base-journal.html.twig' %}
+
+{% block title %}{{ group.name }}{% endblock %}
+
+{% block body %}
+    <table class="table-form6-journal table ver" >
+        {{ include('journal/form6/from6-table.html.twig',{'group':group,'date':3}) }}
+    </table>
+{% endblock %}

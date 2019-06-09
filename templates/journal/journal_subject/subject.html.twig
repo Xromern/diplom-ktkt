@@ -2,9 +2,18 @@
 {% extends 'base-journal.html.twig' %}
 
 {% block title %}{{ subject.getGroup.getName }} - {{ subject.getName }}{% endblock %}
-
+{% set edit = false %}
+{% if is_granted('ROLE_TEACHER') %}
+    {% set currentTeacher = app.user.getCode.getTeacher %}
+    {% if subject.getMainTeacher.getId == currentTeacher.getId %}
+        {% set edit = true %}
+    {% endif %}
+{% elseif  is_granted('ROLE_ADMIN') %}
+    {% set edit = true %}
+{% else %}
+    {% set currentTeacher = null %}
+{% endif %}
 {% block body %}
-
     <div class="container-table-subject-journal">
         <div class="block-type-mark">
             {% for type in typeMark %}
@@ -18,13 +27,12 @@
     </div>
 
     <div class="container-subject-block row-paginate-subject">
-
         {{ include('journal/journal_subject/subject-paginate.html.twig',{
             'page':app.request.attributes.get('_route_params')['page'],
             'totalPage':totalPage
         }) }}
-
     </div>
+
     {% if is_granted('ROLE_ADMIN') %}
 
     <div class="container-subject-block">

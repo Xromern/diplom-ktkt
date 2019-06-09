@@ -153,6 +153,11 @@ class JournalSubjectController extends AbstractController
     public function dateMarkUpdate(Request $request,ObjectManager $manager){
         $journalDateMark = $manager->getRepository(JournalDateMark::class)
             ->find($request->get('date_id'));
+        $currentTeacher = Service\Journal::Teacher($this->getUser());
+        if(!$this->isGranted('ROLE_ADMIN') &&
+        $journalDateMark->getSubject()->getMainTeacher()->getId() != $currentTeacher->getId() ){
+            return new JsonResponse(array('type' => 'error','message'=>'Недостатньо прав'));
+        }
 
         if($request->get('date')=="" || $request->get('date')==null ) {
             $date=null;
@@ -241,6 +246,11 @@ class JournalSubjectController extends AbstractController
         $mark = $manager->getRepository(JournalMark::class)
             ->find($request->get('mark_id'));
 
+        $currentTeacher = Service\Journal::Teacher($this->getUser());
+        if(!$this->isGranted('ROLE_ADMIN') &&
+            $mark->getDateMark()->getSubject()->getMainTeacher()->getId() != $currentTeacher->getId() ){
+            return new JsonResponse(array('type' => 'error','message'=>'Недостатньо прав'));
+        }
 
         $mark->setMark($request->get('mark'));
         $manager->persist($mark);

@@ -24,7 +24,7 @@
         <div class="block-group-caption">Студенти</div>
     </a>
     {% endif %}
-    <a href='/journal/groups/{{group.alisen}}/form6' class='block-group'>
+    <a href='{{ path('journal_show_form6',{'group_alis':group.getAlisEn}) }}' class='block-group'>
         <div class="block-group-caption">Форма 6</div>
 
     </a>
