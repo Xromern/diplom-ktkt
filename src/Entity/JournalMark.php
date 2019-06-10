@@ -43,7 +43,7 @@ class JournalMark
     private $subject;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="string", length=1)
      */
     private $missed = 0;
 

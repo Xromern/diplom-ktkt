@@ -38,6 +38,23 @@ class JournalMarkRepository extends ServiceEntityRepository
         return  array('student'=>$student,'studentName'=>$convertName,'mark'=>$marks);
     }
 
+    public function getOnMarksByStudentForForm6($student,$date,$group_id){
+        $marks = $this->createQueryBuilder('m')
+            ->leftJoin('m.student','stud')
+            ->leftJoin('m.subject','sub')
+            ->leftJoin('sub.group','g')
+            ->leftJoin('m.dateMark','d')
+            ->andWhere('stud.id = :student_id')
+            ->andWhere('g.id =  :group_id')
+            ->andWhere('date_format(d.date, \'%Y-%m-%d\') = :date ')
+            ->setParameter('group_id', $group_id)
+            ->setParameter('date',$date)
+            ->setParameter('student_id',$student->getId())
+            ->getQuery()
+            ->execute();
+
+        return $marks;
+    }
     // /**
     //  * @return JournalMark[] Returns an array of JournalMark objects
     //  */

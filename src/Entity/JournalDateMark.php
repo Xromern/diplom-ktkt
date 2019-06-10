@@ -33,7 +33,7 @@ class JournalDateMark
 
     /**
      * One date has many marks. This is the inverse side.
-     * @ORM\OneToMany(targetEntity="JournalMark", mappedBy="date")
+     * @ORM\OneToMany(targetEntity="JournalMark", mappedBy="dateMark")
      */
     private $marks;
 

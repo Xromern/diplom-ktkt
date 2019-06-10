@@ -27,8 +27,9 @@ class JournalGroupRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('g')
             ->where("g.id = :group_alis or g.alis_en = :group_alis")
             ->setParameter('group_alis',$alis)
+            ->setMaxResults(1)
             ->getQuery()
-            ->execute()[0];
+            ->getOneOrNullResult();
     }
 
     /**

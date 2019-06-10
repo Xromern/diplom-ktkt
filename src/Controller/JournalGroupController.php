@@ -39,12 +39,12 @@ class JournalGroupController extends AbstractController
         ->leftJoin('g.subjects','s');
         if($this->isGranted('ROLE_TEACHER')) {
             $currentTeacher = Service\Journal::Teacher($this->getUser());
-            $listGroups->leftJoin('g.specialty', 'spec')
+            $listGroups = $listGroups->leftJoin('g.specialty', 'spec')
                 ->leftJoin('s.mainTeacher', 'mt')
                 ->andWhere('mt.id = :teacher_id or c.id = :teacher_id')
                 ->setParameter('teacher_id', $currentTeacher->getId());
         }
-        $listGroups = $listGroups->orderBy('spec.id','desc')
+        $listGroups = $listGroups
         ->getQuery()
         ->execute();
 
@@ -138,7 +138,7 @@ class JournalGroupController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/groupAdd", name="groupAdd")
+     * @Route("/journal/ajax/groupAdd", name="groupAdd", methods={"POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
     public function groupAdd(Request $request,ObjectManager $manager)
@@ -175,7 +175,7 @@ class JournalGroupController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/groupUpdate", name="groupUpdate")
+     * @Route("/journal/ajax/groupUpdate", name="groupUpdate", methods={"POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
     public function groupUpdate(Request $request,ObjectManager $manager){
@@ -216,7 +216,7 @@ class JournalGroupController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/groupDelete", name="groupDelete")
+     * @Route("/journal/ajax/groupDelete", name="groupDelete", methods={"POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
     public function groupDelete(Request $request,ObjectManager $manager){

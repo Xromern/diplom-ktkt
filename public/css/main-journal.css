@@ -405,7 +405,7 @@ table {
 
 }
 
-.container-table-subject-journal select {
+.container-table-subject-journal select{
     padding: 0;
     margin: 0;
     width: 27px;
@@ -537,4 +537,37 @@ height: auto;
 
 .disabled-td{
    background: #ded8e5 !important;
+}
+
+.form6{
+    display: flex;
+    justify-content: center;
+}
+.select-date-from6{
+    width: 200px;
+}
+.form6-row-missed,.form6-table-date{
+    width: 30px !important;
+    height: 30px !important;
+    text-align: center;
+}
+.form6-row-missed.active{
+    cursor: pointer;
+}
+.form6-row-id{
+    padding: 5px 5px 5px 5px !important;
+}
+.total-missed-form6{
+    text-align: center;
+    font-size: 12px;
+    font-weight: normal;
+    padding: 2px;
+}
+
+.table-subject-name a{
+    color: #1b1e21;
+}
+
+.table-subject-name a:hover{
+    color: #163C94;
 }

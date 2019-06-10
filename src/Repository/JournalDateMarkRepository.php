@@ -101,4 +101,58 @@ class JournalDateMarkRepository extends ServiceEntityRepository
             ->execute();
     }
 
+    public function getDistinctOnByGroup($group_id){
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.subject','s')
+            ->leftJoin('s.group','g')
+            ->select('date_format(d.date, \'%Y-%m\') as dateFormat')
+            ->andWhere('g.id = :group_id')
+            ->groupBy('dateFormat')
+            ->orderBy('dateFormat','desc')
+            ->setParameter('group_id',$group_id)
+            ->getQuery()
+            ->execute();
+    }
+
+    public function getDateForm6($group_id,$date){
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.subject','s')
+            ->leftJoin('s.group','g')
+            ->andWhere('date_format(d.date, \'%Y-%m\') = :date')
+            ->andWhere('g.id = :group_id')
+            ->setParameter('group_id',$group_id)
+            ->setParameter('date',$date)
+            ->getQuery()
+            ->execute();
+    }
+
+    public function getRangeDateOnBayStudent($student_id)
+    {
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.marks','m')
+            ->leftJoin('m.student','stud')
+            ->andWhere('stud.id = :student_id')
+            ->setParameter('student_id',$student_id)
+            ->select('max(date_format(d.date, \'%Y-%m-%d\')) as dateMax')
+            ->addSelect('min(date_format(d.date, \'%Y-%m-%d\')) as dateMin')
+            ->getQuery()
+            ->execute();
+    }
+
+    public function getDateOnByRange(int $student_id,int $subject_id,$dateMax,$dateMin){
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.subject','sub')
+            ->leftJoin('d.marks','m')
+            ->leftJoin('m.student','stud')
+            ->andWhere('stud.id = :student_id')
+            ->andWhere('sub.id = :subject_id')
+            ->andWhere('date_format(d.date, \'%Y-%m-%d\') BETWEEN :minDate AND :maxDate')
+            ->setParameter('student_id',$student_id)
+            ->setParameter('subject_id',$subject_id)
+            ->setParameter('maxDate',$dateMax)
+            ->setParameter('minDate',$dateMin)
+            ->getQuery()
+            ->execute();
+
+    }
 }

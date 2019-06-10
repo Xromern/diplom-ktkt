@@ -62,7 +62,9 @@
  {% for student in students  %}
 <tr class="student-row">
 <td>{{ i }}</td>
-<td data-student-id='{{ student.student.getId }}' class='table-subject-name'>{{ student.studentName }}</td>
+    <td data-student-id='{{ student.student.getId }}' class='table-subject-name'>
+        <a  target="_blank" href="{{ path('showSubjectsStudent',{'group_alis':student.student.getGroup.getId,'student_alis':student.student.getId}) }}">{{ student.studentName }}</a>
+    </td>
 {% set c = 1 %}{% set average = 0 %}{% set counter_marks = 0 %}
 
 {% for mark in student.mark %}

@@ -1,9 +1,106 @@
 {% extends 'base-journal.html.twig' %}
 
-{% block title %}{{ group.name }}{% endblock %}
+{% block title %}Форма 6 {{ group.name }}{% endblock %}
 
 {% block body %}
+<div class="form6 container-journal-center">
+    <select class="select-date-from6"> {{ option|raw }}</select>
+</div>
+    <div class="container-table-subject-journal">
+        <div class="preLoader" id="preloader-form6">  </div>
+
     <table class="table-form6-journal table ver" >
-        {{ include('journal/form6/from6-table.html.twig',{'group':group,'date':3}) }}
+
     </table>
+    </div>
+
+<script>
+    let preloaderFrom6 = new Preloader(
+
+        $('#preloader-form6'),
+
+        '{{ asset("images/preloader/preloader.gif") }}'
+    );
+
+    function disabledTable() {
+        let table ='.table-form6-journal';
+        $(table).find("*").attr("disabled", "disabled");
+        $(table).css({'filter': 'blur(3px)'})
+    }
+
+
+    $('.select-date-from6').change(function () {
+        showForm6($(this).val());
+    });
+
+    let showForm6 = (date) => {
+        disabledTable();
+
+        $.ajax({
+            type: 'post',
+            url: "{{ path('form6Table') }}",
+            data: ({
+                "date":date,
+                "group_id": '{{ group.getId }}'
+            }),
+            error: function () {
+                note({
+                    content: "Сталася помилка, перезавантажте сторінку.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function (result) {
+                $('.table-form6-journal').css({'filter': 'blur(0px)'});
+                $('.table-form6-journal').html(result)
+            }
+        });
+    };
+
+    showForm6($('.select-date-from6').val());
+
+    $('html').on('click', '.form6-row-missed.active', function () {
+        updateForm6($(this).data('mark_id'),$(this).data('missed'))
+    });
+
+    let updateForm6 = (mark_id,missed) =>{
+        $.ajax({
+            type: 'post',
+            url: "{{ path('form6UpdateMissed') }}",
+            data: ({
+                "mark_id":mark_id,
+                "missed":missed
+            }),
+            error: function () {
+                note({
+                    content: "Сталася помилка, перезавантажте сторінку.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function (result) {
+                note({
+                    content: result['message'],
+                    type: result['type'],
+                    time: 5
+                });
+                showForm6($('.select-date-from6').val());
+
+            }
+        });
+    };
+
+    $('html').on('mouseover', '.column', function() {
+
+        let table2 = $(this).parent().parent();
+        let column = $(this).data('column') + "";
+        $(table2).find("." + column).addClass('hov-column');
+
+    });
+    $('html').on('mouseout', '.column', function() {
+        let table2 = $(this).parent().parent();
+        let column = $(this).data('column') + "";
+        $(table2).find("." + column).removeClass('hov-column');
+    });
+</script>
 {% endblock %}

@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\JournalCode;
+use App\Entity\JournalDateMark;
 use App\Entity\JournalGroup;
+use App\Entity\JournalMark;
 use App\Entity\JournalStudent;
 use App\Service\Helper;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -23,6 +25,7 @@ class JournalStudentController extends AbstractController
      */
     public function listStudent(Request $request, ObjectManager $manager)
     {
+
         $journalGroup = $manager->getRepository(JournalGroup::class)->getGroupByAlis($request->get('group_alis'));
 
         if(!$journalGroup){
@@ -147,5 +150,42 @@ class JournalStudentController extends AbstractController
 
         return new JsonResponse(array('type' => 'info','message'=>'Судента видалено.'));
 
+    }
+
+    /**
+     * @Route("/journal/group/{group_alis}/student/{student_alis}", name="showSubjectsStudent" )
+     */
+    public function showSubjectsStudent(Request $request, ObjectManager $manager)
+    {
+        $student = $manager->getRepository(JournalStudent::class)->find($request->get('student_alis'));
+        if(!$student) return $this->render('Journal/Exception/error404.html.twig', [
+            'message_error' => 'Студент не знайдений'
+        ]);
+
+        $dateMarkRange = $manager->getRepository(JournalDateMark::class)->getRangeDateOnBayStudent($student->getId());
+        $subjects = $student->getSubjects();
+        $tables = [];
+        foreach ($subjects as $itemSubject){
+            $date = $manager->getRepository(JournalDateMark::class)
+                ->getDateOnByRange($student->getId(),$itemSubject->getId(),$dateMarkRange[0]['dateMax'],$dateMarkRange[0]['dateMin']);
+            $marks = [];
+            foreach ( $date as $itemDate) {
+                $marks[] = $manager->getRepository(JournalMark::class)->createQueryBuilder('m')
+                    ->leftJoin('m.dateMark','d')
+                    ->leftJoin('m.student','s')
+                    ->andWhere('d.id = :date_id')
+                    ->andWhere('s.id = :student_id')
+                    ->setParameter('date_id',$itemDate->getId())
+                    ->setParameter('student_id',$student->getId())
+                    ->getQuery()
+                ->execute();
+            }
+            $tables[] = array('subject'=>$itemSubject,'date'=>$date,'marks'=>$marks);
+        }
+       dump($tables);
+        return $this->render('journal/journal_student/subjects-one-student.html.twig', [
+            'rangeDate'=>$dateMarkRange,
+            'controller_name' => 'JournalStudentController',
+        ]);
     }
 }

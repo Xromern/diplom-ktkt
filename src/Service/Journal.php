@@ -5,6 +5,7 @@ namespace App\Service;
 
 
 use App\Entity\JournalDateMark;
+use App\Entity\JournalGroup;
 use App\Entity\JournalMark;
 use App\Entity\JournalStudent;
 use App\Entity\JournalSubject;
@@ -133,6 +134,33 @@ class Journal
             $m->setMark(ceil($average));
             $manager->persist($m);
         }
+    }
+
+    public static function getForm6(JournalGroup &$group,int $cal_days_in_month,&$manager,$date){
+        $students = [];
+        foreach ($group->getStudents() as $student) {
+            $missedArray = array();
+            for($i = 1;$i<=$cal_days_in_month;$i++){
+
+                $marks = $manager->getRepository(JournalMark::class)
+                    ->getOnMarksByStudentForForm6($student,($date .'-'. ( ($i<10)?'0'.$i:$i) ) ,$group->getId());
+                $missedHours = $missed = 0;
+                $arrayIdMark = [];
+                foreach ($marks as $mark){
+                    if($mark->getMark() == 'Н'){
+                        $missedHours += 2;
+                        if( $mark->getMissed() == 1) $missed = 1 ;
+                        if( $mark->getMissed() == 2) $missed = 2 ;
+                        $arrayIdMark[] = $mark->getId();
+                    }
+                }
+                $missedArray[] = array('hours' => $missedHours, 'missed' => $missed, 'jsonId'=>json_encode($arrayIdMark));
+            }
+            $convertName = Helper::convertName($student->getName());
+            $array = array('student'=>$student,'studentName'=>$convertName,'day'=>$missedArray);
+            $students[] = $array;
+        }
+        return $students;
     }
 
 }
