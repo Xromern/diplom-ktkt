@@ -12,6 +12,7 @@ use App\Entity\JournalTeacher;
 use App\Entity\JournalTypeFormControl;
 use App\Entity\JournalTypeMark;
 use Doctrine\Common\Persistence\ObjectManager;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as Request;
@@ -20,6 +21,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Service;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Yectep\PhpSpreadsheetBundle\Factory;
+use Yectep\PhpSpreadsheetBundle\PhpSpreadsheetBundle;
+
 class JournalSubjectController extends AbstractController
 {
 
@@ -482,4 +486,112 @@ class JournalSubjectController extends AbstractController
         return new JsonResponse(array('type' => 'info','message'=>'Студента видалено.'));
     }
 
+    /**
+     * @Route("/journal/ajax/generateTableExcel", name="generateTableExcel")
+     */
+    public function generateTableExcel(Request $request, ObjectManager $manager,\Swift_Mailer $mailer){
+        $subject = $manager->getRepository(JournalSubject::class)
+            ->getSubjectByAlis('ps-1501','test');
+
+        $dates = $manager->getRepository(JournalDateMark::class)
+            ->getOnByPage($subject->getId(),$request->get('page',0));
+
+        foreach ($subject->getStudents() as $student) {
+            $students[] = $manager->getRepository(JournalMark::class)
+                ->getOnMarksByStudent($student,$subject->getId(),$request->get('page',0));
+        }
+
+        $factory = new Factory();
+        $spreadsheet = $factory->createSpreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $rows =1;
+        $sheet->setCellValue("A".$rows, ('id'));
+        $row = ($rows==1)?$rows+2:$rows+1;
+        $sheet->mergeCells('A'.$rows.':A'.$row);//Объяденение ячеек //HORIZONTAL_LEFT
+        $this->c_setHorizontal($sheet, 'A'.$rows);
+        $this->c_setVertical($sheet, 'A'.$rows);
+        $sheet->getColumnDimension('A')->setWidth(3); //Ширина ячейки
+        $sheet->getStyle("A".$rows)->getFont()->setBold(true);    //Шрифт жирным
+
+        $sheet->setCellValue("B".$rows, ('Прізвище та ініціали'));
+        $row = ($rows==1)?$rows+2:$rows+1;
+        $sheet->mergeCells('B'.$rows.':B'.$row);//Объединение  ячейки
+        $this->c_setHorizontal($sheet, 'B'.$rows);
+        $this->c_setVertical($sheet, 'B'.$rows);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getStyle("B".$rows)->getFont()->setBold(true);
+
+        $colString = Coordinate::stringFromColumnIndex(count($dates)+2);
+
+
+        $sheet->setCellValue("C1", ('Місяць, число'));
+        $sheet->mergeCells('C1'.':'.$colString.'1');//Объединение  ячейки
+        $this->c_setHorizontal($sheet, 'C'.$rows);
+        $this->c_setVertical($sheet, 'C'.$rows);
+        $sheet->getStyle("C".$rows)->getFont()->setBold(true);
+
+        $i = 3;
+        foreach ($dates as $date) {// date
+
+            $colString = Coordinate::stringFromColumnIndex($i);
+            if($date->getDate()){
+                $d = $date->getDate()->format('m
+d');
+            }else{ $d ='';}
+            $sheet->setCellValueByColumnAndRow($i, 2/*Рядок*/,$d);
+
+            $sheet->mergeCells($colString . (2) . ":" . $colString . (3));
+            $sheet->getColumnDimension($colString)->setWidth(3);
+            $sheet->getRowDimension(3)->setRowHeight(20);
+            $i++;
+        }
+        $i=1;
+        foreach ($students as $student){
+
+            $sheet->setCellValueByColumnAndRow(1, $i+$row/*Рядок*/, $i);
+            $sheet->setCellValueByColumnAndRow(2, $i+$row/*Рядок*/, $student['studentName']);
+            $j=3;
+            foreach ($student['mark'] as $mark){
+
+                $sheet->setCellValueByColumnAndRow($j,$i+2, $mark->getMark());
+                $this->c_setHorizontal($sheet, $i+$row);
+                $j++;
+            }
+            ++$i;
+            $sheet->getRowDimension($i+2)->setRowHeight(20);
+        }
+       // dd($students);
+            $response = $factory->createStreamedResponse($spreadsheet, 'Xls');
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $rand = Service\Helper::generatePassword(20);
+        $writer->save("excel/subject/$rand.xlsx");
+
+        $message = (new \Swift_Message('Hello Email'))
+            ->setFrom('da.ivasuk@gmail.com')
+            ->setTo('da.ivasuk@gmail.com')
+            ->attach(\Swift_Attachment::fromPath("excel/subject/$rand.xlsx"));
+
+        $mailer->send($message);
+        // Redirect output to a client’s web browser (Xls)
+        $response->headers->set('Content-Type', 'application/vnd.ms-excel');
+        $response->headers->set('Content-Disposition', 'attachment;filename="ExportScan.xls"');
+        $response->headers->set('Cache-Control','max-age=0');
+
+        return $response;
+    }
+    function c_setHorizontal($sheet, $coordinates)
+    {
+        $sheet->getStyle($coordinates)->getAlignment()->setHorizontal(
+            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+        );
+    }
+
+    function c_setVertical($sheet, $coordinates)
+    {
+        $sheet->getStyle($coordinates)->getAlignment()->setVertical(
+            \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        );
+    }
 }

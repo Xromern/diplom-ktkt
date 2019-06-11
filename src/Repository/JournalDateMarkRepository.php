@@ -144,16 +144,16 @@ class JournalDateMarkRepository extends ServiceEntityRepository
             ->leftJoin('d.subject','sub')
             ->leftJoin('d.marks','m')
             ->leftJoin('m.student','stud')
-            ->andWhere('stud.id = :student_id')
-            ->andWhere('date_format(d.date, \'%Y-%m-%d\') BETWEEN :minDate AND :maxDate');
+            ->andWhere('stud.id = :student_id');
+          //  ->andWhere('date_format(d.date, \'%Y-%m-%d\') BETWEEN :minDate AND :maxDate');
 
         if($subject_id != null){
             $query = $query->andWhere('sub.id = :subject_id')
                 ->setParameter('subject_id',$subject_id);
         }
         $query = $query->setParameter('student_id',$student_id)
-            ->setParameter('maxDate',$dateMax)
-            ->setParameter('minDate',$dateMin)
+         //   ->setParameter('maxDate',$dateMax)
+          //  ->setParameter('minDate',$dateMin)
             ->getQuery()
             ->execute();
         return $query;
