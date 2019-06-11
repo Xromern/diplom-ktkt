@@ -24,8 +24,8 @@
 
 .container-journal-center{
 
-    width: 850px;
-
+    max-width: 1100px;
+    min-width: 850px;
     margin: 0 auto;
 }
 
@@ -570,4 +570,28 @@ height: auto;
 
 .table-subject-name a:hover{
     color: #163C94;
+}
+
+.table-for-one-student{
+     margin-top: 10px;
+ }
+.clean-subject-table-body{
+    width: auto;
+    margin: 0;
+}
+.table-for-one-student{
+    margin: 0 auto;
+    margin-top: 20px;
+    width: 1100px;
+    text-align: center;
+}
+.clean-subject-table-body th,.clean-subject-table-body td{
+    border: 1px solid #000000;;
+}
+.clean-subject-table-body td{
+    height: 30px;
+    width: 30px !important;
+}
+.clean-subject-table-body th{
+    width: 30px !important;
 }

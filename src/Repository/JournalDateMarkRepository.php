@@ -133,26 +133,29 @@ class JournalDateMarkRepository extends ServiceEntityRepository
             ->leftJoin('m.student','stud')
             ->andWhere('stud.id = :student_id')
             ->setParameter('student_id',$student_id)
-            ->select('max(date_format(d.date, \'%Y-%m-%d\')) as dateMax')
+            ->addSelect('max(date_format(d.date, \'%Y-%m-%d\')) as dateMax')
             ->addSelect('min(date_format(d.date, \'%Y-%m-%d\')) as dateMin')
             ->getQuery()
             ->execute();
     }
 
-    public function getDateOnByRange(int $student_id,int $subject_id,$dateMax,$dateMin){
-        return $this->createQueryBuilder('d')
+    public function getDateOnByRange(int $student_id,$subject_id,$dateMax,$dateMin){
+        $query = $this->createQueryBuilder('d')
             ->leftJoin('d.subject','sub')
             ->leftJoin('d.marks','m')
             ->leftJoin('m.student','stud')
             ->andWhere('stud.id = :student_id')
-            ->andWhere('sub.id = :subject_id')
-            ->andWhere('date_format(d.date, \'%Y-%m-%d\') BETWEEN :minDate AND :maxDate')
-            ->setParameter('student_id',$student_id)
-            ->setParameter('subject_id',$subject_id)
+            ->andWhere('date_format(d.date, \'%Y-%m-%d\') BETWEEN :minDate AND :maxDate');
+
+        if($subject_id != null){
+            $query = $query->andWhere('sub.id = :subject_id')
+                ->setParameter('subject_id',$subject_id);
+        }
+        $query = $query->setParameter('student_id',$student_id)
             ->setParameter('maxDate',$dateMax)
             ->setParameter('minDate',$dateMin)
             ->getQuery()
             ->execute();
-
+        return $query;
     }
 }

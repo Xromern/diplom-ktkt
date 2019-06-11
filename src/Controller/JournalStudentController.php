@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 class JournalStudentController extends AbstractController
 {
@@ -163,11 +164,46 @@ class JournalStudentController extends AbstractController
         ]);
 
         $dateMarkRange = $manager->getRepository(JournalDateMark::class)->getRangeDateOnBayStudent($student->getId());
+
+        $date = $manager->getRepository(JournalDateMark::class)
+            ->getDateOnByRange($student->getId(),null,$dateMarkRange[0]['dateMax'],$dateMarkRange[0]['dateMin']);
+        $arrayDates= [];
+        foreach ($date as $item){
+            $arrayDates[] =  $item->getDate()->format('Y-m-d');
+        }
+
+        $arrayOfDatesAll = Helper::createDateRangeArray($dateMarkRange[0]['dateMin'],$dateMarkRange[0]['dateMax']);
+        $disabledDate = [];
+        foreach ($arrayOfDatesAll as $item){
+            if(!in_array($item,$arrayDates)){
+                $disabledDate[] = $item;
+            }
+        }
+
+        return $this->render('journal/journal_student/subjects-one-student.html.twig', [
+            'student'=>$student,
+            'disabledDate'=>json_encode($disabledDate),
+            'rangeDate'=>$dateMarkRange,
+            'controller_name' => 'JournalStudentController',
+        ]);
+    }
+
+    /**
+     * @Route("/journal/ajax/getTableSubjectsStudent", name="getTableSubjectsStudent" )
+     */
+    public function getSubjectsStudent(Request $request, ObjectManager $manager)
+    {
+        $student = $manager->getRepository(JournalStudent::class)->find($request->get('student_id'));
+
+        Helper::isEmpty($student);
+
         $subjects = $student->getSubjects();
         $tables = [];
+        $subjectString = '';
         foreach ($subjects as $itemSubject){
             $date = $manager->getRepository(JournalDateMark::class)
-                ->getDateOnByRange($student->getId(),$itemSubject->getId(),$dateMarkRange[0]['dateMax'],$dateMarkRange[0]['dateMin']);
+                ->getDateOnByRange($student->getId(),$itemSubject->getId(),$request->get('dateMax'),$request->get('dateMin'));
+            if(!$date) continue;
             $marks = [];
             foreach ( $date as $itemDate) {
                 $marks[] = $manager->getRepository(JournalMark::class)->createQueryBuilder('m')
@@ -178,14 +214,16 @@ class JournalStudentController extends AbstractController
                     ->setParameter('date_id',$itemDate->getId())
                     ->setParameter('student_id',$student->getId())
                     ->getQuery()
-                ->execute();
+                    ->execute();
             }
-            $tables[] = array('subject'=>$itemSubject,'date'=>$date,'marks'=>$marks);
+            $table = ($this->renderView('journal/journal_table/clean-subject-table.html.twig',
+                array('student'=>$student,'subject'=>$itemSubject,'date'=>$date,'marks'=>$marks)
+            ));
+
+            $tables[] = array('table'=>$table,'subjectName'=>$itemSubject->getName());
+
         }
-       dump($tables);
-        return $this->render('journal/journal_student/subjects-one-student.html.twig', [
-            'rangeDate'=>$dateMarkRange,
-            'controller_name' => 'JournalStudentController',
-        ]);
+
+        return new JsonResponse($tables);
     }
 }

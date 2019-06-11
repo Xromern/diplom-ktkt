@@ -118,7 +118,7 @@ class JournalSubjectController extends AbstractController
             ->getOnMarksByStudent($student,$subject->getId(),$request->get('page',0));
         }
 
-        return $this->render('journal/journal_subject/head-table.html.twig',[
+        return $this->render('journal/journal_table/subject-table.html.twig',[
 
             'subject'=>$subject,
             'students'=>$students,

@@ -6,110 +6,159 @@
 
 {% block body %}
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <style>
-        .embedded-daterangepicker .daterangepicker::before,
-        .embedded-daterangepicker .daterangepicker::after {
-            display: none;
-        }
-        .embedded-daterangepicker .daterangepicker {
-            position: relative !important;
-            top: auto !important;
-            left: 0 !important;
-            float: left;
-            width: 100%;
-        }
-        .embedded-daterangepicker .daterangepicker .drp-calendar {
-            width: 50%;
-            max-width: 50%;
-        }
-        .container{
-            position: relative;
-            width: auto;
-        }
-        .daterangepicker{
-            width: 850px !important;
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<style>
+    .embedded-daterangepicker .daterangepicker::before,
+    .embedded-daterangepicker .daterangepicker::after {
+        display: none;
+    }
+    .embedded-daterangepicker .daterangepicker {
+        position: relative !important;
+        top: auto !important;
+        left: 0 !important;
+        float: left;
+        width: 100%;
+    }
+    .embedded-daterangepicker .daterangepicker .drp-calendar {
+        width: 50%;
+        max-width: 50%;
+    }
+    .container{
+        position: relative;
+        width: auto;
+    }
+    .daterangepicker{
+        width: 100%!important;
 
-        }
-        .drp-calendar{
-            width: 50% !important;
+    }
+    .drp-calendar{
+        width: 50% !important;
 
-        }
-        .container-daterangepicke{
-            width: 520px;
+    }
+    .container-daterangepicke{
 
-        }
-        .daterangepicker td.active, .daterangepicker td.active:hover {
-            background-color: #163C94 !important;
-        }
-    </style>
-    <div class="container-journal-center container-daterangepicker">
-        <div class="row">
-            <div class="container">
-                <p id="daterangepicker-result">Вибрано діапазон дат: </p>
-                <input id="daterangepicker1" type="hidden">
-                <div id="daterangepicker1-container" class="embedded-daterangepicker"></div>
-            </div>
+
+    }
+    .daterangepicker td.active, .daterangepicker td.active:hover {
+        background-color: #163C94 !important;
+    }
+</style>
+
+<div class="container-journal-center container-daterangepicker">
+    <div class="row">
+        <div class="container">
+            <p id="daterangepicker-result">Вибрано діапазон дат: </p>
+            <input id="daterangepicker1" type="hidden">
+            <div id="daterangepicker1-container" class="embedded-daterangepicker"></div>
         </div>
     </div>
-    <script>
-        $(function() {
+</div>
+    <div class="list-subject-table-on-student">
 
-            var picker = $('#daterangepicker1').daterangepicker({
-                "parentEl": "#daterangepicker1-container",
-                "autoApply": true,
-                "locale": {
-                    "format": "YYYY-MM-DD",
-                    "separator": " - ",
-                    "applyLabel": "Зберегти",
-                    "cancelLabel": "Відмінит",
-                    "fromLabel": "Від",
-                    "toLabel": "До",
-                    "customRangeLabel": "Свій",
-                    "daysOfWeek": [
-                        "Вс",
-                        "Пн",
-                        "Вт",
-                        "Ср",
-                        "Чт",
-                        "Пт",
-                        "Сб"
-                    ],
-                    "monthNames": [
-                        "Січень",
-                        "Лютий",
-                        "Березень",
-                        "Квітень",
-                        "Травень",
-                        "Червень",
-                        "Липень",
-                        "Серпень",
-                        "Вересень",
-                        "Жовтень",
-                        "Листопад",
-                        "Грудень"
-                    ],
-                    "firstDay": 1
-                },
-                "minDate": "{{ rangeDate[0].dateMin }}",
-                "maxDate": "{{ rangeDate[0].dateMax }}",
-                "startDate ":"{{ rangeDate[0].dateMin }}",
-                "endDate":"{{ rangeDate[0].dateMax }}",
-            });
+    </div>
+<script>
+$(function() {
+    var arrayDisabledDate  = JSON.parse(("{{ disabledDate }}").replace(/&quot;/g,'"'));
+    console.log(arrayDisabledDate);
+    var picker = $('#daterangepicker1').daterangepicker({
+        "parentEl": "#daterangepicker1-container",
+        "autoApply": true,
+        "locale": {
+            "format": "YYYY-MM-DD",
+            "separator": " - ",
+            "applyLabel": "Зберегти",
+            "cancelLabel": "Відмінит",
+            "fromLabel": "Від",
+            "toLabel": "До",
+            "customRangeLabel": "Свій",
+            "daysOfWeek": [
+                "Вс",
+                "Пн",
+                "Вт",
+                "Ср",
+                "Чт",
+                "Пт",
+                "Сб"
+            ],
+            "monthNames": [
+                "Січень",
+                "Лютий",
+                "Березень",
+                "Квітень",
+                "Травень",
+                "Червень",
+                "Липень",
+                "Серпень",
+                "Вересень",
+                "Жовтень",
+                "Листопад",
+                "Грудень"
+            ],
+            "firstDay": 1
+        },
+        {#datesDisabled: {{ disabledDate }},#}
+        "minDate": "{{ rangeDate[0].dateMin }}",
+        "maxDate": "{{ rangeDate[0].dateMax }}",
+        "startDate ":"{{ rangeDate[0].dateMin }}",
+        "endDate":"{{ rangeDate[0].dateMax }}",
+        isInvalidDate: function(date){
+           if(arrayDisabledDate.includes(date.format('YYYY-MM-DD'))){
+                console.log((date.format('YYYY-MM-DD')));
+               return true;
+            }
+        }
+    });
 
-            picker.on('apply.daterangepicker', function(ev, picker) {
-                $("#daterangepicker-result").html('Вибрано діапазон дат: ' + picker.startDate.format('YYYY-MM-DD') + ' до ' + picker.endDate.format('YYYY-MM-DD'));
+    picker.on('apply.daterangepicker', function(ev, picker) {
+        $("#daterangepicker-result").html('Вибрано діапазон дат: ' + picker.startDate.format('YYYY-MM-DD') + ' до ' + picker.endDate.format('YYYY-MM-DD'));
+        showSubjectTable( picker.endDate.format('YYYY-MM-DD'),picker.startDate.format('YYYY-MM-DD'));
+    });
 
-            });
+    picker.data('daterangepicker').hide = function () {};
 
-            picker.data('daterangepicker').hide = function () {};
+    picker.data('daterangepicker').show();
 
-            picker.data('daterangepicker').show();
+    let disabledTable = () => {
+        let table ='.list-subject-table-on-student table';
+        $(table).css({'filter': 'blur(3px)'})
+    };
 
 
+    let showSubjectTable  = (dateMax,dateMin) => {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '{{ path('getTableSubjectsStudent') }}',
+            data: ({
+                'student_id':{{ student.getId }},
+                'dateMax':dateMax,
+                'dateMin':dateMin
+            }),
+            beforeSend : function(){disabledTable()},
+            error: function () {
+                note({
+                    content: "Сталася помилка, перезавантажте сторінку.",
+                    type: "error",
+                    time: 15
+                });
+            },
+            success: function (result) {
+                $('.list-subject-table-on-student table').css({'filter': 'blur(0px)'});
+                $('.list-subject-table-on-student').html('');
+                for(let i=0;i<result.length;i++){
+                    $('.list-subject-table-on-student').append(
+                        '<div class="table-for-one-student">'+result[i]['subjectName']+' '+result[i]['table']+'</div>');
+
+                }
+
+
+            }
         });
-    </script>
+    };
 
+    showSubjectTable( "{{ rangeDate[0].dateMax }}","{{ rangeDate[0].dateMin }}");
+});
+</script>
 {% endblock %}

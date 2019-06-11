@@ -1,0 +1,16 @@
+
+
+<table class="clean-subject-table-body">
+<tr>
+{% for d in date %}
+    <th colspan="rowspan" style="background: {{ d.getTypeMark.getColor }}">
+        {{ d.getDate|date('m d') }}
+    </th>
+{% endfor %}
+</tr>
+<tr>
+    {% for mark in marks %}
+        <td> {{ mark[0].getMark }} </td>
+    {% endfor %}
+</tr>
+</table>

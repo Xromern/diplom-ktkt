@@ -141,7 +141,6 @@ class Journal
         foreach ($group->getStudents() as $student) {
             $missedArray = array();
             for($i = 1;$i<=$cal_days_in_month;$i++){
-
                 $marks = $manager->getRepository(JournalMark::class)
                     ->getOnMarksByStudentForForm6($student,($date .'-'. ( ($i<10)?'0'.$i:$i) ) ,$group->getId());
                 $missedHours = $missed = 0;

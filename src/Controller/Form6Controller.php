@@ -71,7 +71,7 @@ class Form6Controller extends AbstractController
 
         $students = Journal::getForm6($group,$cal_days_in_month,$manager,$request->get('date'));
 
-        return $this->render('journal/form6/form6-table.html.twig',array(
+        return $this->render('journal/journal_table/form6-table.html.twig',array(
             'students'=>$students,
             'group'=>$group,
             'date'=>$request->get('date'),
