@@ -36,17 +36,62 @@ class ExcelJournal
 
         $dates =  $this->manager->getRepository(JournalDateMark::class)
             ->getOnByPage($subject->getId());
-
+        $students = [];
         foreach ($subject->getStudents() as $student) {
             $students[] = $this->manager->getRepository(JournalMark::class)
                 ->getOnMarksByStudent($student,$subject->getId());
         }
 
-        $rows = 1;$row = 0;
-        $this->createHeadTable($rows,$row,count($dates));
+        $this->createHeadTable(count($dates));
+        $this->getDateTable($dates);
+        $this->getStudentsTable($students);
 
+        return $this->factory->createStreamedResponse($this->spreadsheet, 'Xls');
+    }
+
+    function createHeadTable($countDate){
+        $this->sheet->setCellValue("A1", ('id'));
+        $this->sheet->mergeCells('A1:A3');//Объяденение ячеек //HORIZONTAL_LEFT
+        $this->c_setHorizontal($this->sheet, 'A1');
+        $this->c_setVertical($this->sheet, 'A1');
+        $this->sheet->getColumnDimension('A')->setWidth(3); //Ширина ячейки
+        $this->sheet->getStyle("A1")->getFont()->setBold(true);    //Шрифт жирным
+
+        $this->sheet->setCellValue("B1", ('Прізвище та ініціали'));
+        $this->sheet->mergeCells('B1:B3');//Объединение  ячейки
+        $this->c_setHorizontal($this->sheet, 'B1');
+        $this->c_setVertical($this->sheet, 'B1');
+        $this->sheet->getColumnDimension('B')->setAutoSize(true);
+        $this->sheet->getStyle("B1")->getFont()->setBold(true);
+
+        $colString = Coordinate::stringFromColumnIndex($countDate);
+
+        $this->sheet->setCellValue("C1", ('Місяць, число'));
+        $this->sheet->mergeCells('C1'.':'.$colString.'1');//Объединение  ячейки
+        $this->c_setHorizontal($this->sheet, 'C1');
+        $this->c_setVertical($this->sheet, 'C1');
+        $this->sheet->getStyle("C1")->getFont()->setBold(true);
+    }
+
+    function getStudentsTable($students){
+        $i=1;
+        foreach ($students as $student){
+            $this->sheet->setCellValueByColumnAndRow(1, $i+3/*Рядок*/, $i);
+            $this->sheet->setCellValueByColumnAndRow(2, $i+3/*Рядок*/, $student['studentName']);
+            $j=3;
+            foreach ($student['mark'] as $mark){
+                $this->sheet->setCellValueByColumnAndRow($j,$i+3, $mark->getMark());
+                $this->c_setHorizontal($this->sheet, $i);
+                $j++;
+            }
+            ++$i;
+            $this->sheet->getRowDimension($i+2)->setRowHeight(20);
+        }
+    }
+
+    function getDateTable($dates){
         $i = 3;
-        foreach ($dates as $date) {// date
+        foreach ($dates as $date) {
             $colString = Coordinate::stringFromColumnIndex($i);
             if($date->getDate()){
                 $d = $date->getDate()->format('m d');
@@ -56,48 +101,9 @@ class ExcelJournal
             $this->sheet->getColumnDimension($colString)->setWidth(3);
             $this->sheet->getRowDimension(3)->setRowHeight(20);
             $this->sheet->getStyle($colString . (2) . ":" . $colString . (3))->getAlignment()->setWrapText(true);
+            $this->sheet->getStyle($colString . (2) . ":" . $colString . (3))->getFill()->getStartColor()->setRGB($date->getTypeMark()->getColor());
             $i++;
         }
-        $i=1;
-        foreach ($students as $student){
-            $this->sheet->setCellValueByColumnAndRow(1, $i+$row/*Рядок*/, $i);
-            $this->sheet->setCellValueByColumnAndRow(2, $i+$row/*Рядок*/, $student['studentName']);
-            $j=3;
-            foreach ($student['mark'] as $mark){
-                $this->sheet->setCellValueByColumnAndRow($j,$i+3, $mark->getMark());
-                $this->c_setHorizontal($this->sheet, $i+$row);
-                $j++;
-            }
-            ++$i;
-            $this->sheet->getRowDimension($i+2)->setRowHeight(20);
-        }
-        return $this->factory->createStreamedResponse($this->spreadsheet, 'Xls');
-    }
-
-    function createHeadTable(&$rows,&$row,$countDate){
-        $this->sheet->setCellValue("A".$rows, ('id'));
-        $row = ($rows==1)?$rows+2:$rows+1;
-        $this->sheet->mergeCells('A'.$rows.':A'.$row);//Объяденение ячеек //HORIZONTAL_LEFT
-        $this->c_setHorizontal($this->sheet, 'A'.$rows);
-        $this->c_setVertical($this->sheet, 'A'.$rows);
-        $this->sheet->getColumnDimension('A')->setWidth(3); //Ширина ячейки
-        $this->sheet->getStyle("A".$rows)->getFont()->setBold(true);    //Шрифт жирным
-
-        $this->sheet->setCellValue("B".$rows, ('Прізвище та ініціали'));
-        $row = ($rows==1)?$rows+2:$rows+1;
-        $this->sheet->mergeCells('B'.$rows.':B'.$row);//Объединение  ячейки
-        $this->c_setHorizontal($this->sheet, 'B'.$rows);
-        $this->c_setVertical($this->sheet, 'B'.$rows);
-        $this->sheet->getColumnDimension('B')->setAutoSize(true);
-        $this->sheet->getStyle("B".$rows)->getFont()->setBold(true);
-
-        $colString = Coordinate::stringFromColumnIndex($countDate);
-
-        $this->sheet->setCellValue("C1", ('Місяць, число'));
-        $this->sheet->mergeCells('C1'.':'.$colString.'1');//Объединение  ячейки
-        $this->c_setHorizontal($this->sheet, 'C'.$rows);
-        $this->c_setVertical($this->sheet, 'C'.$rows);
-        $this->sheet->getStyle("C".$rows)->getFont()->setBold(true);
     }
 
     function c_setHorizontal($sheet, $coordinates)

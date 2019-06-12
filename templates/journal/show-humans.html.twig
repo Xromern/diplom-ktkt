@@ -1,14 +1,25 @@
 <tr class='tr-human-leavel-one'>
     <td class='show-human-name'><input data-human-name-id='{{ human.id }}' value='{{ human.name }}'></td>';
-    <th style='text-align:right;'>Код: </th><td class='show-human-key'>
+    <th style='text-align:right;'>Код: </th>
+    <td class='show-human-key'>
         <input data-id-key='{{ human.id }}' value='{% if human.code != null %}{{ human.code.key}}{% endif %}'></td>
 </tr>
+
+{% if human.code.student != null %}
+<tr class='tr-human-leavel-student'>
+    <td class='show-human-email1'><input data-human-email1-id='{{ human.id }}' placeholder="email1" value='{{ human.getEmail1 }}'></td>';
+    <th style='text-align:right;'></th>
+    <td class='show-human-email2'>
+    <input data-id-key='{{ human.id }}' data-human-email2-id='{{ human.id }}' placeholder="email2" value='{{ human.getEmail2 }}'></td>
+</tr>
+{% endif %}
+
 <tr class='tr-human-leavel-two'  >
     <td><br>
         <div class='button button-journal-update' data-human-id='{{ human.id }}' >Змінити</div>
-        <div class='button button-journal-delete' data-human-id='{{ human.id }}' style='margin-left:10px;'>Видалити</div><br><br>
+        <div class='button button-journal-delete' data-human-id='{{ human.id }}' >Видалити</div>
         <div class='button' >Форма 6</div>
-        <div class='button'style='margin-left:10px;'>Журнал</div></td>';
-    <td class='show-human-use' colspan='2'>Дата реєестрації:</td>
+        <div class='button'>Журнал</div></td>';
+    <td class='show-human-use' colspan='2'>Дата реєестрації: {% if human.code != null %}{{ human.code.getDateUse}}{% endif %}</td>
 </tr>
 <tr><td colspan='3'><br><hr style='border:1px solid #999'><br></td></tr>

@@ -4,7 +4,8 @@
         <div class='block-specialty'>
             <div class='line-specialty'>{{ sp.specialty.getName }}</div>
             {% for group in sp.groups %}
-                <a href='{{ path('journal_show_one_group',{'group_alis':group.alisen}) }}' class='block-group'>
+                {% if group != null and group.getAlisEn|length >0 %}
+                <a href='{{ path('journal_show_one_group',{'group_alis':group.getAlisEn}) }}' class='block-group'>
                     <div class='block-group-name'>{{ group.name }}</div>
                     <div class='block-group-curator'><div>Куратор:</div>
                         {% if group.curator != null %}
@@ -15,6 +16,7 @@
                     </div>
                     <div class='block-group-count-student'><div>Кількість студентів:</div>  {{ group.students|length }}</div>
                 </a>
+                {% endif %}
             {% endfor %}
         </div>
     {% endif %}

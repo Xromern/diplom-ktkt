@@ -38,6 +38,7 @@
     <div class="container-subject-block">
         <div class="button button-show-modal-update-subject"> Редагувати предмет.</div>
         <div class="button button-delete-subject"> Видалити предмет.</div>
+        <a class="button button-download" href="{{ path('generateTableExcel',{ 'subject_id': subject.getId }) }}" style="width: 463px"> Завантажити.</a>
     </div>
 
     <div id="myModal" class="modal modal-update-subject">
@@ -174,6 +175,34 @@
         })
 
         {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_TEACHER') %}
+        $('html').on('click', '.button-download-subject',function () {
+            downLoadSubject();
+        });
+
+        function downLoadSubject() {
+
+            $.ajax({
+                type: 'GET',
+                url: "{{ path('generateTableExcel',{ 'subject_id': subject.getId }) }}",
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    setTimeout(function () {
+                        showSubjectJournal();
+                    },400);
+
+                    window.open(result,'','…');
+                }
+
+            });
+        }
+
+
         $('html').on('change', '.table-subject-select',function () {
             updateMark($(this).val(), $(this).attr('data-id-mark'));
         });

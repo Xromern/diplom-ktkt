@@ -133,8 +133,10 @@
         function updateStudent(e) {
             let student_id = e.attr('data-human-id');
             let student_name = $('[data-human-name-id='+student_id+']').val();
+            let email1 = $('[data-human-email1-id='+student_id+']').val();
+            let email2 = $('[data-human-email2-id='+student_id+']').val();
             let key = $('[data-id-key="'+student_id+'"]').val();
-
+        console.log(email1,email2)
             $('.table-show-students').html(" ");
             $('.preLoader').show();
             $.ajax({
@@ -143,6 +145,8 @@
                 data: ({
                     'student_id': student_id,
                     'student_name': student_name,
+                    'email1': email1,
+                    'email2': email2,
                     'key': key
                 }),
                 error: function () {

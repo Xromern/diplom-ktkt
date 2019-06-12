@@ -486,42 +486,39 @@ class JournalSubjectController extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/generateTableExcel", name="generateTableExcel")
+     * @Route("/journal/ajax/generateTableExcel{subject_id}", name="generateTableExcel", methods={"get"})
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_TEACHER')")
      */
     public function generateTableExcel(Request $request, ObjectManager $manager,\Swift_Mailer $mailer){
 
         $subjectExcel = new Service\ExcelJournal($manager);
+        $subject = $manager->getRepository(JournalSubject::class)->find($request->get('subject_id'));
+        if (!$subject) {
+            return $this->render('Journal/Exception/error404.html.twig', [
 
-        $response = $subjectExcel->getSubjectJournal(4,5);
+                'message_error' => 'Сторінка не знайдена'
+            ]);
+        }
+        $name = $subject->getGroup()->getAlisEn().'+'.$subject->getAlisEn().'+'.date("Y-m-d H:i:s");
 
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($subjectExcel->spreadsheet);
-        $rand = Service\Helper::generatePassword(20);
-        $writer->save("excel/subject/$rand.xlsx");
+        $response = $subjectExcel->getSubjectJournal($subject->getGroup()->getId(),$subject->getId());
 
-        $message = (new \Swift_Message('Hello Email'))
-            ->setFrom('da.ivasuk@gmail.com')
-            ->setTo('da.ivasuk@gmail.com')
-            ->attach(\Swift_Attachment::fromPath("excel/subject/$rand.xlsx"));
-
-        $mailer->send($message);
+//        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($subjectExcel->spreadsheet);
+//        $rand = Service\Helper::generatePassword(20);
+//        $writer->save("excel/subject/$rand.xlsx");
+//
+//        $message = (new \Swift_Message('Hello Email'))
+//            ->setFrom('da.ivasuk@gmail.com')
+//            ->setTo('da.ivasuk@gmail.com')
+//            ->attach(\Swift_Attachment::fromPath("excel/subject/$rand.xlsx"));
+//
+//        $mailer->send($message);
         // Redirect output to a client’s web browser (Xls)
         $response->headers->set('Content-Type', 'application/vnd.ms-excel');
-        $response->headers->set('Content-Disposition', 'attachment;filename="ExportScan.xls"');
+        $response->headers->set('Content-Disposition', 'attachment;filename="'.$name.'.xls"');
         $response->headers->set('Cache-Control','max-age=0');
 
         return $response;
     }
-    function c_setHorizontal($sheet, $coordinates)
-    {
-        $sheet->getStyle($coordinates)->getAlignment()->setHorizontal(
-            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
-        );
-    }
 
-    function c_setVertical($sheet, $coordinates)
-    {
-        $sheet->getStyle($coordinates)->getAlignment()->setVertical(
-            \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
-        );
-    }
 }

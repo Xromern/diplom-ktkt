@@ -25,6 +25,24 @@ class JournalStudent
     private $name;
 
     /**
+     * @Assert\Email(
+     *     message = "Електронна адреса '{{value}}' не є дійсною електронною поштою.",
+     *     checkMX = true
+     * )
+     * @ORM\Column(type="string", length=255)
+     */
+    private $email1;
+
+    /**
+     * @Assert\Email(
+     *     message = "Електронна адреса '{{value}}' не є дійсною електронною поштою.",
+     *     checkMX = true
+     * )
+     * @ORM\Column(type="string", length=255)
+     */
+    private $email2;
+
+    /**
      * Many students have one group. This is the owning side.
      * @ORM\ManyToOne(targetEntity="JournalGroup", inversedBy="students")
      * @ORM\JoinColumn(name="group_id", referencedColumnName="id")
@@ -147,6 +165,38 @@ class JournalStudent
     public function __construct()
     {
         $this->subjects = new ArrayCollection();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEmail1()
+    {
+        return $this->email1;
+    }
+
+    /**
+     * @param mixed $email1
+     */
+    public function setEmail1($email1): void
+    {
+        $this->email1 = $email1;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEmail2()
+    {
+        return $this->email2;
+    }
+
+    /**
+     * @param mixed $email2
+     */
+    public function setEmail2($email2): void
+    {
+        $this->email2 = $email2;
     }
 
 }

@@ -5,6 +5,34 @@
     box-sizing: border-box;
 
 }
+::-webkit-scrollbar-button {
+    background-repeat:no-repeat;
+    width:3px;
+    height:0px
+}
+
+::-webkit-scrollbar-track {
+    background-color:#f0f0f0;
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    background-color:#163C94;
+    background-position:center;
+    background-repeat:no-repeat;
+}
+
+::-webkit-resizer{
+    background-repeat:no-repeat;
+    width:3px;
+    height:2px
+}
+
+::-webkit-scrollbar{
+    width: 5px;
+}
+
 html,
 body {
     height: 100%;

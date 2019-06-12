@@ -14,9 +14,9 @@
     margin: 0 auto;
     background-color: #FFFFFF;
     padding: 15px;
-    box-shadow: 0 0.5px 0 0 #ffffff inset, 0 1px 2px 0 #B3B3B3;
     border-radius: 5px;
     margin-top: 20px;
+    border: 2px solid #e8e8e8;
 }
 .container-journal-block select,.container-journal-block input  {
     border-radius: 3px;
@@ -37,16 +37,21 @@
     width: 120px;
     float: right;
 }
-
+.tr-human-leavel-student input{
+    margin-top:10px;
+}
 .table-show-teachers .button, .table-show-students .button {
     display: inline-block;
-    width: 170px;
+    width: 100px;
+    font-size: 14px;
+    margin: 0px;
 }
 
 .container-journal-show-teachers, .container-journal-show-students {
     background-color: #FFFFFF;
     padding: 15px;
-    box-shadow: 0 0.5px 0 0 #ffffff inset, 0 1px 2px 0 #B3B3B3;
+    border: 1px solid #e8e8e8;
+
 }
 
 .container-journal-show-teachers, .container-journal-show-students {
@@ -195,10 +200,9 @@ width: 70%;
     height: 120px;
     background-color: #FFFFFF;
     margin-top: 20px;
-    box-shadow: 0 0.5px 0 0 #ffffff inset, 0 1px 2px 0 #B3B3B3;
+    border: 1px solid #e8e8e8;
     border-radius: 3px;
     display: inline-block;
-    border: 1px solid #FFFFFF;
     margin-right: 15px;
     transition-duration: .2s;
     padding: 10px;
@@ -334,7 +338,7 @@ input{
 }
 
 .container-journal-block {
-    box-shadow: 0 0.5px 0 0 #ffffff inset, 0 1px 2px 0 #B3B3B3;
+    border: 1px solid #e8e8e8;
     background-color: #FFFFFF;
     padding: 10px;
 }
@@ -574,24 +578,24 @@ height: auto;
 
 .table-for-one-student{
      margin-top: 10px;
- }
-.clean-subject-table-body{
-    width: auto;
-    margin: 0;
-}
-.table-for-one-student{
+    overflow-x: scroll;
     margin: 0 auto;
     margin-top: 20px;
     width: 1100px;
     text-align: center;
+
+ }
+.clean-subject-table-body{
+    margin: 0;
+    width: min-content;
+    table-layout: fixed;
 }
+
 .clean-subject-table-body th,.clean-subject-table-body td{
     border: 1px solid #000000;;
+    width: 30px !important;
+
 }
 .clean-subject-table-body td{
     height: 30px;
-    width: 30px !important;
-}
-.clean-subject-table-body th{
-    width: 30px !important;
 }
