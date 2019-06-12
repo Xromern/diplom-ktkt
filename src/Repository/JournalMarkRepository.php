@@ -21,17 +21,20 @@ class JournalMarkRepository extends ServiceEntityRepository
         parent::__construct($registry, JournalMark::class);
     }
 
-    public function getOnMarksByStudent($student,$subject_id,$page){
+    public function getOnMarksByStudent($student,$subject_id,$page = null){
        $marks = $this->createQueryBuilder('m')
            ->leftJoin('m.student','stud')
            ->leftJoin('m.subject','sub')
            ->leftJoin('m.dateMark','d')
-           ->andWhere('d.page =  :page')
            ->andWhere('stud.id = :student_id')
            ->andWhere('sub.id =  :subject_id')
-           ->setParameter('subject_id', $subject_id)
-           ->setParameter('page',$page)
-           ->setParameter('student_id',$student->getId())
+           ->setParameter('subject_id', $subject_id);
+
+        if($page !=null){
+            $marks = $marks->andWhere('d.page =  :page')
+                ->setParameter('page',$page);
+        }
+        $marks = $marks->setParameter('student_id',$student->getId())
            ->getQuery()
            ->execute();
         $convertName = Service\Helper::convertName($student->getName());

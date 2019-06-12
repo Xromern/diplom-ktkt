@@ -12,6 +12,7 @@ use App\Entity\JournalTeacher;
 use App\Entity\JournalTypeFormControl;
 use App\Entity\JournalTypeMark;
 use Doctrine\Common\Persistence\ObjectManager;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as Request;
@@ -20,6 +21,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Service;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Yectep\PhpSpreadsheetBundle\Factory;
+use Yectep\PhpSpreadsheetBundle\PhpSpreadsheetBundle;
 class JournalSubjectController extends AbstractController
 {
 
@@ -482,4 +485,43 @@ class JournalSubjectController extends AbstractController
         return new JsonResponse(array('type' => 'info','message'=>'Студента видалено.'));
     }
 
+    /**
+     * @Route("/journal/ajax/generateTableExcel", name="generateTableExcel")
+     */
+    public function generateTableExcel(Request $request, ObjectManager $manager,\Swift_Mailer $mailer){
+
+        $subjectExcel = new Service\ExcelJournal($manager);
+
+        $response = $subjectExcel->getSubjectJournal(4,5);
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($subjectExcel->spreadsheet);
+        $rand = Service\Helper::generatePassword(20);
+        $writer->save("excel/subject/$rand.xlsx");
+
+        $message = (new \Swift_Message('Hello Email'))
+            ->setFrom('da.ivasuk@gmail.com')
+            ->setTo('da.ivasuk@gmail.com')
+            ->attach(\Swift_Attachment::fromPath("excel/subject/$rand.xlsx"));
+
+        $mailer->send($message);
+        // Redirect output to a client’s web browser (Xls)
+        $response->headers->set('Content-Type', 'application/vnd.ms-excel');
+        $response->headers->set('Content-Disposition', 'attachment;filename="ExportScan.xls"');
+        $response->headers->set('Cache-Control','max-age=0');
+
+        return $response;
+    }
+    function c_setHorizontal($sheet, $coordinates)
+    {
+        $sheet->getStyle($coordinates)->getAlignment()->setHorizontal(
+            \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+        );
+    }
+
+    function c_setVertical($sheet, $coordinates)
+    {
+        $sheet->getStyle($coordinates)->getAlignment()->setVertical(
+            \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+        );
+    }
 }

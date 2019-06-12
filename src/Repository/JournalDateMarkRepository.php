@@ -32,15 +32,18 @@ class JournalDateMarkRepository extends ServiceEntityRepository
             ->execute());
     }
 
-    public function getOnByPage(int $subject_id,int $page){
-        return $this->createQueryBuilder('d')
+    public function getOnByPage(int $subject_id,$page=null){
+        $d = $this->createQueryBuilder('d')
             ->leftJoin('d.subject','s')
-            ->andWhere('s.id = :subject_id')
-            ->andWhere('d.page = :page')
-            ->setParameter('subject_id',$subject_id)
-            ->setParameter('page',$page)
+            ->andWhere('s.id = :subject_id');
+            if($page !=null){
+                $d = $d->andWhere('d.page = :page')
+                    ->setParameter('page',$page);
+            }
+            $d = $d->setParameter('subject_id',$subject_id)
             ->getQuery()
             ->execute();
+            return $d;
 
     }
     /**
