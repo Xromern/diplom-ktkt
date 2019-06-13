@@ -17,7 +17,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Validator\Constraints\DateTime;
-use Symfony\Component\Validator\ValidatorBuilder;
 
 class JournalStudentController extends AbstractController
 {
@@ -108,8 +107,8 @@ class JournalStudentController extends AbstractController
             return new JsonResponse(array('type' => 'error','message'=>'Судента не знайдено.'));
         }
         $student->setName(trim($request->get('student_name')));
-        $student->setName(trim($request->get('email1')));
-        $student->setName(trim($request->get('email2')));
+        $student->setEmail1(trim($request->get('email1')));
+        $student->setEmail2(trim($request->get('email2')));
         $manager->persist($student);
 
         if(!$student->getCode()){
@@ -122,8 +121,6 @@ class JournalStudentController extends AbstractController
             $code->setKeyP(trim($request->get('key')));
             $manager->persist($code);
         }
-        Helper::validate($student);
-        Helper::validate($code);
         $manager->flush();
 
         return new JsonResponse(array('type' => 'info','message'=>'Судента змінено.'));

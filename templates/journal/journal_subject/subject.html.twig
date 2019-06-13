@@ -39,6 +39,7 @@
         <div class="button button-show-modal-update-subject"> Редагувати предмет.</div>
         <div class="button button-delete-subject"> Видалити предмет.</div>
         <a class="button button-download" href="{{ path('generateTableExcel',{ 'subject_id': subject.getId }) }}" style="width: 463px"> Завантажити.</a>
+        <div class="button button-send-subject" style="width: 463px;margin-top: 10px"> Розіслати предмет.</div>
     </div>
 
     <div id="myModal" class="modal modal-update-subject">
@@ -175,15 +176,16 @@
         })
 
         {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_TEACHER') %}
-        $('html').on('click', '.button-download-subject',function () {
-            downLoadSubject();
+        $('html').on('click', '.button-send-subject',function () {
+            sendSubject();
         });
 
-        function downLoadSubject() {
+        function sendSubject() {
 
             $.ajax({
-                type: 'GET',
-                url: "{{ path('generateTableExcel',{ 'subject_id': subject.getId }) }}",
+                type: 'POST',
+                url: "{{ path('sendTableExcelToStudent')}}",
+                data:{'subject_id':{{ subject.getId }} },
                 error: function () {
                     note({
                         content: "Сталася помилка, перезавантажте сторінку.",
@@ -191,17 +193,20 @@
                         time: 15
                     });
                 },
+                beforeSend : function(){disabledTable()},
                 success: function (result) {
                     setTimeout(function () {
                         showSubjectJournal();
                     },400);
-
-                    window.open(result,'','…');
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 5
+                    });
                 }
 
             });
         }
-
 
         $('html').on('change', '.table-subject-select',function () {
             updateMark($(this).val(), $(this).attr('data-id-mark'));

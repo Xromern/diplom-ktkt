@@ -487,7 +487,7 @@ class JournalSubjectController extends AbstractController
 
     /**
      * @Route("/journal/ajax/generateTableExcel{subject_id}", name="generateTableExcel", methods={"get"})
-     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_TEACHER')")
+     * @Security("is_granted('ROLE_ADMIN') ")
      */
     public function generateTableExcel(Request $request, ObjectManager $manager,\Swift_Mailer $mailer){
 
@@ -503,17 +503,6 @@ class JournalSubjectController extends AbstractController
 
         $response = $subjectExcel->getSubjectJournal($subject->getGroup()->getId(),$subject->getId());
 
-//        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($subjectExcel->spreadsheet);
-//        $rand = Service\Helper::generatePassword(20);
-//        $writer->save("excel/subject/$rand.xlsx");
-//
-//        $message = (new \Swift_Message('Hello Email'))
-//            ->setFrom('da.ivasuk@gmail.com')
-//            ->setTo('da.ivasuk@gmail.com')
-//            ->attach(\Swift_Attachment::fromPath("excel/subject/$rand.xlsx"));
-//
-//        $mailer->send($message);
-        // Redirect output to a client’s web browser (Xls)
         $response->headers->set('Content-Type', 'application/vnd.ms-excel');
         $response->headers->set('Content-Disposition', 'attachment;filename="'.$name.'.xls"');
         $response->headers->set('Cache-Control','max-age=0');
@@ -521,4 +510,82 @@ class JournalSubjectController extends AbstractController
         return $response;
     }
 
+    /**
+     * @Route("/journal/ajax/sendTableExcelToStudent", name="sendTableExcelToStudent", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function sendTableExcelToStudent(Request $request, ObjectManager $manager,\Swift_Mailer $mailer){
+
+        $subjectExcel = new Service\ExcelJournal($manager);
+        $subject = $manager->getRepository(JournalSubject::class)->find($request->get('subject_id'));
+        Service\Helper::isEmpty($subject);
+
+        $name = $subject->getGroup()->getAlisEn().'+'.$subject->getAlisEn().'+'.date("Y-m-d H-i-s");
+
+        foreach ($subject->getStudents() as $student){
+            if(mb_strlen($student->getEmail1())<3 && mb_strlen($student->getEmail2())<3) continue;
+            $subjectExcel->sendSubjectJournal($subject->getId(),$student);
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($subjectExcel->spreadsheet);
+
+            $writer->save("excel/subject/$name.xlsx");
+
+            if(mb_strlen($student->getEmail1())>3){
+                $message = (new \Swift_Message($name))
+                    ->setFrom('da.ivasuk@gmail.com')
+                    ->setTo($student->getEmail1())
+                    ->attach(\Swift_Attachment::fromPath("excel/subject/$name.xlsx"));
+                $mailer->send($message);
+            }
+
+            if(mb_strlen($student->getEmail2())>3) {
+                $message = (new \Swift_Message($name))
+                    ->setFrom('da.ivasuk@gmail.com')
+                    ->setTo($student->getEmail2())
+                    ->attach(\Swift_Attachment::fromPath("excel/subject/$name.xlsx"));
+                $mailer->send($message);
+            }
+
+        }
+        return new JsonResponse(array('type' => 'info','message'=>'Журнал розісланий студентам.'));
+
+    }
+
+    /**
+     * @Route("/journal/ajax/sendTableExcelToAllStudent", name="sendTableExcelToAllStudent", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function sendTableExcelToAllStudent(Request $request, ObjectManager $manager,\Swift_Mailer $mailer){
+
+        $student = $manager->getRepository(JournalStudent::class)->find($request->get('student_id'));
+        Service\Helper::isEmpty($student);
+        $group = $student->getGroup();
+
+            $subjectExcel = new Service\ExcelJournal($manager);
+            if(mb_strlen($student->getEmail1())<3 && mb_strlen($student->getEmail2())<3)
+                return new JsonResponse(array('type' => 'error','message'=>'Некоректні дані '.$student->getName()));
+            $subjectExcel->sendAllSubjectGroup($group,$student);
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($subjectExcel->spreadsheet);
+
+            $name = $group->getAlisEn().'+'.Service\Helper::createAlias($student->getName()).'+'.date("Y-m-d H-i-s");
+            $writer->save("excel/subject/$name.xlsx");
+
+            if(mb_strlen($student->getEmail1())>3){
+                $message = (new \Swift_Message($name))
+                    ->setFrom('da.ivasuk@gmail.com')
+                    ->setTo($student->getEmail1())
+                    ->attach(\Swift_Attachment::fromPath("excel/subject/$name.xlsx"));
+                $mailer->send($message);
+            }
+
+            if(mb_strlen($student->getEmail2())>3) {
+                $message = (new \Swift_Message($name))
+                    ->setFrom('da.ivasuk@gmail.com')
+                    ->setTo($student->getEmail2())
+                    ->attach(\Swift_Attachment::fromPath("excel/subject/$name.xlsx"));
+                $mailer->send($message);
+            }
+
+        return new JsonResponse(array('type' => 'info','message'=>'Журнал відіслано студенту '.$student->getName()));
+
+    }
 }

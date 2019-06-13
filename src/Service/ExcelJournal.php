@@ -5,6 +5,7 @@ namespace App\Service;
 
 
 use App\Entity\JournalDateMark;
+use App\Entity\JournalGroup;
 use App\Entity\JournalMark;
 use App\Entity\JournalSubject;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
@@ -12,7 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Validator\ValidatorBuilder;
 use Yectep\PhpSpreadsheetBundle\Factory;
-
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class ExcelJournal
 {
     private $manager;
@@ -20,7 +21,7 @@ class ExcelJournal
     public $spreadsheet;
     public $factory;
     public $countSheet;
-
+    public $count_sheet = 1;
 
     public function __construct($manager)
     {
@@ -30,9 +31,35 @@ class ExcelJournal
         $this->sheet = $this->spreadsheet->getActiveSheet();
     }
 
+    public function sendSubjectJournal(int $subject_id,$student){
+
+        $dates =  $this->manager->getRepository(JournalDateMark::class)
+            ->getOnByPage($subject_id);
+
+        $students['marks'] = $this->manager->getRepository(JournalMark::class)
+            ->getOnMarksByStudent($student,$subject_id);
+
+
+        $this->createHeadTable(count($dates));
+        $this->getDateTable($dates);
+        $this->getStudentsTable($students);
+
+        return $this->factory->createStreamedResponse($this->spreadsheet, 'Xls');
+
+    }
+
+    public function sendAllSubjectGroup(JournalGroup $group,$student){
+
+        foreach ($group->getSubjects() as $subject){
+            $this->sheet->setTitle($subject->getName());
+            $this->sendSubjectJournal($subject->getId(),$student);
+            $this->sheet= $this->spreadsheet->createSheet();
+        }
+    }
+
     public function getSubjectJournal(int $group_id,int $subject_id){
         $subject =  $this->manager->getRepository(JournalSubject::class)
-            ->getSubjectByAlis('ps-1501','fizra');
+            ->getSubjectByAlis($group_id,$subject_id);
 
         $dates =  $this->manager->getRepository(JournalDateMark::class)
             ->getOnByPage($subject->getId());

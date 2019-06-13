@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "beberlei/doctrineextensions": "^1.2",
+        "doctrine/doctrine-bundle": "^1.11",
         "easycorp/easyadmin-bundle": "^2.1",
         "friendsofsymfony/ckeditor-bundle": "^2.1",
         "friendsofsymfony/user-bundle": "~2.0",

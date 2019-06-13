@@ -25,19 +25,11 @@ class JournalStudent
     private $name;
 
     /**
-     * @Assert\Email(
-     *     message = "Електронна адреса '{{value}}' не є дійсною електронною поштою.",
-     *     checkMX = true
-     * )
      * @ORM\Column(type="string", length=255)
      */
     private $email1;
 
     /**
-     * @Assert\Email(
-     *     message = "Електронна адреса '{{value}}' не є дійсною електронною поштою.",
-     *     checkMX = true
-     * )
      * @ORM\Column(type="string", length=255)
      */
     private $email2;

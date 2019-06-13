@@ -31,6 +31,7 @@
     {% if is_granted('ROLE_ADMIN') %}
     <div class="container-journal-block">
         <div class="button button-show-subject-add">Створит новий журнал</div>
+        <div class="button button-sending-subject" style="margin-top: 10px">Розіслати журнали</div>
     </div>
     {% endif %}
     <div class="preLoader" id="preloader-list-subject">  </div>
@@ -134,6 +135,39 @@
                 $('.select-specialty').html(result);
             }
         });
+    }
+    $('html').on('click','.button-sending-subject', function(){
+        sendingSubject();
+    });
+
+    function sendingSubject() {
+        let student = "{{ arrayStudent}}";
+        let arrayStudent = JSON.parse(student);
+        for(let i = 0;i<arrayStudent.length;i++){
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('sendTableExcelToAllStudent') }}',
+                data: ({
+                    "student_id" :arrayStudent[i],
+
+                }),
+                error:function(){
+                    note({
+                        content: "Сталася помилка.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function(result){
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 6
+                    });
+                }
+
+            });
+        }
     }
 
     $('html').on('click','.button-update-group', function(){

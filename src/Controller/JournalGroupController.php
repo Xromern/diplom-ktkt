@@ -128,11 +128,18 @@ class JournalGroupController extends AbstractController
             return $this->render('journal/Exception/error404.html.twig',['message_error'=>'Така група не інуснує.']);
         }
 
+        $arrayStudent = [];
+
+        foreach ($journalGroup->getStudents() as $student) {
+            $arrayStudent[] = $student->getId();
+        }
+
         return $this->render('journal/journal_group/one-group.html.twig',[
             'group'=>$journalGroup,
             'formControl'=>$tfc,
             'gradingSystem'=>$gradingSystem,
-            'tfc'=>$tfcList
+            'tfc'=>$tfcList,
+            'arrayStudent'=>json_encode($arrayStudent)
         ]);
 
     }
