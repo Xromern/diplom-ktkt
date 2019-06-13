@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\JournalDateMark;
 use App\Entity\JournalGroup;
 use App\Entity\JournalMark;
+use App\Entity\JournalSubject;
+use App\Service\ExcelJournal;
 use App\Service\Helper;
 use App\Service\Journal;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -12,7 +14,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request as Request;
 use Symfony\Component\Routing\Annotation\Route;
-
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Yectep\PhpSpreadsheetBundle\Factory;
+use Yectep\PhpSpreadsheetBundle\PhpSpreadsheetBundle;
 
 class Form6Controller extends AbstractController
 {
@@ -98,6 +103,37 @@ class Form6Controller extends AbstractController
         return new JsonResponse(array('type' => 'info','message'=>'Пропуск оновлено'));
     }
 
+    /**
+     * @Route("/journal/ajax/generateTableExcelForm6/{group_id}", name="generateTableExcelForm6", methods={"get"})
+     * @Security("is_granted('ROLE_ADMIN') ")
+     */
+    public function generateTableExcelForm6(Request $request, ObjectManager $manager,\Swift_Mailer $mailer){
 
+        $subjectExcel = new ExcelJournal($manager);
+        $group = $manager->getRepository(JournalGroup::class)->find($request->get('group_id'));
+        if (!$group) {
+            return $this->render('Journal/Exception/error404.html.twig', [
+
+                'message_error' => 'Сторінка не знайдена'
+            ]);
+        }
+
+        $dateArray = explode('-','2019-06');
+
+        $cal_days_in_month = cal_days_in_month(CAL_GREGORIAN, $dateArray[1], $dateArray[0]);
+
+        $students = Journal::getForm6($group,$cal_days_in_month,$manager,'2019-06');
+
+
+        $name = $group->getAlisEn().'+'.date("Y-m-d H:i:s");
+
+        $response = $subjectExcel->getForm6($students,$cal_days_in_month);
+
+        $response->headers->set('Content-Type', 'application/vnd.ms-excel');
+        $response->headers->set('Content-Disposition', 'attachment;filename="'.$name.'.xls"');
+        $response->headers->set('Cache-Control','max-age=0');
+
+        return $response;
+    }
 
 }

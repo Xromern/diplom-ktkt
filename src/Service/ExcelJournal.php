@@ -14,6 +14,8 @@ use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Validator\ValidatorBuilder;
 use Yectep\PhpSpreadsheetBundle\Factory;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 class ExcelJournal
 {
     private $manager;
@@ -131,6 +133,107 @@ class ExcelJournal
             $this->sheet->getStyle($colString . (2) . ":" . $colString . (3))->getFill()->getStartColor()->setRGB($date->getTypeMark()->getColor());
             $i++;
         }
+    }
+
+    function getForm6($student,$dayInMonth){
+        $this->createHeadTableFrom6($dayInMonth);
+
+        $this->getStudentsTableForm6($student,$dayInMonth);
+        return $this->factory->createStreamedResponse($this->spreadsheet, 'Xls');
+    }
+
+    function createHeadTableFrom6($dayInMonth){
+        $this->sheet->setCellValue("A1", "П\П");
+        $this->sheet->getColumnDimension('A')->setWidth(5);//Ширина для столбика с id.
+        $this->sheet->getStyle("A1")->getFont()->setBold(true);//Жирный шрифт.
+
+        $this->sheet->setCellValue("B1", "Прізвище");
+        $this->sheet->getColumnDimension('B')->setWidth(30);//Ширина для столбика с фамилией.
+        $this->sheet->getStyle("B1")->getFont()->setBold(true);//Жирный шрифт.
+        $this->sheet->getStyle('B1')->getAlignment()->setHorizontal(
+            Alignment::HORIZONTAL_CENTER);
+        for($i=2;$i<=$dayInMonth+1;$i++){
+            $this->sheet->setCellValueByColumnAndRow($i+1/*Стлбик*/, 1/*Строка*/, $i-1/*Значение*/);//Выводй дней месяця.
+            $colString =Coordinate::stringFromColumnIndex($i+1);//Преобразование числового индекса в буквенный.
+            $this->sheet->getColumnDimension($colString)->setWidth(3);//Ширина ячейки.
+        }
+        $this->sheet->setCellValueByColumnAndRow($dayInMonth+3/*Столбик*/, 1/*Строка*/, "Пропущено");
+        $colString = Coordinate::stringFromColumnIndex($dayInMonth+3);//Преобразование числового индекса в буквенный.
+        $this->sheet->getColumnDimension($colString)->setWidth(12);//Ширина ячейки.
+    }
+
+    function getStudentsTableForm6($students,$dayInMonth){
+
+        $skipped = $closed = $respectfulReason = 0;
+        $Askipped = $Aclosed = $ArespectfulReason = 0;
+
+        for($i=1;$i< count($students);$i++){
+
+            $missed=0;
+
+            $this->sheet->setCellValue("A".($i+1), $i);
+            $this->sheet->setCellValue("B".($i+1), $students[$i-1]['studentName']);
+            //dd($students);
+            for($j=1;$j<=$dayInMonth;$j++){
+                $styleArray = array();
+              //  $color="000";
+                if($students[$i - 1]['day'][$j-1]['hours'] > 0){
+                   if($students[$i - 1]['day'][$j - 1]['missed'] == 0) {
+                       $color = "#d32828";
+                       $skipped += $students[$i - 1]['day'][$j-1]['hours'];
+                       $Askipped += $students[$i - 1]['day'][$j-1]['hours'];
+
+                   }elseif($students[$i-1]['day'][$j-1]['missed'] == 1){
+                       $color = "#14ad29";
+                       $closed += $students[$i-1]['day'][$j-1]['hours'];
+                       $Aclosed += $students[$i-1]['day'][$j-1]['hours'];
+
+                   }elseif($students[$i-1]['day'][$j-1]['missed'] == 2){
+                      $color = "#ff6324";
+                       $respectfulReason += $students[$i-1]['day'][$j-1]['hours'];
+                       $ArespectfulReason += $students[$i-1]['day'][$j-1]['hours'];
+                    }
+
+                    $styleArray = array(
+                        'font'  => array(
+                            'color' => array('rgb' => $color),
+                        ),  'borders' => array(
+                            'outline' => array(
+                                'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                                'color' => array('rgb' => 'ff6324'),
+                            ),
+                        ),
+                    );
+
+
+                }
+                if( $students[$i-1]['day'][$j-1]['hours']>0){
+
+                    $this->sheet->setCellValueByColumnAndRow($j+2/*Столбик*/, $i+1/*Строка*/, $students[$i-1]['day'][$j-1]['hours']);
+                    $this->sheet->getCellByColumnAndRow($j+2/*Столбик*/, $i+1/*Строка*/)->getStyle()->applyFromArray($styleArray);
+                }
+
+
+            }
+
+           // $this->sheet->setCellValue("AG$i", $missed);
+        }
+
+    }
+
+    function colorCell_date($result){//Пропущенные предметы, цвет для ячейки, id
+        $flag=false;
+        $color="";
+        while($row2 = mysqli_fetch_array($result)){
+            if($row2['missed']==0){
+                $color='#ff0000';
+                $flag = true;
+            }elseif($row2['missed']==1){
+                if($flag==false) $color='#00ff3f';
+            }
+        }
+
+        return $color;
     }
 
     function c_setHorizontal($sheet, $coordinates)

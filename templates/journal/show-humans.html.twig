@@ -18,8 +18,12 @@
     <td><br>
         <div class='button button-journal-update' data-human-id='{{ human.id }}' >Змінити</div>
         <div class='button button-journal-delete' data-human-id='{{ human.id }}' >Видалити</div>
-        <div class='button' >Форма 6</div>
-        <div class='button'>Журнал</div></td>';
+        {% if human.code.student != null %}
+            {%  set group_alis =  human.code.student.group.alisen %}
+            <a class='button'  >Форма 6</a>
+            <a class='button' href="{{ path('showSubjectsStudent',{'group_alis':group_alis,'student_alis':human.code.student.id}) }}">Журнал</a>
+        {% endif %}
+    </td>';
     <td class='show-human-use' colspan='2'>Дата реєестрації: {% if human.code != null %}{{ human.code.getDateUse}}{% endif %}</td>
 </tr>
 <tr><td colspan='3'><br><hr style='border:1px solid #999'><br></td></tr>
