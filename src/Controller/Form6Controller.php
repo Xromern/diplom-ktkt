@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\JournalDateMark;
 use App\Entity\JournalGroup;
 use App\Entity\JournalMark;
+use App\Entity\JournalStudent;
 use App\Entity\JournalSubject;
 use App\Service\ExcelJournal;
 use App\Service\Helper;
@@ -18,6 +19,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Yectep\PhpSpreadsheetBundle\Factory;
 use Yectep\PhpSpreadsheetBundle\PhpSpreadsheetBundle;
+
 
 class Form6Controller extends AbstractController
 {
@@ -35,7 +37,7 @@ class Form6Controller extends AbstractController
         $option = '';
 
         $monthsList = array(
-            "0." => "Січня",
+            "01" => "Січня",
             "02" => "Лютого",
             "03" => "Березная",
             "04" => "Квітня",
@@ -55,9 +57,16 @@ class Form6Controller extends AbstractController
                 $option .= '<option value="'.$item['dateFormat'].'">' . $item['dateFormat'] . ' ' . $monthsList[$dateArray[1]] . '</option>';
             }
         }
+        $arrayStudent = [];
+
+        foreach ($group->getStudents() as $student) {
+            $arrayStudent[] = $student->getId();
+        }
+
         return $this->render('journal/form6/form6.html.twig', [
             'group' => $group,
-            'option'=> $option
+            'option'=> $option,
+            'arrayStudent'=>json_encode($arrayStudent)
         ]);
     }
 
@@ -68,13 +77,22 @@ class Form6Controller extends AbstractController
     {
      //   dd($request->get('group_id'));
         $group = $manager->getRepository(JournalGroup::class)->find($request->get('group_id'));
-      //  dd($group);
+        if(count($group->getSubjects())==0){
+            return new JsonResponse(array('type' => 'info','message'=>'Форма 6 пуста'));
+        }
+
         Helper::isEmpty($group);
         $dateArray = explode('-',$request->get('date'));
 
         $cal_days_in_month = cal_days_in_month(CAL_GREGORIAN, $dateArray[1], $dateArray[0]);
 
-        $students = Journal::getForm6($group,$cal_days_in_month,$manager,$request->get('date'));
+        if($this->isGranted('ROLE_STUDENT')){
+            $students = Journal::getForm6([Journal::Student($this->getUser())],$cal_days_in_month,$manager,$request->get('date'));
+
+        }else{
+            $students = Journal::getForm6($group->getStudents(),$cal_days_in_month,$manager,$request->get('date'));
+        }
+
 
         return $this->render('journal/journal_table/form6-table.html.twig',array(
             'students'=>$students,
@@ -86,10 +104,19 @@ class Form6Controller extends AbstractController
 
     /**
      * @Route("/journal/ajax/form6UpdateMissed", name="form6UpdateMissed")
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_TEACHER') ")
      */
     public function updateMissed(Request $request, ObjectManager $manager)
     {
+
         $missed = $request->get('missed');
+        if($this->isGranted('ROLE_TEACHER')){
+            $teacher =  Journal::Teacher($this->getUser());
+            $teacher->getGroup();
+           // dd($request);
+        }
+
+
         foreach ($request->get('mark_id') as $item){
             $mark = $manager->getRepository(JournalMark::class)->find($item);
             Helper::isEmpty($mark);
@@ -104,8 +131,8 @@ class Form6Controller extends AbstractController
     }
 
     /**
-     * @Route("/journal/ajax/generateTableExcelForm6/{group_id}", name="generateTableExcelForm6", methods={"get"})
-     * @Security("is_granted('ROLE_ADMIN') ")
+     * @Route("/journal/ajax/generateTableExcelForm6/{group_id}/{date}", name="generateTableExcelForm6", methods={"get"})
+     * @Security("is_granted('ROLE_ADMIN') or is_granted('ROLE_TEACHER') ")
      */
     public function generateTableExcelForm6(Request $request, ObjectManager $manager,\Swift_Mailer $mailer){
 
@@ -118,14 +145,14 @@ class Form6Controller extends AbstractController
             ]);
         }
 
-        $dateArray = explode('-','2019-06');
+        $dateArray = explode('-',$request->get('date'));
 
         $cal_days_in_month = cal_days_in_month(CAL_GREGORIAN, $dateArray[1], $dateArray[0]);
 
-        $students = Journal::getForm6($group,$cal_days_in_month,$manager,'2019-06');
+        $students = Journal::getForm6($group->getStudents(),$cal_days_in_month,$manager,$request->get('date'));
 
 
-        $name = $group->getAlisEn().'+'.date("Y-m-d H:i:s");
+        $name ='Form6+'.$group->getAlisEn().'+'.$request->get('date');
 
         $response = $subjectExcel->getForm6($students,$cal_days_in_month);
 
@@ -134,6 +161,36 @@ class Form6Controller extends AbstractController
         $response->headers->set('Cache-Control','max-age=0');
 
         return $response;
+    }
+
+    /**
+     * @Route("/journal/ajax/sendFormToAllStudent/", name="sendFormToAllStudent", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN') ")
+     */
+    public function sendFormToAllStudent(Request $request, ObjectManager $manager,\Swift_Mailer $mailer){
+
+        $subjectExcel = new ExcelJournal($manager);
+        $group = $manager->getRepository(JournalGroup::class)->find($request->get('group_id'));
+        $student = [$manager->getRepository(JournalStudent::class)->find($request->get('student_id'))];
+
+        Helper::isEmpty($group); Helper::isEmpty($student[0]);
+
+        $dateArray = explode('-',$request->get('date'));
+
+        $cal_days_in_month = cal_days_in_month(CAL_GREGORIAN, $dateArray[1], $dateArray[0]);
+
+        $students = Journal::getForm6($student,$cal_days_in_month,$manager,$request->get('date'));
+
+        $name = 'Form6+'.$group->getAlisEn().'+'.Helper::createAlias($student[0]->getName()).'+'.$request->get('date');
+
+        $subjectExcel->getForm6($students,$cal_days_in_month);
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($subjectExcel->spreadsheet);
+
+        $writer->save("excel/subject/$name.xlsx");
+
+        return ExcelJournal::send($student[0],$name,$mailer);
+
     }
 
 }

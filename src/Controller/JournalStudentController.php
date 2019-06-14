@@ -7,6 +7,7 @@ use App\Entity\JournalDateMark;
 use App\Entity\JournalGroup;
 use App\Entity\JournalMark;
 use App\Entity\JournalStudent;
+use App\Entity\JournalTypeMark;
 use App\Service\Helper;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -180,12 +181,14 @@ class JournalStudentController extends AbstractController
                 $disabledDate[] = $item;
             }
         }
+        $typeMark = $manager->getRepository(JournalTypeMark::class)->findAll();
 
         return $this->render('journal/journal_student/subjects-one-student.html.twig', [
             'student'=>$student,
             'disabledDate'=>json_encode($disabledDate),
             'rangeDate'=>$dateMarkRange,
             'controller_name' => 'JournalStudentController',
+            'typeMark'=>$typeMark,
         ]);
     }
 

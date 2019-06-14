@@ -6,8 +6,20 @@
 <div class="form6 container-journal-center">
     <select class="select-date-from6"> {{ option|raw }}</select>
 </div>
+    {% if option|raw|length > 0 %}
+    <div class="buttons-form6">
+        {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_TEACHER') %}
+        <button class="button download-form6">Завантажити форму 6</button>
+        {% endif %}
+
+        {% if is_granted('ROLE_ADMIN') %}
+        <button class="button send-form6">Розіслати форму 6</button>
+        {% endif %}
+    </div>
+    {% endif %}
+
     <div class="container-table-subject-journal">
-        <div class="preLoader" id="preloader-form6">  </div>
+    <div class="preLoader" id="preloader-form6">  </div>
 
     <table class="table-form6-journal table ver" >
 
@@ -28,6 +40,10 @@
         $(table).css({'filter': 'blur(3px)'})
     }
 
+    $('.download-form6').on('click',function () {
+        let date = $('.select-date-from6').val();
+        window.location = '/journal/ajax/generateTableExcelForm6/{{ group.GetId }}/'+date;
+    });
 
     $('.select-date-from6').change(function () {
         showForm6($(this).val());
@@ -51,6 +67,12 @@
                 });
             },
             success: function (result) {
+                if(result['type']==='info')
+                note({
+                    content: result['message'],
+                    type: result['type'],
+                    time: 5
+                });
                 $('.table-form6-journal').css({'filter': 'blur(0px)'});
                 $('.table-form6-journal').html(result)
             }
@@ -58,6 +80,43 @@
     };
 
     showForm6($('.select-date-from6').val());
+
+    {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_TEACHER') %}
+    $('.send-form6').on('click',function () {
+        sendForm6();
+    });
+
+    let sendForm6 = () =>{
+        let student = "{{ arrayStudent}}";
+        let arrayStudent = JSON.parse(student);
+        let date = $('.select-date-from6').val();
+
+        for(let i = 0;i<arrayStudent.length;i++) {
+            $.ajax({
+                type: 'post',
+                url: "{{ path('sendFormToAllStudent') }}",
+                data: ({
+                    "date": date,
+                    "group_id": '{{ group.getId }}',
+                    "student_id":arrayStudent[i],
+                }),
+                error: function () {
+                    note({
+                        content: "Сталася помилка, перезавантажте сторінку.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function (result) {
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 5
+                    });
+                }
+            });
+        }
+    };
 
     $('html').on('click', '.form6-row-missed.active', function () {
         updateForm6($(this).data('mark_id'),$(this).data('missed'))
@@ -89,7 +148,7 @@
             }
         });
     };
-
+    {% endif %}
     $('html').on('mouseover', '.column', function() {
 
         let table2 = $(this).parent().parent();

@@ -7,8 +7,10 @@ namespace App\Service;
 use App\Entity\JournalDateMark;
 use App\Entity\JournalGroup;
 use App\Entity\JournalMark;
+use App\Entity\JournalStudent;
 use App\Entity\JournalSubject;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Writer\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Validator\ValidatorBuilder;
@@ -148,14 +150,17 @@ class ExcelJournal
         $this->sheet->getStyle("A1")->getFont()->setBold(true);//Жирный шрифт.
 
         $this->sheet->setCellValue("B1", "Прізвище");
-        $this->sheet->getColumnDimension('B')->setWidth(30);//Ширина для столбика с фамилией.
+        $this->sheet->getColumnDimension('B')->setWidth(30);//Ширина для столбика с фамилией.->getFont()->setSize(16);
         $this->sheet->getStyle("B1")->getFont()->setBold(true);//Жирный шрифт.
-        $this->sheet->getStyle('B1')->getAlignment()->setHorizontal(
+        $this->sheet->getStyle('B1')->getAlignment( )->setHorizontal(
             Alignment::HORIZONTAL_CENTER);
         for($i=2;$i<=$dayInMonth+1;$i++){
             $this->sheet->setCellValueByColumnAndRow($i+1/*Стлбик*/, 1/*Строка*/, $i-1/*Значение*/);//Выводй дней месяця.
             $colString =Coordinate::stringFromColumnIndex($i+1);//Преобразование числового индекса в буквенный.
-            $this->sheet->getColumnDimension($colString)->setWidth(3);//Ширина ячейки.
+            $this->sheet->getColumnDimension($colString)->setWidth(4);//Ширина ячейки.
+            $this->sheet->getStyle($colString)->getFont()->setSize(14);
+            $this->sheet->getStyle($colString)->getAlignment( )->setHorizontal(
+                Alignment::HORIZONTAL_CENTER);
         }
         $this->sheet->setCellValueByColumnAndRow($dayInMonth+3/*Столбик*/, 1/*Строка*/, "Пропущено");
         $colString = Coordinate::stringFromColumnIndex($dayInMonth+3);//Преобразование числового индекса в буквенный.
@@ -167,52 +172,43 @@ class ExcelJournal
         $skipped = $closed = $respectfulReason = 0;
         $Askipped = $Aclosed = $ArespectfulReason = 0;
 
-        for($i=1;$i< count($students);$i++){
-
-            $missed=0;
+        for($i=1;$i-1< count($students);$i++){
 
             $this->sheet->setCellValue("A".($i+1), $i);
             $this->sheet->setCellValue("B".($i+1), $students[$i-1]['studentName']);
-            //dd($students);
+
             for($j=1;$j<=$dayInMonth;$j++){
                 $styleArray = array();
-              //  $color="000";
+
                 if($students[$i - 1]['day'][$j-1]['hours'] > 0){
                    if($students[$i - 1]['day'][$j - 1]['missed'] == 0) {
-                       $color = "#d32828";
+                       $color = "FF0000";
                        $skipped += $students[$i - 1]['day'][$j-1]['hours'];
                        $Askipped += $students[$i - 1]['day'][$j-1]['hours'];
 
                    }elseif($students[$i-1]['day'][$j-1]['missed'] == 1){
-                       $color = "#14ad29";
+                       $color = "008000";
                        $closed += $students[$i-1]['day'][$j-1]['hours'];
                        $Aclosed += $students[$i-1]['day'][$j-1]['hours'];
 
                    }elseif($students[$i-1]['day'][$j-1]['missed'] == 2){
-                      $color = "#ff6324";
+                      $color = "000A94";
                        $respectfulReason += $students[$i-1]['day'][$j-1]['hours'];
                        $ArespectfulReason += $students[$i-1]['day'][$j-1]['hours'];
                     }
 
                     $styleArray = array(
                         'font'  => array(
-                            'color' => array('rgb' => $color),
-                        ),  'borders' => array(
-                            'outline' => array(
-                                'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
-                                'color' => array('rgb' => 'ff6324'),
-                            ),
-                        ),
+                            'color' => array('rgb' => $color)),
+                        'name'  => 'Verdana'
                     );
-
-
                 }
+
                 if( $students[$i-1]['day'][$j-1]['hours']>0){
 
                     $this->sheet->setCellValueByColumnAndRow($j+2/*Столбик*/, $i+1/*Строка*/, $students[$i-1]['day'][$j-1]['hours']);
-                    $this->sheet->getCellByColumnAndRow($j+2/*Столбик*/, $i+1/*Строка*/)->getStyle()->applyFromArray($styleArray);
-                }
-
+                    $this->sheet->getCellByColumnAndRow($j+2/*Столбик*/, $i+1/*Строка*/)->getStyle()->applyFromArray($styleArray)->getFont()->setName('Verdana');
+            }
 
             }
 
@@ -234,6 +230,34 @@ class ExcelJournal
         }
 
         return $color;
+    }
+
+    public static function send(JournalStudent $student, $filename,$mailer){
+        $error = 0;
+        try{
+            $message = (new \Swift_Message($filename))
+                ->setFrom('da.ivasuk@gmail.com')
+                ->setTo($student->getEmail1())
+                ->attach(\Swift_Attachment::fromPath("excel/subject/$filename.xlsx"));
+           $mailer->send($message);
+        }catch (\Swift_RfcComplianceException $exception){
+            $error++;
+        }
+
+        try{
+            $message = (new \Swift_Message($filename))
+                ->setFrom('da.ivasuk@gmail.com')
+                ->setTo($student->getEmail2())
+                ->attach(\Swift_Attachment::fromPath("excel/subject/$filename.xlsx"));
+            $mailer->send($message);
+
+        }catch (\Swift_RfcComplianceException $exception){
+            $error++;
+        }
+        if($error==2)
+            return new JsonResponse(array('type' => 'error','message'=>'Сталася помилка при відправці email '.$student->getName()));
+        else
+            return new JsonResponse(array('type' => 'info','message'=>'Відіслано для студента '.$student->getName()));
     }
 
     function c_setHorizontal($sheet, $coordinates)

@@ -105,7 +105,7 @@ class JournalGroupController extends AbstractController
             $subjects =  $subjects->leftJoin('g.students','stud')
                 ->andWhere('stud.id = :student_id')
                 ->andWhere('g.id = :group_id')
-                ->setParameter('teacher_id', $currentStudent->getId())
+                ->setParameter('student_id', $currentStudent->getId())
                 ->setParameter('group_id', $journalGroup->getId());
         }
 

@@ -554,6 +554,7 @@ height: auto;
     width: 30px !important;
     height: 30px !important;
     text-align: center;
+    font-weight: bold;
 }
 .form6-row-missed.active{
     cursor: pointer;
@@ -598,4 +599,41 @@ height: auto;
 }
 .clean-subject-table-body td{
     height: 30px;
+}
+.buttons-form6{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+.buttons-form6 button{
+    display: inline-block;
+    width: 200px;
+    margin-right: 10px;
+}
+.white-block{
+    padding: 10px;
+    background-color: #FFFFFF;
+    margin-top: 10px;
+    border: 1px solid #e8e8e8;
+
+}
+.white-block b{
+    color: #163C94;
+}
+
+.container-button-send button{
+    display: inline-block;
+    margin-top: 20px;
+    margin-right: 10px;
+}
+.container-button-send{
+display: flex;
+    min-width: 600px;
+    justify-content: center;
+    margin-top: 10px;
+}
+.white-block.block-type-mark {
+    max-width: 1100px;
+    margin-top: 20px;
 }

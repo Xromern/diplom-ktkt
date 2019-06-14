@@ -12,7 +12,7 @@
 
   <div data-page="{{ page + 1 }}" class="button button-prev-page click"> > </div>
 
-{% elseif page == totalPage%}
+{% elseif page == totalPage and (is_granted('ROLE_ADMIN') or is_granted('ROLE_TEACHER')) %}
 
   <div class="button button-create-page"> Додати сторінку</div>
 

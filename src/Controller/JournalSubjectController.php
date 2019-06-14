@@ -11,6 +11,7 @@ use App\Entity\JournalSubject;
 use App\Entity\JournalTeacher;
 use App\Entity\JournalTypeFormControl;
 use App\Entity\JournalTypeMark;
+use App\Service\Journal;
 use Doctrine\Common\Persistence\ObjectManager;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -60,14 +61,22 @@ class JournalSubjectController extends AbstractController
             ]);
         }
 
-        $dates = $manager->getRepository(JournalDateMark::class)
-            ->getOnByPage($subject->getId(), $request->get('page', 0));
-
-        foreach ($subject->getStudents() as $student) {
+        if($this->isGranted('ROLE_STUDENT')){
+            $dates =  $manager->getRepository(JournalDateMark::class)
+                ->getOnByPage($subject->getId(),$request->get('page',0));
 
             $students[] = $manager->getRepository(JournalMark::class)
-                ->getOnMarksByStudent($student, $subject->getId(), $request->get('page'));
+                ->getOnMarksByStudent(Journal::Student($this->getUser()),$subject->getId(),$request->get('page',0));
+            dd(Journal::Student($this->getUser()));
+        }else{
 
+            $dates = $manager->getRepository(JournalDateMark::class)
+                ->getOnByPage($subject->getId(),$request->get('page',0));
+
+            foreach ($subject->getStudents() as $student) {
+                $students[] = $manager->getRepository(JournalMark::class)
+                    ->getOnMarksByStudent($student,$subject->getId(),$request->get('page',0));
+            }
         }
 
         return $this->render('journal/journal_subject/subject.html.twig', [
@@ -113,21 +122,27 @@ class JournalSubjectController extends AbstractController
 
         $students = [];
 
-        $dates = $manager->getRepository(JournalDateMark::class)
+        if($this->isGranted('ROLE_STUDENT')){
+            $dates =  $manager->getRepository(JournalDateMark::class)
+                ->getOnByPage($subject->getId(),$request->get('page',0));
+
+            $students[] = $manager->getRepository(JournalMark::class)
+                ->getOnMarksByStudent(Journal::Student($this->getUser()),$subject->getId(),$request->get('page',0));
+        }else{
+
+            $dates = $manager->getRepository(JournalDateMark::class)
             ->getOnByPage($subject->getId(),$request->get('page',0));
 
-        foreach ($subject->getStudents() as $student) {
-            $students[] = $manager->getRepository(JournalMark::class)
-            ->getOnMarksByStudent($student,$subject->getId(),$request->get('page',0));
+            foreach ($subject->getStudents() as $student) {
+                $students[] = $manager->getRepository(JournalMark::class)
+                    ->getOnMarksByStudent($student,$subject->getId(),$request->get('page',0));
+            }
         }
 
         return $this->render('journal/journal_table/subject-table.html.twig',[
-
             'subject'=>$subject,
             'students'=>$students,
             'dates'=>$dates,
-
-
         ]);
 
     }
@@ -529,21 +544,7 @@ class JournalSubjectController extends AbstractController
 
             $writer->save("excel/subject/$name.xlsx");
 
-            if(mb_strlen($student->getEmail1())>3){
-                $message = (new \Swift_Message($name))
-                    ->setFrom('da.ivasuk@gmail.com')
-                    ->setTo($student->getEmail1())
-                    ->attach(\Swift_Attachment::fromPath("excel/subject/$name.xlsx"));
-                $mailer->send($message);
-            }
-
-            if(mb_strlen($student->getEmail2())>3) {
-                $message = (new \Swift_Message($name))
-                    ->setFrom('da.ivasuk@gmail.com')
-                    ->setTo($student->getEmail2())
-                    ->attach(\Swift_Attachment::fromPath("excel/subject/$name.xlsx"));
-                $mailer->send($message);
-            }
+            Service\ExcelJournal::send($student,$name,$mailer);
 
         }
         return new JsonResponse(array('type' => 'info','message'=>'Журнал розісланий студентам.'));
@@ -569,21 +570,7 @@ class JournalSubjectController extends AbstractController
             $name = $group->getAlisEn().'+'.Service\Helper::createAlias($student->getName()).'+'.date("Y-m-d H-i-s");
             $writer->save("excel/subject/$name.xlsx");
 
-            if(mb_strlen($student->getEmail1())>3){
-                $message = (new \Swift_Message($name))
-                    ->setFrom('da.ivasuk@gmail.com')
-                    ->setTo($student->getEmail1())
-                    ->attach(\Swift_Attachment::fromPath("excel/subject/$name.xlsx"));
-                $mailer->send($message);
-            }
-
-            if(mb_strlen($student->getEmail2())>3) {
-                $message = (new \Swift_Message($name))
-                    ->setFrom('da.ivasuk@gmail.com')
-                    ->setTo($student->getEmail2())
-                    ->attach(\Swift_Attachment::fromPath("excel/subject/$name.xlsx"));
-                $mailer->send($message);
-            }
+           Service\ExcelJournal::send($student,$name,$mailer);
 
         return new JsonResponse(array('type' => 'info','message'=>'Журнал відіслано студенту '.$student->getName()));
 

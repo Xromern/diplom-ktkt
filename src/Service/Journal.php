@@ -136,13 +136,13 @@ class Journal
         }
     }
 
-    public static function getForm6(JournalGroup &$group,int $cal_days_in_month,&$manager,$date){
+    public static function getForm6($studentsArray,int $cal_days_in_month,&$manager,$date){
         $students = [];
-        foreach ($group->getStudents() as $student) {
+        foreach ($studentsArray as $student) {
             $missedArray = array();
             for($i = 1;$i<=$cal_days_in_month;$i++){
                 $marks = $manager->getRepository(JournalMark::class)
-                    ->getOnMarksByStudentForForm6($student,($date .'-'. ( ($i<10)?'0'.$i:$i) ) ,$group->getId());
+                    ->getOnMarksByStudentForForm6($student,($date .'-'. ( ($i<10)?'0'.$i:$i) ) ,$student->getGroup()->getId());
                 $missedHours = $missed = 0;
                 $arrayIdMark = [];
                 foreach ($marks as $mark){

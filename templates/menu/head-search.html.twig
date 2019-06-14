@@ -7,8 +7,10 @@
                     <div class="container-head-info-user">
                         {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}<br>
                         {% if is_granted('ROLE_ADMIN') %}
-
-                        {%elseif  app.user.getCode.getStudent  %}
+                            <b style="color:red">Admin</b>
+                        {% endif %}
+                        {% if app.user.code %}
+                        {%if  app.user.getCode.getStudent  %}
                             {{ app.user.getCode.getStudent.getName }}<br>
                             {% if app.user.getCode.getStudent.getGroup %}
                                Група - {{ app.user.getCode.getStudent.getGroup.getName }}
@@ -19,6 +21,7 @@
                             {% set group = app.user.getCode.getTeacher.getGroup  %}
                                 Куратор групи - <a href="{{ path('journal_show_one_group',{'group_alis':group.getAlisEn}) }}">{{ group.getName }}</a>
                             {% endif %}
+                        {% endif %}
                         {% endif %}
                     </div>
 

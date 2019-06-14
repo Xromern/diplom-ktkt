@@ -49,12 +49,31 @@
 <div class="container-journal-center container-daterangepicker">
     <div class="row">
         <div class="container">
-            <p id="daterangepicker-result">Вибрано діапазон дат: </p>
+            <p class="white-block">
+                <b>Стутедент групи:</b> <span style="color:#000; font-weight: bold">{{ student.group.name }}</span> {{ student.name }}
+            </p>
+
+            <p id="daterangepicker-result" class="white-block">
+                <b>Вибрано діапазон дат:</b> {{ rangeDate[0].dateMin }} до {{ rangeDate[0].dateMax }}
+            </p>
+
             <input id="daterangepicker1" type="hidden">
             <div id="daterangepicker1-container" class="embedded-daterangepicker"></div>
         </div>
     </div>
 </div>
+    <div class="container-button-send">
+
+        <button class="button button-sending-subject"> Відправити журнали за весь проміжок часу</button>
+    </div>
+    <div class="container">
+    <div class="block-type-mark white-block">
+        {% for type in typeMark %}
+            <div class="type-mark-color" style="background:{{ type.getColor }}"></div>
+            <div>{{ type.getName }}</div>
+        {% endfor %}
+    </div>
+    </div>
     <div class="list-subject-table-on-student">
 
     </div>
@@ -101,7 +120,7 @@ $(function() {
         {#datesDisabled: {{ disabledDate }},#}
         "minDate": "{{ rangeDate[0].dateMin }}",
         "maxDate": "{{ rangeDate[0].dateMax }}",
-        "startDate ":"{{ rangeDate[0].dateMin }}",
+        "startDate":"{{ rangeDate[0].dateMin }}",
         "endDate":"{{ rangeDate[0].dateMax }}",
         isInvalidDate: function(date){
            if(arrayDisabledDate.includes(date.format('YYYY-MM-DD'))){
@@ -111,8 +130,37 @@ $(function() {
         }
     });
 
+    $('html').on('click','.button-sending-subject', function(){
+        sendingSubject();
+    });
+
+    function sendingSubject() {
+            $.ajax({
+                type: 'POST',
+                url: '{{ path('sendTableExcelToAllStudent') }}',
+                data: ({
+                    "student_id" :{{ student.id }},
+                }),
+                error:function(){
+                    note({
+                        content: "Сталася помилка.",
+                        type: "error",
+                        time: 15
+                    });
+                },
+                success: function(result){
+                    note({
+                        content: result['message'],
+                        type: result['type'],
+                        time: 6
+                    });
+                }
+
+            });
+    }
+
     picker.on('apply.daterangepicker', function(ev, picker) {
-        $("#daterangepicker-result").html('Вибрано діапазон дат: ' + picker.startDate.format('YYYY-MM-DD') + ' до ' + picker.endDate.format('YYYY-MM-DD'));
+        $("#daterangepicker-result").html('<b>Вибрано діапазон дат:</b> ' + picker.startDate.format('YYYY-MM-DD') + ' до ' + picker.endDate.format('YYYY-MM-DD'));
         showSubjectTable( picker.endDate.format('YYYY-MM-DD'),picker.startDate.format('YYYY-MM-DD'));
     });
 
