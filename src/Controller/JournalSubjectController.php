@@ -41,7 +41,7 @@ class JournalSubjectController extends AbstractController
 
         $subject = $manager->getRepository(JournalSubject::class)
             ->getSubjectByAlis($request->get('group_alis'),$request->get('subject_alis'));
-
+//dd($subject);
         if (!$subject) {
             return $this->render('Journal/Exception/error404.html.twig', [
 
@@ -67,7 +67,7 @@ class JournalSubjectController extends AbstractController
 
             $students[] = $manager->getRepository(JournalMark::class)
                 ->getOnMarksByStudent(Journal::Student($this->getUser()),$subject->getId(),$request->get('page',0));
-            dd(Journal::Student($this->getUser()));
+
         }else{
 
             $dates = $manager->getRepository(JournalDateMark::class)
@@ -568,6 +568,7 @@ class JournalSubjectController extends AbstractController
             $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($subjectExcel->spreadsheet);
 
             $name = $group->getAlisEn().'+'.Service\Helper::createAlias($student->getName()).'+'.date("Y-m-d H-i-s");
+            $writer->save("excel/subject/$name.xlsx");
             $writer->save("excel/subject/$name.xlsx");
 
            Service\ExcelJournal::send($student,$name,$mailer);

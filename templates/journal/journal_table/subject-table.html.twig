@@ -90,6 +90,11 @@
              {% endif %}
          {% elseif  mark.getDateMark.getTypeMark.getAverage == 1 %}
              <option selected disabled>{{ mark.getMark }}</option>
+         {% else %}
+             {% if mark.getMark matches '/^[-+]?[0-9]*\\.?[0-9]+$/' %}
+             {% set average = average + mark.getMark %}{% set counter_marks = counter_marks + 1 %}
+             {% endif %}
+            <option>{{ mark.getMark }}</option>
          {% endif %}
      </select>
  </td>

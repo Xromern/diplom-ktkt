@@ -611,16 +611,7 @@ height: auto;
     width: 200px;
     margin-right: 10px;
 }
-.white-block{
-    padding: 10px;
-    background-color: #FFFFFF;
-    margin-top: 10px;
-    border: 1px solid #e8e8e8;
 
-}
-.white-block b{
-    color: #163C94;
-}
 
 .container-button-send button{
     display: inline-block;

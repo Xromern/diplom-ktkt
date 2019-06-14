@@ -1,14 +1,25 @@
 {% trans_default_domain 'FOSUserBundle' %}
 <div class="limiter">
-    <div class="container-login100">
-        <div class="wrap-login100 p-t-85 p-b-20">
+    <div class="container-login100 ">
+        <div class="wrap-login100 p-t-85 p-b-20 white-block">
     <p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
     <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
-            <div class="wrap-input100 m-t-85 m-b-35" data-validate = "Enter kode">
-                <input type="text" class="input100 keyP" />
-                <span class="focus-input100" data-placeholder="Код"></span>
-            </div>
-            <div class="button button-use-key">Активувати</div>
+
+    {% if app.user.code == null%}
+    <div class="wrap-input100 m-t-85 m-b-35 white-block" data-validate = "Enter kode">
+        <input type="text" class="input100 keyP" />
+        <span class="focus-input100" data-placeholder="Код"></span>
+    </div>
+    <div class="button button-use-key">Активувати</div>
+    {% elseif app.user.code.student %}
+
+        <p><b>Ім'я в журналі: </b> {{ app.user.code.student.name }}</p>
+        <p><b>Група: </b> {{ app.user.code.student.group.name }}</p>
+        <p><b>Куратор групи: </b> {{ app.user.code.student.group.curator.name }}</p>
+
+    {% elseif app.user.code.teacher %}
+    teacher
+    {% endif %}
 </div>
 </div>
 </div>
@@ -60,6 +71,13 @@
                     type: result['type'],
                     time: 15
                 });
+
+                if(result['type']==='info'){
+                    setTimeout(()=>{
+                        location.reload();
+                    },2000);
+
+                }
 
             }
         });
