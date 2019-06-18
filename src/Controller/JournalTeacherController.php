@@ -29,6 +29,7 @@ class JournalTeacherController extends AbstractController
         return $this->render('journal/journal_teacher/list-teacher.html.twig', [
             'teachers'        => $journalTeachers,
             'controller_name' => 'listStudent',
+            'menu'=>Helper::createMenu($manager),
         ]);
     }
 

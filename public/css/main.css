@@ -159,6 +159,12 @@ main{
 
     overflow: hidden;
 }
+
+.article-container .article-container-image img{
+    height: 230px;
+
+}
+
 .image-article{
     display: block;
     margin-left: auto;

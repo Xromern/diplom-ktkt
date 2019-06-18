@@ -37,6 +37,7 @@ class JournalStudentController extends AbstractController
         return $this->render('journal/journal_student/list-student.html.twig', [
             'group'=>$journalGroup,
             'controller_name' => 'JournalStudentController',
+            'menu'=>Helper::createMenu($manager),
         ]);
     }
 
@@ -189,6 +190,7 @@ class JournalStudentController extends AbstractController
             'rangeDate'=>$dateMarkRange,
             'controller_name' => 'JournalStudentController',
             'typeMark'=>$typeMark,
+            'menu'=>Helper::createMenu($manager),
         ]);
     }
 

@@ -68,6 +68,7 @@ class JournalGroupController extends AbstractController
         }else{
             return $this->render('journal/journal_group/list-group-specialty.html.twig', [
                 'controller_name' => 'JournalGroupController',
+                'menu'=>Service\Helper::createMenu($manager),
                 'specialty'=>$specialtyList
             ]);
         }
@@ -139,6 +140,7 @@ class JournalGroupController extends AbstractController
             'formControl'=>$tfc,
             'gradingSystem'=>$gradingSystem,
             'tfc'=>$tfcList,
+            'menu'=>Service\Helper::createMenu($manager),
             'arrayStudent'=>json_encode($arrayStudent)
         ]);
 

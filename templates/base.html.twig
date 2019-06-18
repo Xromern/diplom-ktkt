@@ -45,8 +45,9 @@
     <main>
 
           {% block body %}{% endblock %}
-
+        {% if  advertisement%}
         {{ include('article/side-bar.html.twig', { 'advertisement': advertisement }) }}
+        {% endif %}
     </main>
     {{ include('article/footer.html.twig') }}
 </div>

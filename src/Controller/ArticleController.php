@@ -2,6 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\JournalGroup;
+use App\Entity\Menu;
+use App\Entity\Page;
+use App\Service\Helper;
+use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Advertisement;
 use App\Entity\Article;
@@ -38,6 +44,7 @@ class ArticleController extends AbstractController
                 'condition'=>false
             ]);
         }
+
         if($request->isXmlHttpRequest()) {
             return $this->render('article/articles-paginate.html.twig', [
                 'articles' => $paginationArticle,
@@ -46,6 +53,7 @@ class ArticleController extends AbstractController
         }else {
             return $this->render('article/articles-paginate.html.twig', [
                 'articles' => $paginationArticle,
+                'menu'=>Service\Helper::createMenu($em),
                 'advertisement' => $advertisements,
                 'ajax' => false,
             ]);
@@ -78,11 +86,31 @@ class ArticleController extends AbstractController
             ]);
 
     }
+    /**
+     * @Route("/page/{alis}", name="showPage", methods={"GET"})
+     */
+    public function showPage(Request $request, ObjectManager $manager)
+    {
+        $page = $manager->getRepository(Page::class)->findOneBy(['alisEn'=>$request->get('alis')]);
+        if($page == null){
+            return $this->render('Exception/error404.html.twig', [
+                'advertisement'=>null,
+                'message_error'=>'Сторінка не знайдена',
+                'condition'=>false
+            ]);
+        }
+
+        return $this->render('article/page.html.twig', [
+            'menu'=>Service\Helper::createMenu($manager),
+            'advertisement'=>null,
+            'page' => $page,
+        ]);
+    }
 
     /**
      * @Route("/article/{id}", name="article", methods={"GET","HEAD","POST"}, requirements={"id":"\d+"})
      */
-    public function showArticle(\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator)
+    public function showArticle(\Symfony\Component\HttpFoundation\Request $request,PaginatorInterface $paginator, ObjectManager $manager)
     {
 
         $entityManager =  $this->getDoctrine()->getManager();
@@ -125,6 +153,7 @@ class ArticleController extends AbstractController
             'comments'=>$paginationComment,
             'advertisement'=>$advertisements,
             'ajax'=>false,
+            'menu'=>Helper::createMenu($manager),
             'formComment'=>$formComment->createView(),
         ]);
 

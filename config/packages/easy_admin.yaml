@@ -9,13 +9,12 @@ easy_admin:
             - { entity: 'Advertisement', label: 'Оголошення' }
             - { entity: 'Comment', label: 'Коментарі' }
             - { entity: 'user', label: 'Пользователи' }
-        - label: 'Журнал'
+        - label: 'Сторінки коледжу'
+          icon: 'newspaper-o'
           children:
-            - { entity: 'JournalGroup', label: 'JournalGroup' }
-            - { entity: 'JournalTeacher', label: 'JournalTeacher' }
-            - { entity: 'JournalSpecialty', label: 'JournalSpecialty' }
-            - { entity: 'JournalStudent', label: 'JournalStudent' }
-            - { entity: 'JournalSubject', label: 'JournalSubject' }
+            - { entity: 'Menu', label: 'Меню' }
+            - { entity: 'Page', label: 'Сторінки' }
+
 
     entities:
         Article:
@@ -35,8 +34,44 @@ easy_admin:
               - { property: 'title' }
               - { property: 'description' }
               - { property: 'imageFile', type: 'vich_image' }
-              - { property: 'body' ,type: 'fos_ckeditor' }
+              - { property: 'body' ,type: 'fos_ckeditor'}
               - { property: 'categories' }
+        Menu:
+          class: App\Entity\Menu
+          list:
+            fields:
+              - { property: 'title' }
+              - { property: 'url' }
+              - { property: 'page' }
+              - { property: 'parent'}
+            show:
+              fields:
+                - { property: 'title' }
+                - { property: 'url' }
+                - { property: 'page' }
+                - { property: 'parent'}
+          form:
+            fields:
+              - { property: 'title' }
+              - { property: 'url' }
+              - { property: 'page' }
+              - { property: 'parent'}
+        Page:
+          class: App\Entity\Page
+          list:
+            fields:
+              - { property: 'title' }
+              - { property: 'AlisEn' }
+              - { property: 'body' ,type: 'fos_ckeditor'}
+            show:
+              fields:
+                - { property: 'title' }
+                - { property: 'AlisEn' }
+                - { property: 'body' ,type: 'fos_ckeditor'}
+          form:
+            fields:
+              - { property: 'title' }
+              - { property: 'body' ,type: 'fos_ckeditor'}
         CategoryArticle:
             class: App\Entity\CategoryArticle
         Advertisement:
@@ -64,7 +99,6 @@ easy_admin:
           class: App\Entity\JournalStudent
         JournalSubject:
           class: App\Entity\JournalSubject
-
 
 
 

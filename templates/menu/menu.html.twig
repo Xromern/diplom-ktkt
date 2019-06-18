@@ -14,6 +14,43 @@
 <div class="overlay">
     <div class="wrap">
         <ul class="wrap-nav">
+        {% if menu %}
+            {% for item in menu %}
+                <li><a href="
+{% if item.parent.url!="" %}
+    {{ path('showPage',{'alis':item.parent.url}) }}
+{% elseif item.parent.page %}
+    {% if item.parent.page.alisen!="" %}
+   {{ path('showPage',{'alis':item.parent.page.alisen}) }}
+   {% else %}
+   #
+   {% endif %}
+{% else %}
+#
+{% endif %}
+">{{ item.parent.title }}</a>
+                    {% if item.child %}
+                    <ul>
+                        {% for child in item.child %}
+                            <li><a href="
+                {% if child.url!="" %}
+                {{ path('showPage',{'alis':child.url}) }}
+                {% elseif child.page %}
+                    {% if  child.page.alisen != ""%}
+                    {{ path('showPage',{'alis':child.page.alisen}) }}
+                    {% else %}
+                    #
+                    {% endif %}
+                {% else %}
+                #
+                {% endif %}
+">{{ child.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        {% endif %}
             <li><a href="/journal">Журнал</a></li>
             <li><a href="#2">Про колледж</a>
                 <ul>

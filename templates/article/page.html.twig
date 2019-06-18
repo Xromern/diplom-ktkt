@@ -1,0 +1,12 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block body %}
+
+    <div class="article-sheet">
+        <div class="article-sheet-caption">{{ page.title}}</div>
+        {{ page.body|raw  }}
+    </div>
+{% endblock %}

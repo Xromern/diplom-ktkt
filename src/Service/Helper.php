@@ -4,6 +4,7 @@
 namespace App\Service;
 
 
+use App\Entity\Menu;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Validator\ValidatorBuilder;
@@ -32,6 +33,22 @@ class Helper
             $string .= substr($chars, rand(1, $numChars) - 1, 1);
         }
         return $string;
+    }
+
+    public static function createMenu($em){
+        $menu = $em->getRepository(Menu::class)->findBy(['parent'=>null]);
+        $menuCreate = [];
+
+        foreach ($menu as $item){
+            $child = $em->getRepository(Menu::class)->createQueryBuilder('m')
+                ->leftJoin('m.parent','p')
+                ->where('p.id = :id')
+                ->setParameter('id',$item->getId())
+                ->getQuery()
+                ->execute();
+            $menuCreate[] = array('parent'=>$item,'child'=>$child);
+        }
+        return $menuCreate;
     }
 
     public static function convertName($str){

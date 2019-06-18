@@ -11,6 +11,7 @@ use App\Entity\JournalSubject;
 use App\Entity\JournalTeacher;
 use App\Entity\JournalTypeFormControl;
 use App\Entity\JournalTypeMark;
+use App\Service\Helper;
 use App\Service\Journal;
 use Doctrine\Common\Persistence\ObjectManager;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
@@ -86,7 +87,7 @@ class JournalSubjectController extends AbstractController
             'typeMark' => $typeMark,
             'dates' => $dates,
             'totalPage' => $pages - 1,
-
+            'menu'=>Helper::createMenu($manager),
         ]);
 
     }

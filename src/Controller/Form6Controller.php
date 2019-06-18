@@ -66,6 +66,7 @@ class Form6Controller extends AbstractController
         return $this->render('journal/form6/form6.html.twig', [
             'group' => $group,
             'option'=> $option,
+            'menu'=>Helper::createMenu($manager),
             'arrayStudent'=>json_encode($arrayStudent)
         ]);
     }
@@ -190,7 +191,6 @@ class Form6Controller extends AbstractController
         $writer->save("excel/subject/$name.xlsx");
 
         return ExcelJournal::send($student[0],$name,$mailer);
-
-    }
+ }
 
 }
