@@ -72,14 +72,10 @@ class JournalStudentController extends AbstractController
     public function addStudent(Request $request, ObjectManager $manager)
     {
         $group = $manager->getRepository(JournalGroup::class)->find($request->get('group_id'));
-        if(!$group){
-            return new JsonResponse(array('type' => 'error','message'=>'Така група не інуснує.'));
-        }
 
         $code = new JournalCode();
         $code->setKeyP(Helper::createAlias($request->get('student_name')).'_'.Helper::generatePassword(30));
         $code->setRole('ROLE_STUDENT');
-
         $manager->persist($code);
 
         $student = new JournalStudent();
@@ -87,9 +83,7 @@ class JournalStudentController extends AbstractController
         $student->setGroup($group);
         $student->setCode($code);
 
-
         $manager->persist($student);
-
         $manager->flush();
 
         return new JsonResponse(array('type' => 'info','message'=>'Судента додано.'));

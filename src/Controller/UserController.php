@@ -27,7 +27,7 @@ class UserController extends AbstractController
            return new JsonResponse(array('type' => 'error','message'=>'Код невірний'));
        }
 
-       if(!$key->getDateUse()){
+       if($key->getDateUse()){
            return new JsonResponse(array('type' => 'error','message'=>'Код вже використано'));
 
        }

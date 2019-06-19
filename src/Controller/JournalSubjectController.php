@@ -276,7 +276,6 @@ class JournalSubjectController extends AbstractController
         $manager->flush();
 
         return new JsonResponse(array('type' => 'info','message'=>'Оцінка оновлена'));
-
     }
 
     /**
